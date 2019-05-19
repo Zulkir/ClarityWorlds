@@ -1,0 +1,8 @@
+{
+	"Right": 	"Stars/1right.png",
+	"Left": 	"Stars/2left.png",
+	"Top": 		"Stars/3top.png",
+	"Bottom": 	"Stars/4bottom.png",
+	"Back": 	"Stars/6back.png",
+	"Front": 	"Stars/5front.png"
+}
