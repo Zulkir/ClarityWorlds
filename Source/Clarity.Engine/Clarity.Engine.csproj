@@ -1,0 +1,305 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A3C1C459-4B9F-4AAB-A939-2A9A8DC9A630}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Engine</RootNamespace>
+    <AssemblyName>Clarity.Engine</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JsonNet\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PtrMagic, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\PtrMagic\PtrMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Audio\AudioComponent.cs" />
+    <Compile Include="Audio\IAudioAspect.cs" />
+    <Compile Include="Audio\IAudioSystem.cs" />
+    <Compile Include="Gui\DummyClipboardService.cs" />
+    <Compile Include="Gui\IClipboardService.cs" />
+    <Compile Include="Gui\Menus\GuiCommand.cs" />
+    <Compile Include="Gui\Menus\GuiMenu.cs" />
+    <Compile Include="Gui\Menus\IGuiCommand.cs" />
+    <Compile Include="Gui\IGuiComponent.cs" />
+    <Compile Include="Gui\Menus\IGuiMenu.cs" />
+    <Compile Include="Gui\Menus\IGuiMenuBuilder.cs" />
+    <Compile Include="Gui\Menus\IGuiMenuItem.cs" />
+    <Compile Include="Gui\Menus\IGuiMenuSection.cs" />
+    <Compile Include="Gui\Menus\IGuiSubmenu.cs" />
+    <Compile Include="Interaction\IInteractionComponent.cs" />
+    <Compile Include="Media\Images\IImageLoader.cs" />
+    <Compile Include="Media\Skyboxes\ISkyboxLoader.cs" />
+    <Compile Include="Media\Skyboxes\SkyboxFace.cs" />
+    <Compile Include="Media\Skyboxes\SkyboxLoader.cs" />
+    <Compile Include="Media\Text\Common\ITextLineBreaker.cs" />
+    <Compile Include="Media\Text\Common\TextLineBreaker.cs" />
+    <Compile Include="Media\Text\Rich\DefaultRtListStyle.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextBoxLayout.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextBoxLayoutBuilder.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextMeasurer.cs" />
+    <Compile Include="Media\Text\Rich\IRtListStyle.cs" />
+    <Compile Include="Media\Text\Rich\RichTextBoxLayout.cs" />
+    <Compile Include="Media\Text\Rich\RichTextBoxLayoutBuilder.cs" />
+    <Compile Include="Media\Text\Rich\RichTextBoxLayoutSpan.cs" />
+    <Compile Include="Media\Text\Rich\RichTextDirection.cs" />
+    <Compile Include="Media\Text\Rich\RichTextPositionPreference.cs" />
+    <Compile Include="Media\Text\Rich\RtListType.cs" />
+    <Compile Include="Objects\Caching\CacheContainer.cs" />
+    <Compile Include="Objects\Caching\ICache.cs" />
+    <Compile Include="Objects\Caching\ICacheContainer.cs" />
+    <Compile Include="Objects\WorldTree\IWorld.cs" />
+    <Compile Include="Objects\WorldTree\World.cs" />
+    <Compile Include="Platforms\EngineLifecycle.cs" />
+    <Compile Include="Resources\EmbeddedResourceFiles.cs" />
+    <Compile Include="Resources\EmbeddedResourceSource.cs" />
+    <Compile Include="Resources\EmbeddedResourceType.cs" />
+    <Compile Include="Resources\FactoryResourceSourceBase.cs" />
+    <Compile Include="Resources\IEmbeddedResourceFiles.cs" />
+    <Compile Include="Resources\IFactoryResourceCache.cs" />
+    <Compile Include="Resources\IFactoryResourceSource.cs" />
+    <Compile Include="Resources\ITemporaryCacheService.cs" />
+    <Compile Include="Resources\ResourceExtensions.cs" />
+    <Compile Include="Resources\SubresourceResourceSource.cs" />
+    <Compile Include="Resources\TemporaryCacheService.cs" />
+    <Compile Include="Serialization\ISerializationNecessitiesProvider.cs" />
+    <Compile Include="Serialization\ISerializationNecessities.cs" />
+    <Compile Include="Serialization\SerializationNecessities.cs" />
+    <Compile Include="Visualization\Viewports\ViewportLength.cs" />
+    <Compile Include="Visualization\Viewports\ViewportLengthUnit.cs" />
+    <Compile Include="Gui\IRenderGuiControl.cs" />
+    <Compile Include="Visualization\Viewports\ViewportsLayout.cs" />
+    <Compile Include="Interaction\RayHittables\Embedded\CircleHittable.cs" />
+    <Compile Include="Interaction\RayHittables\Embedded\DummyHittable.cs" />
+    <Compile Include="Interaction\RayHittables\IRayHitIndex.cs" />
+    <Compile Include="Interaction\RayHittables\Embedded\LineHittable.cs" />
+    <Compile Include="Interaction\RayHittables\RayHitResult.cs" />
+    <Compile Include="Interaction\RayHittables\Embedded\SphereHittable.cs" />
+    <Compile Include="Interaction\RayHittables\Embedded\RectangleHittable.cs" />
+    <Compile Include="Interaction\RayHittables\RayHitIndex.cs" />
+    <Compile Include="Interaction\RayHittables\RayHitInfo.cs" />
+    <Compile Include="Utilities\AmFactory.cs" />
+    <Compile Include="Platforms\FrameTime.cs" />
+    <Compile Include="Platforms\IEnvironment.cs" />
+    <Compile Include="Platforms\IExtension.cs" />
+    <Compile Include="Platforms\IWindowingSystem.cs" />
+    <Compile Include="Platforms\IRenderLoopDispatcher.cs" />
+    <Compile Include="Platforms\RenderLoopDispatcher.cs" />
+    <Compile Include="Interaction\Input\IInputEventArgs.cs" />
+    <Compile Include="Interaction\Input\IInputHandler.cs" />
+    <Compile Include="Interaction\Input\IInputLock.cs" />
+    <Compile Include="Interaction\Input\IInputService.cs" />
+    <Compile Include="Interaction\Input\Keyboard\IKeyboardInputProvider.cs" />
+    <Compile Include="Interaction\Input\Keyboard\IKeyboardState.cs" />
+    <Compile Include="Interaction\Input\Keyboard\IKeyEventArgs.cs" />
+    <Compile Include="Interaction\Input\Mouse\IMouseEventArgs.cs" />
+    <Compile Include="Interaction\Input\Mouse\IMouseInputProvider.cs" />
+    <Compile Include="Interaction\Input\Mouse\IMouseState.cs" />
+    <Compile Include="Interaction\Input\InputEventProcessResult.cs" />
+    <Compile Include="Interaction\Input\InputLock.cs" />
+    <Compile Include="Interaction\Input\InputService.cs" />
+    <Compile Include="Interaction\Input\Keyboard\Key.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyboardState.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyEventArgs.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyEventType.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyModifyers.cs" />
+    <Compile Include="Interaction\Input\Mouse\MouseButtons.cs" />
+    <Compile Include="Interaction\Input\Mouse\MouseEventArgs.cs" />
+    <Compile Include="Interaction\Input\Mouse\MouseEventArgsExtensions.cs" />
+    <Compile Include="Interaction\Input\Mouse\MouseEventType.cs" />
+    <Compile Include="Interaction\Input\Mouse\MouseState.cs" />
+    <Compile Include="Interaction\IInteractionEventArgs.cs" />
+    <Compile Include="Platforms\IRenderService.cs" />
+    <Compile Include="Resources\EmbeddedResources.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\CircleModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\CubeModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\LineModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModelHelpers.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\PlaneModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\Rect3DModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\SimpleFrustumModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\SimplePlaneXyModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\SimplePlaneXzModelFactory.cs" />
+    <Compile Include="Media\Models\Flexible\Embedded\SphereModelFactory.cs" />
+    <Compile Include="Resources\IEmbeddedResources.cs" />
+    <Compile Include="Resources\RawData\IRawDataResource.cs" />
+    <Compile Include="Resources\RawData\IRawDataResourceDisposableMap.cs" />
+    <Compile Include="Resources\IResource.cs" />
+    <Compile Include="Resources\IResourceFactory.cs" />
+    <Compile Include="Resources\IResourceSource.cs" />
+    <Compile Include="Resources\RawData\RawDataResource.cs" />
+    <Compile Include="Resources\RawData\RawDataResourceDisposableMap.cs" />
+    <Compile Include="Resources\RawData\RawDataResSubrange.cs" />
+    <Compile Include="Resources\ResourceBase.cs" />
+    <Compile Include="Resources\FactoryResourceCache.cs" />
+    <Compile Include="Resources\ResourceFactoryBase.cs" />
+    <Compile Include="Resources\ResourcePack.cs" />
+    <Compile Include="Resources\ResourceVolatility.cs" />
+    <Compile Include="Visualization\Cameras\CameraFrame.cs" />
+    <Compile Include="Visualization\Cameras\CameraProjection.cs" />
+    <Compile Include="Visualization\Cameras\CameraProps.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\FixedCamera.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\FreeControlledCamera.cs" />
+    <Compile Include="Visualization\Cameras\IBoundCamera.cs" />
+    <Compile Include="Visualization\Cameras\IBoundControlledCamera.cs" />
+    <Compile Include="Visualization\Cameras\ICamera.cs" />
+    <Compile Include="Visualization\Cameras\IControlledCamera.cs" />
+    <Compile Include="Visualization\Views\IView.cs" />
+    <Compile Include="Visualization\Views\IViewLayer.cs" />
+    <Compile Include="Visualization\Viewports\IViewport.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\LookAroundCamera.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\PlaneOrthoBoundControlledCamera.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\SceneTransitionCamera.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\TargetedControlledCamera.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\TargetedControlledCameraY.cs" />
+    <Compile Include="Visualization\Cameras\Embedded\TransitionCamera.cs" />
+    <Compile Include="Visualization\Views\ViewLayer.cs" />
+    <Compile Include="Visualization\Viewports\Viewport.cs" />
+    <Compile Include="Visualization\Viewports\ViewportExtensions.cs" />
+    <Compile Include="Visualization\Components\IVisualComponent.cs" />
+    <Compile Include="Visualization\Components\IVisualElement.cs" />
+    <Compile Include="Utilities\AmDiBasedObjectFactoryExtensions.cs" />
+    <Compile Include="Objects\WorldTree\RenderStageDistribution\FocusedOnlyRenderStageDistribution.cs" />
+    <Compile Include="Interaction\RayHittables\IRayHittable.cs" />
+    <Compile Include="Interaction\RayHittables\IRayHittableComponent.cs" />
+    <Compile Include="Objects\WorldTree\RenderStageDistribution\IRenderStageDistribution.cs" />
+    <Compile Include="Objects\WorldTree\IScene.cs" />
+    <Compile Include="Objects\WorldTree\ISceneNode.cs" />
+    <Compile Include="Objects\WorldTree\ISceneNodeBound.cs" />
+    <Compile Include="Objects\WorldTree\ISceneNodeComponent.cs" />
+    <Compile Include="Objects\WorldTree\ISceneNodeParent.cs" />
+    <Compile Include="Objects\WorldTree\Scene.cs" />
+    <Compile Include="Special\WarpScrollComponent.cs" />
+    <Compile Include="Objects\WorldTree\SceneNode.cs" />
+    <Compile Include="Objects\WorldTree\SceneNodeComponentBase.cs" />
+    <Compile Include="Objects\WorldTree\SceneNodeExtensions.cs" />
+    <Compile Include="Media\Models\Explicit\ExplicitModelIndexSubrange.cs" />
+    <Compile Include="Media\Models\Explicit\ExplicitModelPrimitiveTopology.cs" />
+    <Compile Include="Media\Models\Explicit\IExplicitModel.cs" />
+    <Compile Include="Visualization\Graphics\CgBasicRenderStage.cs" />
+    <Compile Include="Visualization\Graphics\CgBasicVisualGroup.cs" />
+    <Compile Include="Media\Images\SingleColorPixelSource.cs" />
+    <Compile Include="Media\Images\SingleColorPixelSourceProxy.cs" />
+    <Compile Include="Visualization\Graphics\CgCullFace.cs" />
+    <Compile Include="Visualization\Graphics\CgHighlightEffect.cs" />
+    <Compile Include="Visualization\Graphics\CgModelVisualElement.cs" />
+    <Compile Include="Visualization\Graphics\CgModelVisualElementImmutabilityFlags.cs" />
+    <Compile Include="Media\Movies\MovieAudioFrame.cs" />
+    <Compile Include="Media\Movies\MovieFrame.cs" />
+    <Compile Include="Media\Movies\MoviePlaybackState.cs" />
+    <Compile Include="Visualization\Graphics\CgPolygonMode.cs" />
+    <Compile Include="Media\Text\Rich\RichTextPixelSource.cs" />
+    <Compile Include="Media\Text\Rich\RichTextPixelSourceProxy.cs" />
+    <Compile Include="Visualization\Graphics\Materials\StandardMaterial.cs" />
+    <Compile Include="Visualization\Graphics\Materials\StandardMaterialProxy.cs" />
+    <Compile Include="Media\Movies\StandardMoviePlayback.cs" />
+    <Compile Include="Media\Skyboxes\Skybox.cs" />
+    <Compile Include="Visualization\Graphics\CgTransformSpace.cs" />
+    <Compile Include="Visualization\Graphics\CgVertexPosNormTex.cs" />
+    <Compile Include="Media\Images\ISingleColorPixelSource.cs" />
+    <Compile Include="Media\Images\IImage.cs" />
+    <Compile Include="Visualization\Graphics\Materials\IMaterial.cs" />
+    <Compile Include="Visualization\Graphics\ICgModelVisualElement.cs" />
+    <Compile Include="Media\Movies\IMovie.cs" />
+    <Compile Include="Media\Movies\IMovieReader.cs" />
+    <Compile Include="Media\Movies\IMoviePlayback.cs" />
+    <Compile Include="Media\Movies\IMoviePlayer.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextPixelSource.cs" />
+    <Compile Include="Visualization\Graphics\Materials\IStandardMaterial.cs" />
+    <Compile Include="Media\Images\IPixelSource.cs" />
+    <Compile Include="Media\Skyboxes\ISkybox.cs" />
+    <Compile Include="Visualization\Graphics\ICgVisualElement.cs" />
+    <Compile Include="Visualization\Graphics\ICgVisualElementExtension.cs" />
+    <Compile Include="Media\Images\RawImage.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModel.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModelPart.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModelPrimitiveTopology.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModelVertexSet.cs" />
+    <Compile Include="Media\Models\Flexible\FlexibleModelWriter.cs" />
+    <Compile Include="Media\Models\Flexible\IFlexibleModel.cs" />
+    <Compile Include="Media\Models\Flexible\IFlexibleModelPart.cs" />
+    <Compile Include="Media\Models\Flexible\IFlexibleModelVertexSet.cs" />
+    <Compile Include="Special\Sketching\ISketchService.cs" />
+    <Compile Include="Special\Sketching\SketchService.cs" />
+    <Compile Include="Media\Text\Rich\FontDecoration.cs" />
+    <Compile Include="Media\Text\Rich\IRichText.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextBox.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextComponent.cs" />
+    <Compile Include="Media\Text\Rich\IRtImage.cs" />
+    <Compile Include="Media\Text\Rich\IRtImageBuilder.cs" />
+    <Compile Include="Media\Text\Rich\IRtOverallStyle.cs" />
+    <Compile Include="Media\Text\Rich\IRtParagraph.cs" />
+    <Compile Include="Media\Text\Rich\IRtParagraphStyle.cs" />
+    <Compile Include="Media\Text\Rich\IRtSpan.cs" />
+    <Compile Include="Media\Text\Rich\IRtSpanStyle.cs" />
+    <Compile Include="Media\Text\Rich\RichText.cs" />
+    <Compile Include="Media\Text\Rich\RichTextBox.cs" />
+    <Compile Include="Media\Text\Rich\RichTextHelper.cs" />
+    <Compile Include="Media\Text\Rich\RtImage.cs" />
+    <Compile Include="Media\Text\Rich\RtOverallStyle.cs" />
+    <Compile Include="Media\Text\Rich\RtParagraph.cs" />
+    <Compile Include="Media\Text\Rich\RtParagraphAlignment.cs" />
+    <Compile Include="Media\Text\Rich\RtParagraphDirection.cs" />
+    <Compile Include="Media\Text\Rich\RtParagraphStyle.cs" />
+    <Compile Include="Media\Text\Rich\RtPosition.cs" />
+    <Compile Include="Media\Text\Rich\RtRange.cs" />
+    <Compile Include="Media\Text\Rich\RtSimpleDiff.cs" />
+    <Compile Include="Media\Text\Rich\RtSpan.cs" />
+    <Compile Include="Media\Text\Rich\RtSpanStyle.cs" />
+    <Compile Include="Media\Text\Rich\RtTransparencyMode.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JitsuGen.Core\JitsuGen.Core.csproj">
+      <Project>{24b75709-5d16-4642-a3b2-460aafa9f79d}</Project>
+      <Name>JitsuGen.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

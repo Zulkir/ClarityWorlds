@@ -1,0 +1,42 @@
+﻿namespace IritNet
+{
+    public enum IGGraphicEventType
+    {
+        IG_EVENT_ZERO = 0,
+        IG_EVENT_RESET,
+        IG_EVENT_NONE = 2000,
+        IG_EVENT_DISCONNECT,
+        IG_EVENT_QUIT,
+        IG_EVENT_SCR_OBJ_TGL,
+        IG_EVENT_CONT_MOTION,
+        IG_EVENT_NRML_ORIENT,
+        IG_EVENT_PERS_ORTHO_TGL,
+        IG_EVENT_PERS_ORTHO_Z,
+        IG_EVENT_ROTATE,
+        IG_EVENT_ROTATE_X,
+        IG_EVENT_ROTATE_Y,
+        IG_EVENT_ROTATE_Z,
+        IG_EVENT_TRANSLATE,
+        IG_EVENT_TRANSLATE_X,
+        IG_EVENT_TRANSLATE_Y,
+        IG_EVENT_TRANSLATE_Z,
+        IG_EVENT_SCALE,
+        IG_EVENT_NEAR_CLIP,
+        IG_EVENT_FAR_CLIP,
+        IG_EVENT_DEPTH_CUE,
+        IG_EVENT_3D_GLASSES,
+        IG_EVENT_DBL_BUFFER,
+        IG_EVENT_ACCUM_MATRIX,
+        IG_EVENT_SAVE_MATRIX,
+        IG_EVENT_SUBMIT_MATRIX,
+        IG_EVENT_PUSH_MATRIX,
+        IG_EVENT_POP_MATRIX,
+        IG_EVENT_ANIMATION,
+        IG_EVENT_SHADE_PARAM,
+        IG_EVENT_CRV_EDIT,
+        IG_EVENT_SRF_EDIT,
+        IG_EVENT_PICK_OBJS,
+        IG_EVENT_OBJ_MANIP,
+        IG_EVENT_STATE
+    }
+}

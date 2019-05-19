@@ -1,0 +1,313 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{74936FE0-2B60-43B0-BD5C-3D511C840251}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Common</RootNamespace>
+    <AssemblyName>Clarity.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JsonNet\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="CodingUtilities\Await\IAwaitable.cs" />
+    <Compile Include="CodingUtilities\Await\IAwaiter.cs" />
+    <Compile Include="CodingUtilities\Await\ICriticalAwaiter.cs" />
+    <Compile Include="CodingUtilities\CodingHelper.cs" />
+    <Compile Include="CodingUtilities\Collections\EmptyArrays.cs" />
+    <Compile Include="CodingUtilities\Collections\EmptyDictionary.cs" />
+    <Compile Include="CodingUtilities\Collections\EnumerableRedirect.cs" />
+    <Compile Include="CodingUtilities\Collections\FixedList.cs" />
+    <Compile Include="CodingUtilities\Collections\ImmutableArray.cs" />
+    <Compile Include="CodingUtilities\Collections\IRelaxedObservableList.cs" />
+    <Compile Include="CodingUtilities\Collections\IUnmanagedArray.cs" />
+    <Compile Include="CodingUtilities\Collections\LazyDictionary.cs" />
+    <Compile Include="CodingUtilities\Collections\Pool.cs" />
+    <Compile Include="CodingUtilities\Collections\PoolItem.cs" />
+    <Compile Include="CodingUtilities\Collections\RelaxedListFacade.cs" />
+    <Compile Include="CodingUtilities\Collections\RelaxedObservableList.cs" />
+    <Compile Include="CodingUtilities\Collections\SubList.cs" />
+    <Compile Include="CodingUtilities\Comparers\ReferenceEqualityComparer.cs" />
+    <Compile Include="CodingUtilities\Exceptions\TypeContractException.cs" />
+    <Compile Include="CodingUtilities\Patterns\ProxyProperty.cs" />
+    <Compile Include="CodingUtilities\Patterns\ProxyPropertyFacade.cs" />
+    <Compile Include="CodingUtilities\Pools\IntegerPool.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\CollectionExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\CovariantDictionaryWrapper.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\DictionaryExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\EnumerableExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\ListExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\ObservableCollectionExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Collections\ReadOnlyListExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\ClonableExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\ExceptionExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\NumeralExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\ObjectExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\StreamExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\StringExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Common\TypeExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Expressions\ExpressionExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Extensions\Reflection\ReflectionExtensions.cs" />
+    <Compile Include="CodingUtilities\Sugar\Wrappers\Emit\CilEmitterSugar.cs" />
+    <Compile Include="CodingUtilities\Sugar\Wrappers\Exceptions\ExcepResult.cs" />
+    <Compile Include="CodingUtilities\Tuples\Pair.cs" />
+    <Compile Include="CodingUtilities\Tuples\Tuples.cs" />
+    <Compile Include="CodingUtilities\Tuples\UnorderedPair.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\AutoDisposableBase.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\AutoDisposer.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\BinaryDatum16.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\BinaryDatum32.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\BinaryDatum64.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\IAutoDisposable.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\UnamanagedDataRange.cs" />
+    <Compile Include="CodingUtilities\Unmanaged\UnmanagedArray.cs" />
+    <Compile Include="CommonFormat.cs" />
+    <Compile Include="GraphicalGeometry\Axis3D.cs" />
+    <Compile Include="GraphicalGeometry\CommonVertexSemantic.cs" />
+    <Compile Include="GraphicalGeometry\IGeometryReader.cs" />
+    <Compile Include="GraphicalGeometry\IGeometrySpan.cs" />
+    <Compile Include="GraphicalGeometry\ILineGeometryReader.cs" />
+    <Compile Include="GraphicalGeometry\IPointGeometryReader.cs" />
+    <Compile Include="GraphicalGeometry\ITriangleGeometryReader.cs" />
+    <Compile Include="GraphicalGeometry\IVertexElementInfo.cs" />
+    <Compile Include="GraphicalGeometry\IVertexIndicesInfo.cs" />
+    <Compile Include="GraphicalGeometry\ManifoldType.cs" />
+    <Compile Include="GraphicalGeometry\VertexElementInfo.cs" />
+    <Compile Include="GraphicalGeometry\VertexIndicesInfo.cs" />
+    <Compile Include="Infra\ActiveModel\AmBindingFlags.cs" />
+    <Compile Include="Infra\ActiveModel\AmDerivedAttribute.cs" />
+    <Compile Include="Infra\ActiveModel\AmDiBasedObjectFactory.cs" />
+    <Compile Include="Infra\ActiveModel\AmEventMessage.cs" />
+    <Compile Include="Infra\ActiveModel\AmEventMessageExtensions.cs" />
+    <Compile Include="Infra\ActiveModel\AmListBinding.cs" />
+    <Compile Include="Infra\ActiveModel\AmObjectBase.cs" />
+    <Compile Include="Infra\ActiveModel\AmObjectInstantiator.cs" />
+    <Compile Include="Infra\ActiveModel\AmReferenceAttribute.cs" />
+    <Compile Include="Infra\ActiveModel\AmSingularBinding.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmBindingDescriptionBase.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmListBindingDescription.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmListBindingTypeDescriptor.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmObjectClassBuildingContext.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmObjectClassBuildingFields.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmObjectClassFactory.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmObjectTypeDescription.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmSingularBindingDescription.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\AmSingularBindingTypeDescriptor.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\IAmBindingDescription.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\IAmBindingTypeDescriptor.cs" />
+    <Compile Include="Infra\ActiveModel\ClassEmitting\IAmObjectClassFactory.cs" />
+    <Compile Include="Infra\ActiveModel\IAmBinding.cs" />
+    <Compile Include="Infra\ActiveModel\IAmDiBasedObjectFactory.cs" />
+    <Compile Include="Infra\ActiveModel\IAmListBinding.cs" />
+    <Compile Include="Infra\ActiveModel\IAmObject.cs" />
+    <Compile Include="Infra\ActiveModel\IAmObjectInstantiator.cs" />
+    <Compile Include="Infra\ActiveModel\IAmSingularBinding.cs" />
+    <Compile Include="Infra\ActiveModel\JitsuGen\AmCodeGenerator.cs" />
+    <Compile Include="Infra\ActiveModel\JitsuGen\AmJitsuGenDiBasedObjectFactory.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcAwaiter.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcScriptRuntime.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcTaskQueue.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcWaitConditionTask.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcWaitSecondsTask.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\AwcWaitUpdatesTask.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\IAwcScriptRuntime.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\IAwcTask.cs" />
+    <Compile Include="Infra\AwaitableCoroutines\IAwcTaskQueue.cs" />
+    <Compile Include="Infra\Di\IDiContainer.cs" />
+    <Compile Include="Infra\Di\DiBuildInstanceType.cs" />
+    <Compile Include="Infra\Di\DiCachedRootBinding.cs" />
+    <Compile Include="Infra\Di\DiConstructorBinding.cs" />
+    <Compile Include="Infra\Di\DiContainer.cs" />
+    <Compile Include="Infra\Di\DiFluentBinder.cs" />
+    <Compile Include="Infra\Di\DiFuncBinding.cs" />
+    <Compile Include="Infra\Di\DiMethodBinding.cs" />
+    <Compile Include="Infra\Di\DiObjectBinding.cs" />
+    <Compile Include="Infra\Di\DiRedirectBinding.cs" />
+    <Compile Include="Infra\Di\DiRootBinding.cs" />
+    <Compile Include="Infra\Di\DiRootBindingItem.cs" />
+    <Compile Include="Infra\Di\DiRootBindingType.cs" />
+    <Compile Include="Infra\Di\IDiBinding.cs" />
+    <Compile Include="Infra\Di\IDiBindResult.cs" />
+    <Compile Include="Infra\Di\IDiCachedRootBinding.cs" />
+    <Compile Include="Infra\Di\IDiFirstBindResult.cs" />
+    <Compile Include="Infra\Di\IDiMultiBinding.cs" />
+    <Compile Include="Infra\Di\IDiMultiBindResult.cs" />
+    <Compile Include="Infra\Di\IDiMultiToResult.cs" />
+    <Compile Include="Infra\Di\IDiRootBinding.cs" />
+    <Compile Include="Infra\Di\IDiRooTBindingItem.cs" />
+    <Compile Include="Infra\Di\IDiToResult.cs" />
+    <Compile Include="Infra\Files\ActualFileSystem.cs" />
+    <Compile Include="Infra\Files\FilePath.cs" />
+    <Compile Include="Infra\Files\FileSystemExtensions.cs" />
+    <Compile Include="Infra\Files\IFileSystem.cs" />
+    <Compile Include="Infra\Files\IReadOnlyFileSystem.cs" />
+    <Compile Include="Infra\Files\MemoryFileSystem.cs" />
+    <Compile Include="Infra\Files\MemoryFileSystemWriteStream.cs" />
+    <Compile Include="Infra\Files\ZipFileSystem.cs" />
+    <Compile Include="Infra\TreeReadWrite\ITrwFactory.cs" />
+    <Compile Include="Infra\TreeReadWrite\ITrwFormat.cs" />
+    <Compile Include="Infra\TreeReadWrite\ITrwReader.cs" />
+    <Compile Include="Infra\TreeReadWrite\ITrwWriter.cs" />
+    <Compile Include="Infra\TreeReadWrite\ITrwValueWriter.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Json\TrwFormatJson.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Json\TrwReaderJson.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Json\TrwWriterJson.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\DiBasedTrwAttributeObjectCreator.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\BasicTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\StringDictionaryTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\ArrayTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\AttributeTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\BoolTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\EnumTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\NumericalsTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\ArrayTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\AttributeTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\CommonTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\NullableTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\HandlerFamilies\PairTrwHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\FloatTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\GuidTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\IntTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\NullableTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\PairTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\ProxyTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\StringDictionaryTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\StringTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\TransformTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\TypeTrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\Vector2TrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\Vector3TrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\Handlers\Vector4TrwHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwAttributeObjectCreator.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationTypeRedirect.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationHandler.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationReadContext.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationHandlerContainer.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationHandlerFamily.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\ITrwSerializationWriteContext.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationExplicitTypes.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationOptions.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationReadContextExtensions.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationWriteContextExtensions.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializeAttribute.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationHandlerBase.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationWriteContext.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationReadContext.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\TrwSerializationHandlerContainer.cs" />
+    <Compile Include="Infra\TreeReadWrite\Serialization\UninitializedTrwAttributeObjectCreator.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwFactory.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwFactoryExtensions.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwReaderExtensions.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwPathBuilder.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwTokenType.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwValueType.cs" />
+    <Compile Include="Infra\TreeReadWrite\TrwWriterExtensions.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwFormatXml.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwReaderXml.cs" />
+    <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwWriterXml.cs" />
+    <Compile Include="Numericals\Algebra\DVector3.cs" />
+    <Compile Include="Numericals\Algebra\Matrix3x3.cs" />
+    <Compile Include="Numericals\Algebra\Matrix4x3.cs" />
+    <Compile Include="Numericals\Algebra\Matrix4x4.cs" />
+    <Compile Include="Numericals\Algebra\Quaternion.cs" />
+    <Compile Include="Numericals\Algebra\Rational.cs" />
+    <Compile Include="Numericals\Algebra\Transform.cs" />
+    <Compile Include="Numericals\Algebra\Transform2.cs" />
+    <Compile Include="Numericals\Algebra\Vector2.cs" />
+    <Compile Include="Numericals\Algebra\Vector3.cs" />
+    <Compile Include="Numericals\Algebra\Vector4.cs" />
+    <Compile Include="Numericals\Colors\Color3.cs" />
+    <Compile Include="Numericals\Colors\Color4.cs" />
+    <Compile Include="Numericals\Geometry\AaBox.cs" />
+    <Compile Include="Numericals\Geometry\AaRectangle2.cs" />
+    <Compile Include="Numericals\Geometry\BezierQuadratic3.cs" />
+    <Compile Include="Numericals\Geometry\Circle2.cs" />
+    <Compile Include="Numericals\Geometry\Circle3.cs" />
+    <Compile Include="Numericals\Geometry\IntRectangle2.cs" />
+    <Compile Include="Numericals\Geometry\IntSize2.cs" />
+    <Compile Include="Numericals\Geometry\IntSize3.cs" />
+    <Compile Include="Numericals\Geometry\Line2.cs" />
+    <Compile Include="Numericals\Geometry\Line3.cs" />
+    <Compile Include="Numericals\Geometry\LineSegment2.cs" />
+    <Compile Include="Numericals\Geometry\LineSegment3.cs" />
+    <Compile Include="Numericals\Geometry\Plane.cs" />
+    <Compile Include="Numericals\Geometry\Polygon2.cs" />
+    <Compile Include="Numericals\Geometry\Ray2.cs" />
+    <Compile Include="Numericals\Geometry\Ray3.cs" />
+    <Compile Include="Numericals\Geometry\Size2.cs" />
+    <Compile Include="Numericals\Geometry\Size3.cs" />
+    <Compile Include="Numericals\Geometry\Sphere.cs" />
+    <Compile Include="Numericals\Geometry\Triangle2.cs" />
+    <Compile Include="Numericals\Geometry\Winding.cs" />
+    <Compile Include="Numericals\GraphicsHelper.cs" />
+    <Compile Include="Numericals\IntSet.cs" />
+    <Compile Include="Numericals\IntSet32.cs" />
+    <Compile Include="Numericals\MathHelper.cs" />
+    <Compile Include="Numericals\OtherTuples\Bool32.cs" />
+    <Compile Include="Numericals\OtherTuples\Bool32Vector2.cs" />
+    <Compile Include="Numericals\OtherTuples\Bool32Vector3.cs" />
+    <Compile Include="Numericals\OtherTuples\Bool32Vector4.cs" />
+    <Compile Include="Numericals\OtherTuples\ByteVector2.cs" />
+    <Compile Include="Numericals\OtherTuples\ByteVector4.cs" />
+    <Compile Include="Numericals\OtherTuples\IntVector2.cs" />
+    <Compile Include="Numericals\OtherTuples\IntVector3.cs" />
+    <Compile Include="Numericals\OtherTuples\IntVector4.cs" />
+    <Compile Include="Numericals\OtherTuples\ShortVector2.cs" />
+    <Compile Include="Numericals\OtherTuples\ShortVector4.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shapes\CommonCollisions.cs" />
+    <Compile Include="Shapes\IShape3D.cs" />
+    <Compile Include="Shapes\IShapeCollisionChecker.cs" />
+    <Compile Include="Shapes\SphereShape.cs" />
+    <Compile Include="Shapes\TriangleListShape.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JitsuGen.Core\JitsuGen.Core.csproj">
+      <Project>{24b75709-5d16-4642-a3b2-460aafa9f79d}</Project>
+      <Name>JitsuGen.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

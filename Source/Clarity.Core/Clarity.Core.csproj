@@ -1,0 +1,344 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{012FD711-33D4-4724-BDAD-801BB7FAEDC0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Core</RootNamespace>
+    <AssemblyName>Clarity.Core</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../../Build/Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../../Build/Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CjClutter.ObjLoader.Loader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\ObjLoader\CjClutter.ObjLoader.Loader.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations.Dotnet">
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JsonNet\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PtrMagic, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\PtrMagic\PtrMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppCore\AppModes\AppMode.cs" />
+    <Compile Include="AppCore\AppModes\AppModeService.cs" />
+    <Compile Include="AppCore\AppModes\IAppModeService.cs" />
+    <Compile Include="AppCore\AppModes\IPresentationWorldBuilder.cs" />
+    <Compile Include="AppCore\AppModes\PresentationWorldBuilder.cs" />
+    <Compile Include="AppCore\Configuration\Config.cs" />
+    <Compile Include="AppCore\Configuration\ConfigService.cs" />
+    <Compile Include="AppCore\Configuration\IConfig.cs" />
+    <Compile Include="AppCore\Configuration\IConfigService.cs" />
+    <Compile Include="AppCore\Coroutines\CoroutineService.cs" />
+    <Compile Include="AppCore\Coroutines\ICoroutineService.cs" />
+    <Compile Include="AppCore\Gui\FullscreenMode.cs" />
+    <Compile Include="AppCore\Gui\IGui.cs" />
+    <Compile Include="AppCore\Gui\IGuiObservable.cs" />
+    <Compile Include="AppCore\Gui\IGuiObserver.cs" />
+    <Compile Include="AppCore\Gui\ISceneNodeContextMenuBuilder.cs" />
+    <Compile Include="AppCore\Gui\SceneNodeContextMenuBuilder.cs" />
+    <Compile Include="AppCore\Infra\AppVersion.cs" />
+    <Compile Include="AppCore\Input\InputHandler.cs" />
+    <Compile Include="AppCore\Interaction\ActionOnEventInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\LambdaInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\Manipulation3D\DragAlongAxisGizmoComponent.cs" />
+    <Compile Include="AppCore\Interaction\Manipulation3D\Translate3DGizmoComponent.cs" />
+    <Compile Include="AppCore\Interaction\NavigateOnDoubleClickInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\Queries\IUserQuery.cs" />
+    <Compile Include="AppCore\Interaction\Queries\IUserQueryService.cs" />
+    <Compile Include="AppCore\Interaction\Queries\OptionsUserQuery.cs" />
+    <Compile Include="AppCore\Interaction\Queries\Scene\UserQuerySceneComponent.cs" />
+    <Compile Include="AppCore\Interaction\Queries\UserQueryService.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetFileCache.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetHashMd5.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetLoaderFlags.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetLoadInfo.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetLoadResultByLoader.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetStorageType.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\FromAssetResourceSource.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\IAssetFileCache.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\SysDrawImageLoader.cs" />
+    <Compile Include="AppCore\SaveLoad\AssetTrwHandlerFamily.cs" />
+    <Compile Include="AppCore\SaveLoad\AssetTrwHandler.cs" />
+    <Compile Include="AppCore\SaveLoad\AssetForWorldTrwTypeRedirect.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Data\EmptyTypeRenames.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\PassthroughSaveLoadConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverterExpandoBase.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Versions\WorldConverter4.cs" />
+    <Compile Include="AppCore\SaveLoad\ISaveLoadFactory.cs" />
+    <Compile Include="AppCore\SaveLoad\NecessitiesProviders\AmSerializationNecessitiesProvider.cs" />
+    <Compile Include="AppCore\SaveLoad\NecessitiesProviders\CommonSerializationNecessitiesProvider.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Data\PropertyRenames3.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\ISaveLoadConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\ISaveLoadConverterContainer.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\ISaveLoadConverterTask.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\ISaveLoadVersionConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverterTaskBase.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadRenamedTypeDescription.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Tasks\PropertyRenameConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadTypeAliasesConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverterReaderBase.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverter2.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverter3.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadConverterContainer.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\SaveLoadVersionConverterBase.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Tasks\TypeRenameConverter.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Data\TypeRenames2.cs" />
+    <Compile Include="AppCore\SaveLoad\Converters\Data\TypeRenames3.cs" />
+    <Compile Include="AppCore\SaveLoad\DefaultFileLoadInfo.cs" />
+    <Compile Include="AppCore\SaveLoad\DefaultFileSaveInfo.cs" />
+    <Compile Include="AppCore\SaveLoad\IFileLoadInfo.cs" />
+    <Compile Include="AppCore\SaveLoad\IFileSaveInfo.cs" />
+    <Compile Include="AppCore\SaveLoad\ITypeAliasesSaveLoader.cs" />
+    <Compile Include="AppCore\SaveLoad\NecessitiesProviders\WorldSerializationNecessitiesProvider.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadFactory.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadMetadata.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadConstants.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadTrwContainers.cs" />
+    <Compile Include="AppCore\SaveLoad\TypeAliasesSaveLoader.cs" />
+    <Compile Include="AppCore\SaveLoad\AmReferenceLoadContext.cs" />
+    <Compile Include="AppCore\SaveLoad\AmReferenceSaveContext.cs" />
+    <Compile Include="AppCore\SaveLoad\ResourceTrwTypeRedirect.cs" />
+    <Compile Include="AppCore\StoryGraph\BasicStoryLayoutInstance.cs" />
+    <Compile Include="AppCore\StoryGraph\DirectStoryPath.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\AddExplicitStoryGraphEdgeTool.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\Flowchart\FlowchartGrid.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\Flowchart\FlowchartTunnelDigger.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\Flowchart\StoryFlowchartEditSceneComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\Flowchart\StoryFlowchartNodeGizmoComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\Flowchart\StoryFlowchartEdgeGizmoComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\Editing\StoryBranchIntoTool.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryLayoutInstance.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryPath.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryOperations.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryServiceRootComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\StorySubgraphLayoutNestingLocation.cs" />
+    <Compile Include="AppCore\Tools\IToolMenuItem.cs" />
+    <Compile Include="AppCore\Interaction\InteractionAcceptance.cs" />
+    <Compile Include="AppCore\Tools\ProxyTool.cs" />
+    <Compile Include="AppCore\Views\EditingView.cs" />
+    <Compile Include="AppCore\Views\IFocusableView.cs" />
+    <Compile Include="AppCore\Views\INavigationEventArgs.cs" />
+    <Compile Include="AppCore\Views\IViewServiceModel.cs" />
+    <Compile Include="AppCore\Views\INavigationService.cs" />
+    <Compile Include="AppCore\Views\NavigationEventArgs.cs" />
+    <Compile Include="AppCore\Views\NavigationEventType.cs" />
+    <Compile Include="AppCore\Views\NavigationState.cs" />
+    <Compile Include="AppCore\Views\PresentationView.cs" />
+    <Compile Include="AppCore\Views\StoryGraphView.cs" />
+    <Compile Include="AppCore\Views\StoryPathCamera.cs" />
+    <Compile Include="AppCore\Views\NavigationService.cs" />
+    <Compile Include="AppCore\Views\ThumbnailView.cs" />
+    <Compile Include="AppCore\Views\ViewServiceModel.cs" />
+    <Compile Include="AppCore\WorldTree\ColorRectangleComponent.cs" />
+    <Compile Include="AppCore\WorldTree\DirtyHackService.cs" />
+    <Compile Include="AppCore\WorldTree\DummyViewpointMechanism.cs" />
+    <Compile Include="AppCore\SaveLoad\IAssetInfoSaveLoader.cs" />
+    <Compile Include="AppCore\WorldTree\IDirtyHackService.cs" />
+    <Compile Include="AppCore\WorldTree\IFocusNodeComponent.cs" />
+    <Compile Include="AppCore\WorldTree\ImageRectangleComponent.cs" />
+    <Compile Include="AppCore\WorldTree\IPlacementPlane.cs" />
+    <Compile Include="AppCore\WorldTree\IPlacementPlaneComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryService.cs" />
+    <Compile Include="AppCore\WorldTree\IPresentationGuiCommands.cs" />
+    <Compile Include="AppCore\WorldTree\IPresentationRootComponent.cs" />
+    <Compile Include="AppCore\WorldTree\IRectangleComponent.cs" />
+    <Compile Include="AppCore\WorldTree\MovieRectangleComponent.cs" />
+    <Compile Include="AppCore\WorldTree\OrthoDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\WorldTree\PlacementPlaneComponent.cs" />
+    <Compile Include="AppCore\WorldTree\PresentationComponent.cs" />
+    <Compile Include="AppCore\WorldTree\PresentationGuiCommands.cs" />
+    <Compile Include="AppCore\WorldTree\RotateOnceComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryService.cs" />
+    <Compile Include="AppCore\WorldTree\PresentationRootComponent.cs" />
+    <Compile Include="AppCore\WorldTree\RectangleComponent.cs" />
+    <Compile Include="AppCore\WorldTree\WorldConstants.cs" />
+    <Compile Include="AppCore\WorldTree\WorldHolder.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\SysDrawImage.cs" />
+    <Compile Include="AppFeatures\Models\CgModelLoader.cs" />
+    <Compile Include="AppFeatures\StoryLayouts\NestedCircles\NestedCirclesStoryLayout.cs" />
+    <Compile Include="AppFeatures\StoryLayouts\NestedCircles\NestedCirclesStorySpringModel.cs" />
+    <Compile Include="AppFeatures\StoryLayouts\NestedSpheres\NestedSpheresRenderStageDistribution.cs" />
+    <Compile Include="AppFeatures\StoryLayouts\NestedSpheres\NestedSpheresStoryLayout.cs" />
+    <Compile Include="AppFeatures\StoryLayouts\NestedSpheres\NestedSpheresStorySpringModel.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\Asset.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetEventArgs.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetEventType.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\IAssetLoader.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetLoadResult.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\SysDrawImageAssetLoader.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\SkyboxAssetLoader.cs" />
+    <Compile Include="AppCore\CopyPaste\SceneNodeDuplicateUndoable.cs" />
+    <Compile Include="AppCore\Interaction\CoreInteractionEventCategory.cs" />
+    <Compile Include="AppCore\Interaction\CoreInteractionEventType.cs" />
+    <Compile Include="AppCore\Interaction\CoreInterationEventArgs.cs" />
+    <Compile Include="AppCore\Interaction\FocusOnDoubleClickInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\ICoreInterationEventArgs.cs" />
+    <Compile Include="AppCore\Interaction\MoviePlaybackInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\DragRectangleInputLock.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\DragRectangleInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\EditRectangleInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\DragRectangleGizmoComponent.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\ResizeRectangleGizmoComponent.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\ResizeRectangleGizmoPlace.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\ResizeRectangleInputLock.cs" />
+    <Compile Include="AppCore\Interaction\RectangleManipulation\ResizeRectangleInteractionElement.cs" />
+    <Compile Include="AppCore\Interaction\SelectOnClickInteractionElement.cs" />
+    <Compile Include="AppCore\Logging\FileLogWriter.cs" />
+    <Compile Include="AppCore\Logging\ILogWriter.cs" />
+    <Compile Include="AppCore\Logging\ILogService.cs" />
+    <Compile Include="AppCore\Logging\Log.cs" />
+    <Compile Include="AppCore\Logging\LogMessageType.cs" />
+    <Compile Include="AppCore\Logging\LogService.cs" />
+    <Compile Include="AppCore\SaveLoad\AmTrwTypeRedirect.cs" />
+    <Compile Include="AppCore\SaveLoad\AssetSaveLoadInfo.cs" />
+    <Compile Include="AppCore\SaveLoad\ISaveLoadFormat.cs" />
+    <Compile Include="AppCore\SaveLoad\ResourceTrwHandler.cs" />
+    <Compile Include="AppCore\SaveLoad\ResourceTrwHandlerFamily.cs" />
+    <Compile Include="AppCore\SaveLoad\RuntimeTypeTrwTypeRedirect.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadLog.cs" />
+    <Compile Include="AppCore\SaveLoad\ZipSaveLoadFormat.cs" />
+    <Compile Include="AppCore\Tools\AddRectangleTool.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\AssetService.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\IAssetService.cs" />
+    <Compile Include="AppCore\CopyPaste\CopyPasteContent.cs" />
+    <Compile Include="AppCore\CopyPaste\SwapWorldItemsUndoable.cs" />
+    <Compile Include="AppCore\CopyPaste\WorldCopyPasteService.cs" />
+    <Compile Include="AppCore\CopyPaste\ICopyPasteContent.cs" />
+    <Compile Include="AppCore\CopyPaste\IWorldCopyPasteService.cs" />
+    <Compile Include="AppCore\CopyPaste\WorldPasteUndoable.cs" />
+    <Compile Include="AppCore\Tools\CommonChildPlaneSemantics.cs" />
+    <Compile Include="AppCore\UndoRedo\ICommonUndoRedo.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryComponent.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryNodeDynamicParts.cs" />
+    <Compile Include="AppCore\StoryGraph\StoryGraph.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryGraph.cs" />
+    <Compile Include="AppCore\WorldTree\ModelComponent.cs" />
+    <Compile Include="AppCore\WorldTree\ModelLayerLimitComponent.cs" />
+    <Compile Include="AppCore\WorldTree\ICommonNodeFactory.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryComponent.cs" />
+    <Compile Include="AppCore\Interaction\IInteractionElement.cs" />
+    <Compile Include="AppCore\WorldTree\IModelComponent.cs" />
+    <Compile Include="AppCore\WorldTree\ITransformable3DComponent.cs" />
+    <Compile Include="AppCore\WorldTree\SceneNodeExtensions.cs" />
+    <Compile Include="AppCore\SaveLoad\AmObjectTrwHandler.cs" />
+    <Compile Include="AppCore\SaveLoad\AmObjectSerializationHandlerFamily.cs" />
+    <Compile Include="AppCore\SaveLoad\ISaveLoadService.cs" />
+    <Compile Include="AppCore\SaveLoad\ITreeLoadStream.cs" />
+    <Compile Include="AppCore\SaveLoad\ITreeSaveStream.cs" />
+    <Compile Include="AppCore\SaveLoad\SaveLoadService.cs" />
+    <Compile Include="AppCore\SaveLoad\XmlSaveStream.cs" />
+    <Compile Include="AppCore\SaveLoad\XmlLoadStream.cs" />
+    <Compile Include="AppCore\Tools\DrawBorderCurveTool.cs" />
+    <Compile Include="AppCore\Tools\MoveEntityTool.cs" />
+    <Compile Include="AppCore\Tools\RotateEntityTool.cs" />
+    <Compile Include="AppCore\Tools\ScaleEntityTool.cs" />
+    <Compile Include="AppCore\WorldTree\CommonNodeFactory.cs" />
+    <Compile Include="AppCore\WorldTree\FreeLandDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\StoryGraph\IStoryLayout.cs" />
+    <Compile Include="AppCore\WorldTree\IDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\WorldTree\LandDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\StoryGraph\MuseumStoryLayout.cs" />
+    <Compile Include="AppCore\StoryGraph\OrbitStoryLayout.cs" />
+    <Compile Include="AppCore\WorldTree\Rectangle3D.cs" />
+    <Compile Include="AppCore\SaveLoad\DefaultStateInitializer.cs" />
+    <Compile Include="AppCore\Tools\IToolFactory.cs" />
+    <Compile Include="AppCore\Tools\ToolFactory.cs" />
+    <Compile Include="AppCore\StoryGraph\SimpleStoryLayout.cs" />
+    <Compile Include="AppCore\StoryGraph\SphereStoryLayout.cs" />
+    <Compile Include="AppCore\WorldTree\SphereDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\WorldTree\WallDefaultViewpointMechanism.cs" />
+    <Compile Include="AppCore\WorldTree\WallDefaultViewpointMechanismZ.cs" />
+    <Compile Include="AppCore\WorldTree\WtnAspectPair.cs" />
+    <Compile Include="AppCore\UndoRedo\AddToCollectionUndoable.cs" />
+    <Compile Include="AppCore\UndoRedo\ChangePropertyUndoable.cs" />
+    <Compile Include="AppCore\UndoRedo\CommonUndoRedo.cs" />
+    <Compile Include="AppCore\UndoRedo\ReversedUndoable.cs" />
+    <Compile Include="AppCore\UndoRedo\UndoableExtensions.cs" />
+    <Compile Include="AppCore\SaveLoad\IDefaultStateInitializer.cs" />
+    <Compile Include="AppCore\WorldTree\IWorldTreeService.cs" />
+    <Compile Include="AppCore\Tools\ITool.cs" />
+    <Compile Include="AppCore\Tools\IToolService.cs" />
+    <Compile Include="AppCore\UndoRedo\IUndoable.cs" />
+    <Compile Include="AppCore\UndoRedo\IUndoRedoService.cs" />
+    <Compile Include="AppCore\Views\IViewService.cs" />
+    <Compile Include="AppCore\WorldTree\WorldTreeService.cs" />
+    <Compile Include="AppCore\Tools\ToolService.cs" />
+    <Compile Include="AppCore\UndoRedo\UndoRedoService.cs" />
+    <Compile Include="AppCore\Views\ViewEventArgs.cs" />
+    <Compile Include="AppCore\Views\ViewEventType.cs" />
+    <Compile Include="AppCore\Views\ViewService.cs" />
+    <Compile Include="AppFeatures\Text\RichTextComponent.cs" />
+    <Compile Include="AppFeatures\Text\RichTextEditInteractionElement.cs" />
+    <Compile Include="External\FluidSimulation\FluidSimulationConfig.cs" />
+    <Compile Include="External\FluidSimulation\FluidSurfaceType.cs" />
+    <Compile Include="External\FluidSimulation\IFluidSimulationComponent.cs" />
+    <Compile Include="External\ObjLoading\MyMaterialStreamProvider.cs" />
+    <Compile Include="External\ObjLoading\ObjGeoModelLoader.cs" />
+    <Compile Include="External\ObjLoading\ObjLoaderExtensions.cs" />
+    <Compile Include="AppCore\ResourceTree\Assets\IAsset.cs" />
+    <Compile Include="AppCore\Infra\AppLifecycle.cs" />
+    <Compile Include="Presentations\PresentationInfra.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
+      <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>
+      <Name>Clarity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JitsuGen.Core\JitsuGen.Core.csproj">
+      <Project>{24b75709-5d16-4642-a3b2-460aafa9f79d}</Project>
+      <Name>JitsuGen.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

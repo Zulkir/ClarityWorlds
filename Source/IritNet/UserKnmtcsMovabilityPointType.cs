@@ -1,0 +1,15 @@
+﻿namespace IritNet
+{
+    public enum UserKnmtcsMovabilityPointType
+    {
+        USER_KNMTCS_PT_NONE = 0,
+        USER_KNMTCS_PT_FIXED,
+        USER_KNMTCS_PT_XY_PLANE,
+        USER_KNMTCS_PT_X_DIRECTION,
+        USER_KNMTCS_PT_Y_DIRECTION,
+        USER_KNMTCS_PT_Z_DIRECTION,
+        USER_KNMTCS_PT_MOVES_ALONG_CURVE,
+        USER_KNMTCS_PT_MOVES_ALONG_SURFACE,
+        USER_KNMTCS_PT_MOVES_ALONG_ROT_CURVE,
+    }
+}

@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{D5451E35-CAFE-459D-B5BF-BA0E2464A1CB}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Ext.Gui.EtoForms</RootNamespace>
+    <AssemblyName>Clarity.Ext.Gui.EtoForms</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../../Build/Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../../Build/Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="atk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\GtkSharp\atk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto">
+      <HintPath>..\..\Dependencies\Eto\Forms\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.Gtk2">
+      <HintPath>..\..\Dependencies\Eto\Platforms\Gtk2\Eto.Gtk2.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.WinForms">
+      <HintPath>..\..\Dependencies\Eto\Platforms\Windows\Eto.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="gdk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\GtkSharp\gdk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="glib-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\GtkSharp\glib-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="gtk-sharp, Version=2.12.0.0, Culture=neutral, PublicKeyToken=35e10195dab3c99f, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\GtkSharp\gtk-sharp.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\OpenTK\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.XML" />
+    <Reference Include="System.Xml.Serialization" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppModes\AppModesCommands.cs" />
+    <Compile Include="Aspects\HyperLinkAspectCreationDialog.cs" />
+    <Compile Include="ClipBoardService.cs" />
+    <Compile Include="Commands\ToolCommand.cs" />
+    <Compile Include="CommonGuiObjects.cs" />
+    <Compile Include="Common\INameGenerator.cs" />
+    <Compile Include="Common\NameGenerator.cs" />
+    <Compile Include="Converters.cs" />
+    <Compile Include="EtoMenuBuilder.cs" />
+    <Compile Include="FrameTimeMeasurer.cs" />
+    <Compile Include="Helpers\GuiCommandsHelper.cs" />
+    <Compile Include="ICommonGuiObjects.cs" />
+    <Compile Include="IFrameTimeMeasurer.cs" />
+    <Compile Include="KeyboardInputProvider.cs" />
+    <Compile Include="MouseInputProvider.cs" />
+    <Compile Include="EtoGuiExtension.cs" />
+    <Compile Include="FlagExtensions.cs" />
+    <Compile Include="ILoopAppHandler.cs" />
+    <Compile Include="IMainForm.cs" />
+    <Compile Include="LoopAppHandlerGtk.cs" />
+    <Compile Include="LoopAppHandlerWinForms.cs" />
+    <Compile Include="DefaultMainForm.cs" />
+    <Compile Include="PrimitiveExceptionHandler.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Props\IPropsGui.cs" />
+    <Compile Include="Props\IPropsGuiGroup.cs" />
+    <Compile Include="Props\PropsGui.cs" />
+    <Compile Include="Props\PropsGuiGroupComponents.cs" />
+    <Compile Include="Props\PropsGuiGroupAbstractNode.cs" />
+    <Compile Include="Props\PropsGuiGroupCommon.cs" />
+    <Compile Include="Props\PropsGuiGroupFluidSimulation.cs" />
+    <Compile Include="Props\PropsGuiGroupRectangleEntity.cs" />
+    <Compile Include="Props\PropsGuiGroupRichTextEntity.cs" />
+    <Compile Include="Props\PropsGuiGroupScene.cs" />
+    <Compile Include="Props\PropsGuiGroupGeoModelEntity.cs" />
+    <Compile Include="Props\PropsGuiGroupStoryComponent.cs" />
+    <Compile Include="RenderControl.cs" />
+    <Compile Include="RenderingAreaHandlerGtkOgl.cs" />
+    <Compile Include="RenderingAreaHandlerWinFormsOgl.cs" />
+    <Compile Include="GuiEto.cs" />
+    <Compile Include="ResourceExplorer\IResourceExplorerGui.cs" />
+    <Compile Include="ResourceExplorer\ResourceExplorerGui.cs" />
+    <Compile Include="SaveLoad\ISaveLoadGuiCommands.cs" />
+    <Compile Include="SaveLoad\SaveLoadGuiCommands.cs" />
+    <Compile Include="SceneTree\ISceneTreeGui.cs" />
+    <Compile Include="SceneTree\SceneTreeGui.cs" />
+    <Compile Include="SceneTree\SceneTreeGuiItemTag.cs" />
+    <Compile Include="SceneTree\SceneTreeGuiItemType.cs" />
+    <Compile Include="SelectablePanelWinForms.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="StoryGraph\IStoryGraphGui.cs" />
+    <Compile Include="StoryGraph\StoryGraphGui.cs" />
+    <Compile Include="Text\FontFamilyCache.cs" />
+    <Compile Include="Text\IFontFamilyCache.cs" />
+    <Compile Include="Text\RichTextMeasurer.cs" />
+    <Compile Include="Text\TextImageAtom.cs" />
+    <Compile Include="Text\TextImageAtomWithDrawInfo.cs" />
+    <Compile Include="Text\RtImageBuilder.cs" />
+    <Compile Include="UndoRedoGui.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Core\Clarity.Core.csproj">
+      <Project>{012fd711-33d4-4724-bdad-801bb7faedc0}</Project>
+      <Name>Clarity.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
+      <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>
+      <Name>Clarity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Native.Linux\Clarity.Native.Linux.csproj">
+      <Project>{113f0ba4-a72a-4b47-8728-a84a9741dc06}</Project>
+      <Name>Clarity.Native.Linux</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Native.Win32\Clarity.Native.Win32.csproj">
+      <Project>{762a7a27-3e60-40ca-baa0-58162e679561}</Project>
+      <Name>Clarity.Native.Win32</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\eye_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\white_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\entity_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\scene_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\layout_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\eye2_icon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\view_icon.ico" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

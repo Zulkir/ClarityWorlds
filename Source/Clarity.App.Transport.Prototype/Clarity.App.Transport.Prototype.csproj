@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{26E6F128-071F-4E9C-9A8D-F6453AF57303}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>Clarity.App.Transport.Prototype</RootNamespace>
+    <AssemblyName>Clarity.App.Transport.Prototype</AssemblyName>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Eto">
+      <HintPath>..\..\Dependencies\Eto\Forms\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="Eto.WinForms">
+      <HintPath>..\..\Dependencies\Eto\Platforms\Windows\Eto.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Dummy\DummyImageLoader.cs" />
+    <Compile Include="IPlayback.cs" />
+    <Compile Include="PlaybackGui.cs" />
+    <Compile Include="PlaybackState.cs" />
+    <Compile Include="PropertiesGui.cs" />
+    <Compile Include="Simulation\ISimFrameGenerator.cs" />
+    <Compile Include="Simulation\PackageBeginFrame.cs" />
+    <Compile Include="Simulation\PackageEndFrame.cs" />
+    <Compile Include="Simulation\ISimState.cs" />
+    <Compile Include="Simulation\ISimFrame.cs" />
+    <Compile Include="Simulation\SimFrameGenerator.cs" />
+    <Compile Include="Simulation\SimPackage.cs" />
+    <Compile Include="Simulation\SimState.cs" />
+    <Compile Include="Simulation\SimSite.cs" />
+    <Compile Include="AppLifecycle.cs" />
+    <Compile Include="Playback.cs" />
+    <Compile Include="DesktopEnvironment.cs" />
+    <Compile Include="Gui.cs" />
+    <Compile Include="InputHandler.cs" />
+    <Compile Include="PrimitiveExceptionHandler.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PrototypeMainForm.cs" />
+    <Compile Include="TransportLogs\CrudLogEntryBody.cs" />
+    <Compile Include="TransportLogs\LogEntry.cs" />
+    <Compile Include="TransportLogs\LogEntryCode.cs" />
+    <Compile Include="TransportLogs\LogEntryHeader.cs" />
+    <Compile Include="TransportLogs\LogReader.cs" />
+    <Compile Include="TransportLogs\MigrationLogEntryBody.cs" />
+    <Compile Include="TransportView.cs" />
+    <Compile Include="Visualization\CommonMaterials.cs" />
+    <Compile Include="Visualization\ICommonMaterials.cs" />
+    <Compile Include="Visualization\IStateVisualizer.cs" />
+    <Compile Include="Visualization\PackageComponent.cs" />
+    <Compile Include="Visualization\SiteComponent.cs" />
+    <Compile Include="Visualization\StateVisualizer.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
+      <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>
+      <Name>Clarity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Ext.Gui.EtoForms\Clarity.Ext.Gui.EtoForms.csproj">
+      <Project>{d5451e35-cafe-459d-b5bf-ba0e2464a1cb}</Project>
+      <Name>Clarity.Ext.Gui.EtoForms</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Ext.Rendering.Ogl3\Clarity.Ext.Rendering.Ogl3.csproj">
+      <Project>{f1f1feb3-0f8b-4e98-9767-c6f88ddc4f7f}</Project>
+      <Name>Clarity.Ext.Rendering.Ogl3</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

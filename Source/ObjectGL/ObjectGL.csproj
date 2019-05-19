@@ -1,0 +1,202 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{4DE82129-C01E-4F7A-BF6A-9E55FA7026F9}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ObjectGL</RootNamespace>
+    <AssemblyName>ObjectGL</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../../Build/Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../../Build/Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Api\Context\Actions\BeginFeedbackMode.cs" />
+    <Compile Include="Api\Context\Actions\BeginMode.cs" />
+    <Compile Include="Api\Context\BindingExtensions.cs" />
+    <Compile Include="Api\Context\Actions\BlitFramebufferFilter.cs" />
+    <Compile Include="Api\Context\Actions\ClearBufferMask.cs" />
+    <Compile Include="Api\Context\ObjectBindings\FramebufferTarget.cs" />
+    <Compile Include="Api\Context\Actions\IContextActions.cs" />
+    <Compile Include="Api\Context\ObjectBindings\IContextBindings.cs" />
+    <Compile Include="Api\Context\Actions\IContextDrawActions.cs" />
+    <Compile Include="Api\Context\States\IContextStates.cs" />
+    <Compile Include="Api\Context\ObjectBindings\BufferRange.cs" />
+    <Compile Include="Api\Context\States\Blend\BlendEquation.cs" />
+    <Compile Include="Api\Context\States\Blend\BlendFunction.cs" />
+    <Compile Include="CachingImpl\Context\Actions\ContextDrawActions.cs" />
+    <Compile Include="CachingImpl\Context\Actions\ContextActions.cs" />
+    <Compile Include="CachingImpl\Context\ObjectBindings\ContextBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextRasterizerBindings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\IContextScreenClippingSeparateBindings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\DepthRangeDouble.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\DepthRangeFloat.cs" />
+    <Compile Include="Api\Context\States\Blend\IContextBlendBindings.cs" />
+    <Compile Include="Api\Context\States\Blend\IContextBlendTargetBindings.cs" />
+    <Compile Include="Api\Context\ObjectBindings\IContextBufferBindings.cs" />
+    <Compile Include="Api\Context\IContext.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\IContextDepthStencilBindings.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\IContextDepthStencilSideBindings.cs" />
+    <Compile Include="Api\Context\ObjectBindings\IContextFramebufferBindings.cs" />
+    <Compile Include="Api\Context\States\Rasterizer\IContextRasterizerBindings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\IContextScreenClippingBindings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\IContextScreenClippingUnitedBindings.cs" />
+    <Compile Include="Api\Context\ObjectBindings\IContextTextureBindings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\ScissorBox.cs" />
+    <Compile Include="Api\Context\States\SeparationMode.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\StencilFunctionSettings.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\StencilOperationSettings.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\ViewportFloat.cs" />
+    <Compile Include="Api\Context\States\ScreenClipping\ViewportInt.cs" />
+    <Compile Include="CachingImpl\Context\BufferBinding.cs" />
+    <Compile Include="Api\Context\IBinding.cs" />
+    <Compile Include="CachingImpl\Context\EnableCapBinding.cs" />
+    <Compile Include="CachingImpl\Context\Context.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextBlendBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextBlendTargetBinding.cs" />
+    <Compile Include="CachingImpl\Context\ObjectBindings\ContextBufferBindings.cs" />
+    <Compile Include="Api\Objects\GLObjectExtensions.cs" />
+    <Compile Include="Api\Objects\GLObjectType.cs" />
+    <Compile Include="Api\Objects\Framebuffers\DepthStencil.cs" />
+    <Compile Include="Api\Context\Actions\DrawElementsType.cs" />
+    <Compile Include="Api\Objects\IGLObject.cs" />
+    <Compile Include="Api\Context\IContextObjectFactory.cs" />
+    <Compile Include="Api\Context\IContextCaps.cs" />
+    <Compile Include="Api\Objects\Samplers\CompareFunc.cs" />
+    <Compile Include="Api\Objects\Framebuffers\CubemapFace.cs" />
+    <Compile Include="Api\Objects\Framebuffers\FramebufferAttachmentPoint.cs" />
+    <Compile Include="Api\Objects\Shaders\IFragmentShader.cs" />
+    <Compile Include="Api\Objects\Framebuffers\IFramebuffer.cs" />
+    <Compile Include="Api\Objects\Shaders\IGeometryShader.cs" />
+    <Compile Include="Api\Objects\Samplers\ISampler.cs" />
+    <Compile Include="Api\Objects\Shaders\IShader.cs" />
+    <Compile Include="Api\Objects\Shaders\IShaderProgram.cs" />
+    <Compile Include="Api\Objects\Shaders\ITesselationControlShader.cs" />
+    <Compile Include="Api\Objects\Shaders\ITesselationEvaluationShader.cs" />
+    <Compile Include="Api\Objects\TransformFeedbacks\ITransformFeedback.cs" />
+    <Compile Include="Api\Objects\VertexArrays\IVertexArray.cs" />
+    <Compile Include="Api\Objects\Shaders\IVertexShader.cs" />
+    <Compile Include="Api\Objects\Resources\Buffers\BufferExtensions.cs" />
+    <Compile Include="Api\Objects\Resources\Buffers\MapAccess.cs" />
+    <Compile Include="Api\Objects\Resources\Buffers\BufferTarget.cs" />
+    <Compile Include="Api\Objects\Resources\Buffers\BufferUsageHint.cs" />
+    <Compile Include="Api\Objects\Resources\Images\Format.cs" />
+    <Compile Include="Api\Objects\Resources\Images\FormatColor.cs" />
+    <Compile Include="Api\Objects\Resources\Images\FormatType.cs" />
+    <Compile Include="Api\Objects\Resources\Buffers\IBuffer.cs" />
+    <Compile Include="Api\Objects\Resources\Images\IRenderbuffer.cs" />
+    <Compile Include="Api\Objects\Resources\IResource.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture1D.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture1DArray.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture2D.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture2DArray.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture2DMultisample.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture2DMultisampleArray.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITexture3D.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITextureCubemap.cs" />
+    <Compile Include="Api\Objects\Resources\Images\ITextureCubemapArray.cs" />
+    <Compile Include="Api\Objects\Resources\Images\RenderbufferTarget.cs" />
+    <Compile Include="Api\Objects\Resources\ResourceType.cs" />
+    <Compile Include="Api\Objects\Resources\Images\TextureExtensions.cs" />
+    <Compile Include="Api\Objects\Resources\Images\TextureTarget.cs" />
+    <Compile Include="Api\Objects\Shaders\ShaderType.cs" />
+    <Compile Include="Api\Objects\Samplers\TextureCompareMode.cs" />
+    <Compile Include="Api\Objects\Samplers\TextureMagFilter.cs" />
+    <Compile Include="Api\Objects\Samplers\TextureMinFilter.cs" />
+    <Compile Include="Api\Objects\Samplers\TextureWrapMode.cs" />
+    <Compile Include="Api\Objects\VertexArrays\VertexAttribIPointerType.cs" />
+    <Compile Include="Api\Objects\VertexArrays\VertexAttribPointerType.cs" />
+    <Compile Include="Api\Objects\VertexArrays\VertexAttributeDimension.cs" />
+    <Compile Include="Api\Context\States\Blend\BlendFactor.cs" />
+    <Compile Include="Api\Context\States\Blend\BlendMode.cs" />
+    <Compile Include="Api\Context\States\Rasterizer\CullFaceMode.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\DepthFunction.cs" />
+    <Compile Include="Api\Context\States\Rasterizer\FrontFaceDirection.cs" />
+    <Compile Include="Api\Context\States\Rasterizer\PolygonMode.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\StencilFunction.cs" />
+    <Compile Include="Api\Context\States\DepthStencil\StencilOp.cs" />
+    <Compile Include="Api\Objects\Shaders\ShaderException.cs" />
+    <Compile Include="Api\Objects\Shaders\ShaderProgramDescription.cs" />
+    <Compile Include="Api\Objects\TransformFeedbacks\TransformFeedbackMode.cs" />
+    <Compile Include="CachingImpl\All.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextStates.cs" />
+    <Compile Include="CachingImpl\Context\ContextObjectFactory.cs" />
+    <Compile Include="CachingImpl\Context\EnableCap.cs" />
+    <Compile Include="CachingImpl\Context\ContextCaps.cs" />
+    <Compile Include="Api\Context\IContextInfra.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\FragmentShader.cs" />
+    <Compile Include="CachingImpl\Objects\Framebuffers\Framebuffer.cs" />
+    <Compile Include="CachingImpl\Objects\Framebuffers\FramebufferAttachmentDescription.cs" />
+    <Compile Include="CachingImpl\Objects\Framebuffers\FramebufferAttachmentType.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\GeometryShader.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Buffers\Buffer.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Renderbuffer.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture1D.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture1DArray.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture2D.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture2DArray.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture2DMultisample.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture2DMultisampleArray.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\Texture3D.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\TextureCubemap.cs" />
+    <Compile Include="CachingImpl\Objects\Resources\Images\TextureCubemapArray.cs" />
+    <Compile Include="CachingImpl\Objects\Samplers\Sampler.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\Shader.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\ShaderProgram.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\TesselationControlShader.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\TesselationEvaluationShader.cs" />
+    <Compile Include="CachingImpl\Objects\TransformFeedbacks\TransformFeedback.cs" />
+    <Compile Include="CachingImpl\Objects\VertexArrays\VertexArray.cs" />
+    <Compile Include="CachingImpl\Objects\VertexArrays\VertexAttributeDescription.cs" />
+    <Compile Include="CachingImpl\Objects\Shaders\VertexShader.cs" />
+    <Compile Include="CachingImpl\Context\Binding.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextDepthStencilBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextDepthStencilSideBindings.cs" />
+    <Compile Include="CachingImpl\Context\ObjectBindings\ContextFramebufferBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextScreenClippingBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextScreenClippingSeparateBindings.cs" />
+    <Compile Include="CachingImpl\Context\States\ContextScreenClippingUnitedBindings.cs" />
+    <Compile Include="CachingImpl\Context\ObjectBindings\ContextTextureBindings.cs" />
+    <Compile Include="Api\Color4.cs" />
+    <Compile Include="Api\IGL.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Helper\TextureHelper.cs" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

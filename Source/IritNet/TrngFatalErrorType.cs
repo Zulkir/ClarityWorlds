@@ -1,0 +1,16 @@
+﻿namespace IritNet
+{
+    public enum TrngFatalErrorType
+    {
+        TRNG_ERR_DIR_NOT_VALID,
+        TRNG_ERR_UNDEF_GEOM,
+        TRNG_ERR_WRONG_DOMAIN,
+        TRNG_ERR_WRONG_ORDER,
+        TRNG_ERR_BSPLINE_NO_SUPPORT,
+        TRNG_ERR_GREGORY_NO_SUPPORT,
+        TRNG_ERR_RATIONAL_NO_SUPPORT,
+        TRNG_ERR_RATIONAL_EXPECTED,
+
+        TRNG_ERR_UNDEFINE_ERR
+    }
+}

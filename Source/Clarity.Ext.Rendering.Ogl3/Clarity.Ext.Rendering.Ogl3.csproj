@@ -1,0 +1,145 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F1F1FEB3-0F8B-4E98-9767-C6F88DDC4F7F}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Ext.Rendering.Ogl3</RootNamespace>
+    <AssemblyName>Clarity.Ext.Rendering.Ogl3</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="OpenTK, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\OpenTK\OpenTK.dll</HintPath>
+    </Reference>
+    <Reference Include="PtrMagic">
+      <HintPath>..\..\Dependencies\PtrMagic\PtrMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="BlurDrawer.cs" />
+    <Compile Include="CgImageCache.cs" />
+    <Compile Include="CgModelVisualElementHandler.cs" />
+    <Compile Include="CgMovieInstanceCache.cs" />
+    <Compile Include="Color4Extensions.cs" />
+    <Compile Include="CommonObjects.cs" />
+    <Compile Include="DrawableTextureCube.cs" />
+    <Compile Include="DrawableTextureCubeFactory.cs" />
+    <Compile Include="GraphicsInfra.cs" />
+    <Compile Include="ICommonObjects.cs" />
+    <Compile Include="IDrawableTextureCube.cs" />
+    <Compile Include="IDrawableTextureCubeFactory.cs" />
+    <Compile Include="IGraphicsInfra.cs" />
+    <Compile Include="IMainThreadDisposer.cs" />
+    <Compile Include="IOgl3TextureImage.cs" />
+    <Compile Include="ISceneRenderingContext.cs" />
+    <Compile Include="IRenderStage.cs" />
+    <Compile Include="IRenderQueue.cs" />
+    <Compile Include="ISceneRenderingContextFactory.cs" />
+    <Compile Include="ISketchDrawer.cs" />
+    <Compile Include="IVeilDrawer.cs" />
+    <Compile Include="IVisualElementHandler.cs" />
+    <Compile Include="IVisualElementHandlerChoices.cs" />
+    <Compile Include="MainThreadDisposer.cs" />
+    <Compile Include="Ogl3TextureImage.cs" />
+    <Compile Include="OffScreen.cs" />
+    <Compile Include="RawDataResCache.cs" />
+    <Compile Include="RenderService.cs" />
+    <Compile Include="RenderViewportInfo.cs" />
+    <Compile Include="StandardRenderStageNames.cs" />
+    <Compile Include="StandardTransparentRenderQueue.cs" />
+    <Compile Include="RenderQueueItem.cs" />
+    <Compile Include="RenderStage.cs" />
+    <Compile Include="SceneRenderingContext.cs" />
+    <Compile Include="SceneRenderingContextFactory.cs" />
+    <Compile Include="SketchDrawer.cs" />
+    <Compile Include="SkyboxDrawer.cs" />
+    <Compile Include="DrawableTexture.cs" />
+    <Compile Include="DrawArraysCall.cs" />
+    <Compile Include="DrawElementsCall.cs" />
+    <Compile Include="GlobalUniform.cs" />
+    <Compile Include="ISkyboxDrawer.cs" />
+    <Compile Include="IDrawableTexture.cs" />
+    <Compile Include="IDrawCall.cs" />
+    <Compile Include="IRenderingRuntime.cs" />
+    <Compile Include="IShaderProgramFactory.cs" />
+    <Compile Include="MaterialUniform.cs" />
+    <Compile Include="OglRenderingExtension.cs" />
+    <Compile Include="ShaderProgramFactory.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RenderingRuntime.cs" />
+    <Compile Include="StandardOpaqueRenderQueue.cs" />
+    <Compile Include="Sugar\UniformBufferSugar.cs" />
+    <Compile Include="Text\BorderCurveLocalCache.cs" />
+    <Compile Include="Text\IBorderCurveLocalCache.cs" />
+    <Compile Include="Text\RichTextBoxCache.cs" />
+    <Compile Include="TransformUniform.cs" />
+    <Compile Include="VaoKey.cs" />
+    <Compile Include="VeilDrawer.cs" />
+    <Compile Include="VertexSetCache.cs" />
+    <Compile Include="VisualElementHandlerChoices.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
+      <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>
+      <Name>Clarity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectGL.Otk\ObjectGL.Otk.csproj">
+      <Project>{d58ba319-894c-4763-b330-f1e7ebbca5e9}</Project>
+      <Name>ObjectGL.Otk</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObjectGL\ObjectGL.csproj">
+      <Project>{4de82129-c01e-4f7a-bf6a-9e55fa7026f9}</Project>
+      <Name>ObjectGL</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

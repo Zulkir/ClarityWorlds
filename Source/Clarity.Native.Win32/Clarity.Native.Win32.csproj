@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{762A7A27-3E60-40CA-BAA0-58162E679561}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.Native.Win32</RootNamespace>
+    <AssemblyName>Clarity.Native.Win32</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\..\Build\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\..\Build\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClassStyles.cs" />
+    <Compile Include="CURSOR.cs" />
+    <Compile Include="CURSORINFO.cs" />
+    <Compile Include="DEVMODE.cs" />
+    <Compile Include="DisplayDeviceStateFlags.cs" />
+    <Compile Include="DISPLAY_DEVICE.cs" />
+    <Compile Include="ENUM.cs" />
+    <Compile Include="WinApi.cs" />
+    <Compile Include="GUITHREADINFO.cs" />
+    <Compile Include="GWLP.cs" />
+    <Compile Include="HARDWAREINPUT.cs" />
+    <Compile Include="IDC.cs" />
+    <Compile Include="INPUT.cs" />
+    <Compile Include="KEYBDINPUT.cs" />
+    <Compile Include="MK.cs" />
+    <Compile Include="MOUSEINPUT.cs" />
+    <Compile Include="MSG.cs" />
+    <Compile Include="PM.cs" />
+    <Compile Include="POINT.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RECT.cs" />
+    <Compile Include="SIZE.cs" />
+    <Compile Include="SM.cs" />
+    <Compile Include="SW.cs" />
+    <Compile Include="SWP.cs" />
+    <Compile Include="TimerProc.cs" />
+    <Compile Include="VK.cs" />
+    <Compile Include="WINDOWPOS .cs" />
+    <Compile Include="WM.cs" />
+    <Compile Include="WNDCLASSEX.cs" />
+    <Compile Include="WndProc.cs" />
+    <Compile Include="WS.cs" />
+    <Compile Include="WS_EX.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>
