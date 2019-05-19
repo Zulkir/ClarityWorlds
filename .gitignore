@@ -5,7 +5,8 @@ Build/CandidacyBuild
 Build/Unity
 [Bb]in/
 [Oo]bj/
-.vs/
+
+.vs
 _ReSharper*
 .vs/
 *.suo
@@ -17,8 +18,8 @@ _ReSharper*
 desktop.ini
 
 # Unity
-UnityClarity/Library/
-UnityClarity/Assets/References/
-UnityClarity/Logs/
-UnityClarity/Temp/
-UnityClarity/Assets/SteamVR
+/Source/UnityClarity/Library/
+/Source/UnityClarity/Assets/References/
+/Source/UnityClarity/Logs/
+/Source/UnityClarity/Temp/
+/Source/UnityClarity/Assets/SteamVR/
