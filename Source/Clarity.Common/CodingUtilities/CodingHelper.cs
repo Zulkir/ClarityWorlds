@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Clarity.Common.CodingUtilities
 {
@@ -9,6 +10,13 @@ namespace Clarity.Common.CodingUtilities
             var t = a;
             a = b;
             b = t;
+        }
+
+        public static void Swap<T>(List<T> list, int index1, int index2)
+        {
+            var t = list[index1];
+            list[index1] = list[index2];
+            list[index2] = t;
         }
 
         public static bool HasFlag(int value, int flag) => (value & flag) == flag;
