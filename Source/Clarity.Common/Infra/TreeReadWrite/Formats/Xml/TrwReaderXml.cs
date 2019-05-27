@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Xml;
 using Clarity.Common.CodingUtilities.Sugar.Wrappers.Exceptions;
+using Clarity.Common.Infra.TreeReadWrite.Paths;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Formats.Xml
 {

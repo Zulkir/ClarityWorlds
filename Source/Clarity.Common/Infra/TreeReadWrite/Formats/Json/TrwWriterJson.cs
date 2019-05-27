@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Clarity.Common.Infra.TreeReadWrite.Paths;
 using Newtonsoft.Json;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
@@ -72,14 +73,7 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
         public void Null() => WriteValue<object>(null, (w, v) => w.WriteNull());
         public void String(string val) => WriteValue(val, (w, v) => w.WriteValue(v));
         public void Bool(bool val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void SInt8(sbyte val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void UInt8(byte val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void SInt16(short val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void UInt16(ushort val) => WriteValue(val, (w, v) => w.WriteValue(v));
         public void SInt32(int val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void UInt32(uint val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void SInt64(long val) => WriteValue(val, (w, v) => w.WriteValue(v));
-        public void UInt64(ulong val) => WriteValue(val, (w, v) => w.WriteValue(v));
         public void Float32(float val) => WriteValue(val, (w, v) => w.WriteValue(v));
         public void Float64(double val) => WriteValue(val, (w, v) => w.WriteValue(v));
         #endregion

@@ -5,6 +5,9 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Collections
 {
     public static class ReadOnlyListExtensions
     {
+        public static bool HasItems<T>(this IReadOnlyList<T> list) => list.Count != 0;
+        public static bool IsEmpty<T>(this IReadOnlyList<T> list) => list.Count == 0;
+
         public static int IndexOf<T>(this IReadOnlyList<T> list, T element, IEqualityComparer<T> equalityComparer = null)
         {
             var actualComparer = equalityComparer ?? EqualityComparer<T>.Default;

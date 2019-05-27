@@ -4,11 +4,12 @@ using Clarity.Engine.Resources;
 
 namespace Clarity.Engine.Media.Movies
 {
-    public interface IMoviePlayback : IResource, IPixelSource
+    public interface IMoviePlayback : IResource
     {
         IMovie Movie { get; }
         MoviePlaybackState State { get; }
 
+        IImage FrameImage { get; }
         byte[] FrameRawRgba { get; }
         double FrameTimestamp { get; }
 

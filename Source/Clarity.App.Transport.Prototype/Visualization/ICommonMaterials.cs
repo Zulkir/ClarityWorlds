@@ -1,5 +1,5 @@
 ﻿using Clarity.App.Transport.Prototype.TransportLogs;
-using Clarity.Engine.Visualization.Graphics.Materials;
+using Clarity.Engine.Visualization.Elements.Materials;
 
 namespace Clarity.App.Transport.Prototype.Visualization
 {

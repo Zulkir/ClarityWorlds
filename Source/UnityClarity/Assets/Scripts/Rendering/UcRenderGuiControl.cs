@@ -16,10 +16,8 @@ namespace Assets.Scripts.Rendering
         public IViewport FocusedViewport { get; private set; }
         public IReadOnlyList<IViewport> Viewports { get; private set; }
 
-        public IReadOnlyList<IGuiCommand> Commands => commands;
         public IViewport MainViewport => Viewports?.FirstOrDefault();
 
-        private List<IGuiCommand> commands;
         private ViewportsLayout tableLayout;
 
         public void SetViewports(IReadOnlyList<IViewport> viewports, ViewportsLayout layout)
@@ -101,12 +99,6 @@ namespace Assets.Scripts.Rendering
                 }
 
             return startRow != int.MaxValue && startCol != int.MaxValue;
-        }
-
-        public void SetCommands(IReadOnlyList<IGuiCommand> commands)
-        {
-            this.commands.Clear();
-            this.commands.AddRange(commands);
         }
     }
 }

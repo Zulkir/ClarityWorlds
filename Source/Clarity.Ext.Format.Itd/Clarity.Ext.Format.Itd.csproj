@@ -50,13 +50,13 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Clarity.App.Worlds\Clarity.App.Worlds.csproj">
+      <Project>{012fd711-33d4-4724-bdad-801bb7faedc0}</Project>
+      <Name>Clarity.App.Worlds</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
       <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
       <Name>Clarity.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Clarity.Core\Clarity.Core.csproj">
-      <Project>{012fd711-33d4-4724-bdad-801bb7faedc0}</Project>
-      <Name>Clarity.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
       <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>

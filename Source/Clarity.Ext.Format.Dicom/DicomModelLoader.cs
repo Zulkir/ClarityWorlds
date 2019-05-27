@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Clarity.App.Worlds.Assets;
 using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals.Algebra;
-using Clarity.Core.AppCore.ResourceTree.Assets;
+using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Resources.RawData;
@@ -76,7 +77,7 @@ namespace Clarity.Ext.Format.Dicom
 
             var lowerBuffer = new byte[width * height];
             var higherBuffer = new byte[width * height];
-            var vertexList = new List<CgVertexPosNormTex>();
+            var vertexList = new List<VertexPosNormTex>();
 
             fixed (byte* pBuffer = higherBuffer)
             {
@@ -147,14 +148,14 @@ namespace Clarity.Ext.Format.Dicom
 
             var pack = new ResourcePack(ResourceVolatility.Immutable);
             
-            var rawVerticesData = new RawDataResource(ResourceVolatility.Immutable, vertexList.Count * sizeof(CgVertexPosNormTex));
+            var rawVerticesData = new RawDataResource(ResourceVolatility.Immutable, vertexList.Count * sizeof(VertexPosNormTex));
             pack.AddSubresource("VertexData", rawVerticesData);
-            var pRawData = (CgVertexPosNormTex*)rawVerticesData.Map();
+            var pRawData = (VertexPosNormTex*)rawVerticesData.Map();
             for (int i = 0; i < vertexList.Count; i++)
                 pRawData[i] = vertexList[i];
             rawVerticesData.Unmap(true);
 
-            var vertexSet = new FlexibleModelVertexSet(ResourceVolatility.Immutable, new[] { new RawDataResSubrange(rawVerticesData, 0) }, CgVertexPosNormTex.GetElementsInfos(0), null);
+            var vertexSet = new FlexibleModelVertexSet(ResourceVolatility.Immutable, new[] { new RawDataResSubrange(rawVerticesData, 0) }, VertexPosNormTex.GetElementsInfos(0), null);
             pack.AddSubresource("ModelVertexSet", vertexSet);
             var modelPart = new FlexibleModelPart
             {
@@ -162,7 +163,7 @@ namespace Clarity.Ext.Format.Dicom
                 PrimitiveTopology = FlexibleModelPrimitiveTopology.TriangleList,
                 VertexSetIndex = 0
             };
-            var model = new FlexibleModel(ResourceVolatility.Immutable, new[] { vertexSet }, new[] { modelPart }, 50f);
+            var model = new FlexibleModel(ResourceVolatility.Immutable, new[] { vertexSet }, new[] { modelPart }, new Sphere(Vector3.Zero, 50));
             pack.AddSubresource("Model", model);
 
             CheckSuccess(DicomProject.AnalyzerKillDicomAnalyzer(&dicomManager));

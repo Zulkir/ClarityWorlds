@@ -1,39 +1,22 @@
-﻿using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
 
-namespace Clarity.Common.Infra.TreeReadWrite.Serialization.Handlers
+namespace Clarity.Common.Infra.TreeReadWrite.Serialization.Handlers 
 {
-    public class StringDictionaryTrwHandler<TDict, TValue> : TrwSerializationHandlerBase<TDict>
-        where TDict : IEnumerable<KeyValuePair<string, TValue>>
+    public class StringDictionaryTrwHandler<TDict, TValue> : ObjectDiffableTrwHandlerBase<TDict, TValue, string>
+        where TDict : IDictionary<string, TValue>, new()
     {
-        public override bool ContentIsProperties => true;
+        protected override TDict CreateBuilder() => new TDict();
+        protected override IEnumerable<string> EnumerateProps(TDict obj) => obj.Keys;
+        protected override string GetPropName(string prop) => prop;
+        protected override Type GetPropType(string prop) => typeof(TValue);
+        protected override TValue GetPropValue(TDict obj, string prop) => obj[prop];
+        protected override void SetPropValue(TDict builder, object boxedBuilder, string prop, TValue value) => builder[prop] = value;
 
-        public StringDictionaryTrwHandler()
+        protected override bool TryGetProp(TDict obj, string name, out string prop)
         {
-            Debug.Assert(typeof(TDict).IsAssignableFrom(typeof(Dictionary<string, TValue>)),
-                "typeof(TDict).IsAssignableFrom(typeof(Dictionary<string, TValue>))");
-        }
-
-        public override void SaveContent(ITrwSerializationWriteContext context, TDict value)
-        {
-            foreach (var kvp in value)
-            {
-                context.Writer.AddProperty(kvp.Key);
-                context.Write(typeof(TValue), kvp.Value);
-            }
-        }
-
-        public override TDict LoadContent(ITrwSerializationReadContext context)
-        {
-            var dict = new Dictionary<string, TValue>();
-            while (context.Reader.TokenType != TrwTokenType.EndObject)
-            {
-                var key = context.Reader.ValueAsString;
-                context.Reader.MoveNext();
-                var val = context.Read<TValue>();
-                dict.Add(key, val);
-            }
-            return (TDict)(object)dict;
+            prop = name;
+            return true;
         }
     }
 }

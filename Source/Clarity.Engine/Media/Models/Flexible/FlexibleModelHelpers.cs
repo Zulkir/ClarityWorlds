@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Linq;
 using Clarity.Common;
 using Clarity.Common.GraphicalGeometry;
-using Clarity.Common.Numericals;
+using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Resources.RawData;
 using Clarity.Engine.Visualization.Graphics;
@@ -13,14 +12,14 @@ namespace Clarity.Engine.Media.Models.Flexible
     public static unsafe class FlexibleModelHelpers
     {
         // todo: remove source param
-        public static IFlexibleModel CreateSimple(IResourceSource source, CgVertexPosNormTex[] vertices, int[] indices, FlexibleModelPrimitiveTopology primitiveTopology)
+        public static IFlexibleModel CreateSimple(IResourceSource source, VertexPosNormTex[] vertices, int[] indices, FlexibleModelPrimitiveTopology primitiveTopology)
         {
             var pack = new ResourcePack(ResourceVolatility.Immutable);
             //pack.Source = source;
 
             RawDataResource vertexDataRes;
-            fixed (CgVertexPosNormTex* pVertices = vertices)
-                vertexDataRes = new RawDataResource(ResourceVolatility.Immutable, (IntPtr)pVertices, vertices.Length * sizeof(CgVertexPosNormTex));
+            fixed (VertexPosNormTex* pVertices = vertices)
+                vertexDataRes = new RawDataResource(ResourceVolatility.Immutable, (IntPtr)pVertices, vertices.Length * sizeof(VertexPosNormTex));
             pack.AddSubresource("VertexArray", vertexDataRes);
 
             var hasIndices = indices != null;
@@ -44,7 +43,7 @@ namespace Clarity.Engine.Media.Models.Flexible
                     vertexDataRes.GetSubrange(0)
                 };
 
-            var elementInfos = CgVertexPosNormTex.GetElementsInfos(0);
+            var elementInfos = VertexPosNormTex.GetElementsInfos(0);
             var indicesInfo = hasIndices ? new VertexIndicesInfo(1, CommonFormat.R32_UINT) : null;
 
             var vertexSet = new FlexibleModelVertexSet(ResourceVolatility.Immutable, arraySubranges, elementInfos, indicesInfo);
@@ -60,9 +59,8 @@ namespace Clarity.Engine.Media.Models.Flexible
                 VertexOffset = 0
             };
 
-            var radiusSq = vertices.Max(x => x.Position.LengthSquared());
-            var radius = MathHelper.Sqrt(radiusSq);
-            var model = new FlexibleModel(ResourceVolatility.Immutable, new[] { vertexSet }, new[] { modelPart }, radius);
+            var sphere = Sphere.BoundingSphere(vertices, x => x.Position);
+            var model = new FlexibleModel(ResourceVolatility.Immutable, new[] { vertexSet }, new[] { modelPart }, sphere);
             pack.AddSubresource("Model", model);
             model.Source = source;
 

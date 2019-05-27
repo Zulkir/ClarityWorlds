@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.Coroutines;
+using Clarity.App.Worlds.StoryGraph;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.Coroutines;
-using Clarity.Core.AppCore.StoryGraph;
 
 namespace Clarity.Ext.StoryLayout.Building
 {

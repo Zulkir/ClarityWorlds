@@ -7,11 +7,10 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
     {
         ITrwWriter Writer { get; }
         IDictionary<string, object> Bag { get; }
+        IDictionary<Type, string> TypeAliases { get; set; }
 
         void Write<T>(T value);
         void Write(Type type, object value);
-        
         void WriteType(Type value);
-        IReadOnlyDictionary<Type, string> TypeAliases { get; }
     }
 }

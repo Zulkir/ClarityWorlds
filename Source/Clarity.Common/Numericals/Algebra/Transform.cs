@@ -88,6 +88,12 @@ namespace Clarity.Common.Numericals.Algebra
             //return new Ray3(r.Point * tr, r.Direction * tr.Rotation);
         }
 
+        public static Sphere operator *(Sphere s, Transform tr) { return Apply(s, tr); }
+        public static Sphere Apply(Sphere s, Transform tr)
+        {
+            return new Sphere(s.Center * tr, s.Radius * tr.Scale);
+        }
+
         public static Transform operator *(Transform left, Transform right) { return Combine(left, right); }
         public static Transform Combine(Transform left, Transform right)
         {

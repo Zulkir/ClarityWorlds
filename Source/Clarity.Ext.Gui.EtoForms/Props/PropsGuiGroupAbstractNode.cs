@@ -1,7 +1,7 @@
 ﻿using System;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.UndoRedo;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -79,14 +79,16 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.InstantTransition, cInstantTransition.Checked ?? false);
+            boundComponent.InstantTransition = cInstantTransition.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnSkipOrderChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.SkipOrder, cSkipOrder.Checked ?? false);
+            boundComponent.SkipOrder = cSkipOrder.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnBackgroundColorChanged(object sender, EventArgs eventArgs)
@@ -96,7 +98,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             var newValue = (cUseBackGroundColor.Checked ?? false)
                 ? (Color4?)new Color4(cBackgroundColor.Value.ToArgb())
                 : null;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.BackgroundColor, newValue);
+            boundComponent.BackgroundColor = newValue;
+            undoRedo.OnChange();
         }
     }
 }

@@ -2,13 +2,16 @@
 using Assets.Scripts.Gui;
 using Assets.Scripts.Hacks;
 using Assets.Scripts.Rendering;
+using Assets.Scripts.Rendering.Materials;
+using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.SaveLoad;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Infra.ActiveModel.JitsuGen;
-using Clarity.Common.Infra.Di;
-using Clarity.Core.AppCore.Gui;
-using Clarity.Core.AppCore.SaveLoad;
+using Clarity.Common.Infra.DependencyInjection;
+using Clarity.Engine.Gui.MessageBoxes;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Media.Movies;
+using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Platforms;
 using JitsuGen.Core;
 using JitsuGen.Output;
@@ -43,6 +46,10 @@ namespace Assets.Scripts
             di.Bind<IImageLoader>().To<UcImageLoader>();
             di.BindMulti<IUcInputProvider>().To<UcMouseInputProvider>();
             di.BindMulti<IUcInputProvider>().To<UcKeyboardInputProvider>();
+            di.Bind<IStandardMaterialCache>().To<StandardMaterialCache>();
+            di.Bind<IRtImageBuilder>().To<UcRtImageBuilder>();
+            di.Bind<IRichTextMeasurer>().To<UcRichTextMeasurer>();
+            di.Bind<IMessageBoxService>().To<MessageBoxService>();
         }
 
         public void OnStartup(IDiContainer di)

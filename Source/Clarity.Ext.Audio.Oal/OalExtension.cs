@@ -1,4 +1,4 @@
-﻿using Clarity.Common.Infra.Di;
+﻿using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Audio;
 using Clarity.Engine.Platforms;
 

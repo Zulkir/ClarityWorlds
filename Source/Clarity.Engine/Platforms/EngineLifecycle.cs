@@ -1,19 +1,24 @@
 ﻿using System.Collections.Generic;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Infra.ActiveModel.ClassEmitting;
-using Clarity.Common.Infra.Di;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Common.Infra.TreeReadWrite;
+using Clarity.Common.Infra.TreeReadWrite.DiffBuilding;
 using Clarity.Common.Infra.TreeReadWrite.Formats.Json;
+using Clarity.Common.Infra.TreeReadWrite.Formats.Mem;
 using Clarity.Common.Infra.TreeReadWrite.Formats.Xml;
 using Clarity.Common.Infra.TreeReadWrite.Serialization;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.RayHittables;
-using Clarity.Engine.Media.Models.Flexible.Embedded;
+using Clarity.Engine.Media.Images;
+using Clarity.Engine.Media.Models.Explicit.Embedded;
 using Clarity.Engine.Media.Skyboxes;
 using Clarity.Engine.Media.Text.Common;
 using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Resources;
+using Clarity.Engine.Resources.SaveLoad;
 using Clarity.Engine.Serialization;
 using Clarity.Engine.Special.Sketching;
 using Clarity.Engine.Utilities;
@@ -39,6 +44,7 @@ namespace Clarity.Engine.Platforms
             //di.Bind<IAmDiBasedObjectFactory>().To(d => new AmJitsuGenDiBasedObjectFactory(d.Get));
             di.BindMulti<IAmBindingTypeDescriptor>().To<AmSingularBindingTypeDescriptor>();
             di.BindMulti<IAmBindingTypeDescriptor>().To<AmListBindingTypeDescriptor>();
+            di.Bind<IEventRoutingService>().To<EventRoutingService>();
             di.Bind<IRenderLoopDispatcher>().To<RenderLoopDispatcher>();
             di.Bind<IRayHitIndex>().To<RayHitIndex>();
             di.Bind<ITemporaryCacheService>().To<TemporaryCacheService>();
@@ -48,25 +54,29 @@ namespace Clarity.Engine.Platforms
             di.Bind<ITrwFactory>().To<TrwFactory>();
             di.BindMulti<ITrwFormat>().To<TrwFormatJson>();
             di.BindMulti<ITrwFormat>().To<TrwFormatXml>();
+            di.BindMulti<ITrwFormat>().To<TrwFormatMem>();
             di.Bind<ITrwSerializationHandlerContainer>().To<TrwSerializationHandlerContainer>();
             di.Bind<ITrwAttributeObjectCreator>().To<DiBasedTrwAttributeObjectCreator>();
+            di.Bind<ITrwDiffBuilder>().To<TrwDiffBuilder>();
             di.Bind<ISerializationNecessities>().To<SerializationNecessities>();
+            di.Bind<IResourceSavingService>().To<ResourceSavingService>();
+            di.Bind<IResourceLoadingService>().To<ResourceLoadingService>();
             di.BindMulti<IResourceFactory>().To<LineModelFactory>();
             di.BindMulti<IResourceFactory>().To<CircleModelFactory>();
             di.BindMulti<IResourceFactory>().To<CubeModelFactory>();
             di.BindMulti<IResourceFactory>().To<PlaneModelFactory>();
-            di.BindMulti<IResourceFactory>().To<Rect3DModelFactory>();
             di.BindMulti<IResourceFactory>().To<SimpleFrustumModelFactory>();
             di.BindMulti<IResourceFactory>().To<SimplePlaneXyModelFactory>();
             di.BindMulti<IResourceFactory>().To<SimplePlaneXzModelFactory>();
             di.BindMulti<IResourceFactory>().To<SphereModelFactory>();
+            di.BindMulti<IResourceLoader>().To<ImageResourceLoader>();
             di.Bind<ISkyboxLoader>().To<SkyboxLoader>();
             di.Bind<ISketchService>().To<SketchService>();
             di.Bind<IFactoryResourceCache>().To<FactoryResourceCache>();
             di.Bind<IRichTextBoxLayoutBuilder>().To<RichTextBoxLayoutBuilder>();
             di.Bind<ITextLineBreaker>().To<TextLineBreaker>();
 
-            di.Bind<IClipboardService>().To<DummyClipboardService>();
+            di.Bind<IClipboard>().To<DummyClipboard>();
         }
 
         protected virtual void BindExtensions(IDiContainer di, IEnvironment environment)

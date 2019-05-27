@@ -12,15 +12,20 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
         private readonly Transform planeTransform;
         private readonly Func<TComponent, AaRectangle2> getLocalRectangle;
         private readonly Func<TComponent, float> getHitDistanceOffset;
+        private readonly int intTag;
+        private readonly string strTag;
 
         private ISceneNode Node => master.Node;
 
         public RectangleHittable(TComponent master, Transform planeTransform, 
-            Func<TComponent, AaRectangle2> getLocalRectangle, Func<TComponent, float> getHitDistanceOffset) 
+            Func<TComponent, AaRectangle2> getLocalRectangle, Func<TComponent, float> getHitDistanceOffset, 
+            int intTag = 0, string strTag = null) 
         {
             this.master = master;
             this.getLocalRectangle = getLocalRectangle;
             this.getHitDistanceOffset = getHitDistanceOffset;
+            this.intTag = intTag;
+            this.strTag = strTag;
             this.planeTransform = planeTransform;
         }
 
@@ -40,9 +45,22 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
                 return RayHitResult.Failure();
 
             var globalT = t / globalTransformInverse.Scale;
-            var globalPoint = globalRay.Point + globalRay.Direction * globalT;
             var offset = getHitDistanceOffset(master);
-            return RayHitResult.Success(Node, globalPoint, globalT + offset);
+            var globalPoint = globalRay.Point + globalRay.Direction * globalT;
+            var localPoint = new Vector3(
+                (point.X - rectangle.Center.X) / rectangle.HalfWidth,
+                (point.Y - rectangle.Center.Y) / rectangle.HalfHeight,
+                0);
+            return new RayHitResult
+            {
+                Successful = true,
+                Node = Node,
+                Distance = globalT + offset,
+                GlobalHitPoint = globalPoint,
+                LocalHitPoint = localPoint,
+                IntTag = intTag,
+                StrTag = strTag
+            };
         }
     }
 }

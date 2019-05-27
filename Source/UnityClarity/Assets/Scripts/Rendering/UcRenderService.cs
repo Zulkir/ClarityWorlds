@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Helpers;
+using Assets.Scripts.Rendering.Materials;
+using Clarity.App.Worlds.Views;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;
-using Clarity.Engine.Visualization.Components;
+using Clarity.Engine.Visualization.Elements;
 using Clarity.Engine.Visualization.Viewports;
 using u = UnityEngine;
 
@@ -20,17 +21,17 @@ namespace Assets.Scripts.Rendering
     {
         private readonly u.Camera unityCamera;
 
-        private readonly IUcRenderingInfra infra;
+        private readonly IDiContainer di;
+        private readonly IStandardMaterialCache standardMaterialCache;
         private readonly IWindowingSystem windowingSystem;
-        private readonly IWorldTreeService worldTreeService;
         private readonly IViewService viewService;
 
-        public UcRenderService(IUcRenderingInfra infra, IWindowingSystem windowingSystem, IRenderLoopDispatcher loopDispatcher, IWorldTreeService worldTreeService, IViewService viewService)
+        public UcRenderService(IDiContainer di, IWindowingSystem windowingSystem, IRenderLoopDispatcher loopDispatcher, IViewService viewService, IStandardMaterialCache standardMaterialCache)
         {
-            this.infra = infra;
+            this.di = di;
             this.windowingSystem = windowingSystem;
             this.viewService = viewService;
-            this.worldTreeService = worldTreeService;
+            this.standardMaterialCache = standardMaterialCache;
             unityCamera = u.GameObject.Find("Main Camera").GetComponent<u.Camera>();
             loopDispatcher.Render += frameTime =>
             {
@@ -55,8 +56,14 @@ namespace Assets.Scripts.Rendering
             unityCamera.transform.localPosition = viewFrame.Eye.ToUnity(true);
             unityCamera.transform.localRotation = Quaternion.RotationToFrame(viewFrame.Right, viewFrame.Up).ToUnity(false);
 
-            var sceneRoot = aScene.Root;
+            var lightPos = viewFrame.Eye + 0.5f * viewFrame.Right + 0.5f * viewFrame.Up;
+            foreach (var uStandardMaterial in standardMaterialCache.EnumerateAll())
+            {
+                uStandardMaterial.SetVector("_CameraPosition", viewFrame.Eye.ToUnity4(true));
+                uStandardMaterial.SetVector("_LightPosition", lightPos.ToUnity4(true));
+            }
 
+            var sceneRoot = aScene.Root;
             foreach (var node in sceneRoot.EnumerateSceneNodesDeep())
             {
                 var visualAspect = node.SearchComponent<IVisualComponent>();
@@ -64,7 +71,7 @@ namespace Assets.Scripts.Rendering
                     continue;
 
                 // todo: use explicit closure
-                var nodeCache = node.CacheContainer.GetOrAddCache(() => new UcWorldNodeVisualCache(infra, node));
+                var nodeCache = node.CacheContainer.GetOrAddCache(() => new UcWorldNodeVisualCache(di, node));
                 nodeCache.PrepareUnityObjectsForRendering();
             }
         }
@@ -72,7 +79,6 @@ namespace Assets.Scripts.Rendering
         public IImage CreateRenderTargetImage(IntSize2 size)
         {
             throw new NotImplementedException();
-            //return new Ogl3TextureImage(ResourceVolatility.Stable, infra, size, false);
         }
 
         public void Render(IImage target, IReadOnlyList<IViewport> viewports, float timestamp)

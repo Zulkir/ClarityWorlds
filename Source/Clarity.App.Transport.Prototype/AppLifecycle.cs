@@ -2,7 +2,7 @@
 using Clarity.App.Transport.Prototype.Dummy;
 using Clarity.App.Transport.Prototype.Simulation;
 using Clarity.App.Transport.Prototype.Visualization;
-using Clarity.Common.Infra.Di;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;

@@ -1,29 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.External.FluidSimulation;
+using Clarity.App.Worlds.Interaction;
+using Clarity.App.Worlds.Interaction.Manipulation3D;
 using Clarity.Common;
+using Clarity.Common.CodingUtilities.Collections;
 using Clarity.Common.GraphicalGeometry;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.Interaction;
-using Clarity.Core.AppCore.WorldTree;
-using Clarity.Core.External.FluidSimulation;
 using Clarity.Engine.Interaction;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Interaction.RayHittables;
 using Clarity.Engine.Interaction.RayHittables.Embedded;
 using Clarity.Engine.Media.Images;
+using Clarity.Engine.Media.Models;
 using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Resources.RawData;
-using Clarity.Engine.Visualization.Components;
-using Clarity.Engine.Visualization.Graphics;
-using Clarity.Engine.Visualization.Graphics.Materials;
+using Clarity.Engine.Visualization.Elements;
+using Clarity.Engine.Visualization.Elements.Effects;
+using Clarity.Engine.Visualization.Elements.Materials;
 
 namespace Clarity.Ext.Simulation.Fluids
 {
@@ -44,8 +46,8 @@ namespace Clarity.Ext.Simulation.Fluids
         private RawImage levelSetImage;
         private byte[] levelSetImageData;
         private IRawDataResource particlesBuffer;
-        private IFlexibleModel model;
-        private IFlexibleModel squareModel;
+        private IModel3D model;
+        private IModel3D squareModel;
         private bool simulationRunning;
         private float simulationTimestamp;
         private Queue<FluidSimulationFrame> prevQueue;
@@ -53,7 +55,7 @@ namespace Clarity.Ext.Simulation.Fluids
         private FluidSimulationFrame nextFrame;
         private bool firstTime = true;
 
-        public float OwnRadius => model.Radius;
+        public Sphere LocalBoundingSphere => model.BoundingSphere;
 
         protected FluidSimulationComponent(IEmbeddedResources embeddedResources) 
         {
@@ -96,11 +98,7 @@ namespace Clarity.Ext.Simulation.Fluids
                     }),
             };
 
-            hittable = new SphereHittable<FluidSimulationComponent>(this, c =>
-            {
-                var globalTransform1 = c.Node.GlobalTransform;
-                return new Sphere(globalTransform1.Offset, c.model.Radius * globalTransform1.Scale);
-            });
+            hittable = new SphereHittable<FluidSimulationComponent>(this, c => c.model.BoundingSphere * c.Node.GlobalTransform);
 
             Width = 20;
             Height = 20;
@@ -123,16 +121,25 @@ namespace Clarity.Ext.Simulation.Fluids
             levelSetImage = new RawImage(ResourceVolatility.Volatile, new IntSize2(fluidSimulation.LevelSet.Size.Width, fluidSimulation.LevelSet.Size.Height), false, levelSetImageData);
             squareModel = embeddedResources.SimplePlaneXyModel();
             visualElements.Clear();
-            visualElements.Add(new CgModelVisualElement()
+            visualElements.Add(ModelVisualElement.New()
                 .SetModel(model)
-                .SetMaterial(new StandardMaterial(new SingleColorPixelSource(Color4.Yellow)) { IgnoreLighting = true }));
-            visualElements.Add(new CgModelVisualElement()
+                .SetMaterial(StandardMaterial.New()
+                    .SetDiffuseColor(Color4.Yellow)
+                    .SetIgnoreLighting(true)
+                    .FromGlobalCache()));
+            visualElements.Add(ModelVisualElement.New()
                 .SetModel(model)
                 .SetModelPartIndex(0)
-                .SetMaterial(new StandardMaterial(new SingleColorPixelSource(Color4.White)) { IgnoreLighting = true }));
-            visualElements.Add(new CgModelVisualElement()
+                .SetMaterial(StandardMaterial.New()
+                    .SetDiffuseColor(Color4.White)
+                    .SetIgnoreLighting(true)
+                    .FromGlobalCache()));
+            visualElements.Add(ModelVisualElement.New()
                 .SetModel(squareModel)
-                .SetMaterial(new StandardMaterial(levelSetImage) {IgnoreLighting = true})
+                .SetMaterial(StandardMaterial.New()
+                    .SetDiffuseMap(levelSetImage)
+                    .SetIgnoreLighting(true)
+                    .FromGlobalCache())
                 .SetTransform(new Transform(cellSize * size.Width / 2, Quaternion.Identity, new Vector3(cellSize * size.Width / 2, cellSize * size.Height / 2, -0.1f))));
         }
 
@@ -175,8 +182,6 @@ namespace Clarity.Ext.Simulation.Fluids
             }
             base.Update(frameTime);
         }
-
-        
 
         private bool TryMoveToCorrectFrames()
         {
@@ -265,7 +270,7 @@ namespace Clarity.Ext.Simulation.Fluids
             var resultModel = new FlexibleModel(ResourceVolatility.Immutable, 
                 new [] {boundsVertexSet, particlesVertexSet}, 
                 new [] { boundsModelPart, particlesModelPart }, 
-                bounds.Length());
+                new Sphere(bounds / 2, bounds.Length() / 2));
             resourcePack.AddSubresource("Model", resultModel);
             return resultModel;
         }
@@ -325,6 +330,7 @@ namespace Clarity.Ext.Simulation.Fluids
 
         // Visual
         public IEnumerable<IVisualElement> GetVisualElements() => visualElements;
+        public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
         public bool TryHandleInteractionEvent(IInteractionEventArgs args)

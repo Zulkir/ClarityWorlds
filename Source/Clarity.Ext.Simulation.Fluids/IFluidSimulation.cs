@@ -1,5 +1,5 @@
 ﻿using System.Collections.Concurrent;
-using Clarity.Core.External.FluidSimulation;
+using Clarity.App.Worlds.External.FluidSimulation;
 
 namespace Clarity.Ext.Simulation.Fluids
 {

@@ -1,7 +1,7 @@
 ﻿//using System;
 
 using System.Linq;
-using Clarity.Core.AppCore.Views;
+using Clarity.App.Worlds.Views;
 using Clarity.Engine.Audio;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;

@@ -101,10 +101,10 @@ namespace Clarity.Ext.StoryLayout.Building
             var negPoint3 = negativeElevatorCenter + new Vector3(offset, 0, -offset);
             
             var positiveElevatorCenter =  (placementAlgorithm.HalfSizes[node].Width + offset) * Vector3.UnitX;
-            var posPoint0 = positiveElevatorCenter + new Vector3(-offset, 0, offset);
-            var posPoint1 = positiveElevatorCenter + new Vector3(offset, 0, offset);
-            var posPoint2 = positiveElevatorCenter + new Vector3(offset, 0, -offset);
-            var posPoint3 = positiveElevatorCenter + new Vector3(-offset, 0, -offset);
+            var posPoint0 = positiveElevatorCenter + new Vector3(-offset, 0, -offset);
+            var posPoint1 = positiveElevatorCenter + new Vector3(offset, 0, -offset);
+            var posPoint2 = positiveElevatorCenter + new Vector3(offset, 0, offset);
+            var posPoint3 = positiveElevatorCenter + new Vector3(-offset, 0, offset);
 
             var fullHeight = 2 * placementAlgorithm.HalfSizes[node].Height;
 
@@ -254,7 +254,7 @@ namespace Clarity.Ext.StoryLayout.Building
             return primitiveSegments.Select(x => new BuildingWallSegment(x.Point1, x.Point2, BuildingConstants.CeilingHeight)).ToList();
         }
 
-        private List<BuildingWallSegment> BuildWallBasementManaged(List<BuildingPrimitive> primitives)
+        private static List<BuildingWallSegment> BuildWallBasementManaged(List<BuildingPrimitive> primitives)
         {
             var wallSegments = new List<BuildingWallSegment>();
             var primitiveSegments = new List<LineSegment3>();
@@ -360,14 +360,16 @@ namespace Clarity.Ext.StoryLayout.Building
                     }
                     return;
                 }
-                if (conains1)
+
+                var swap = conains1;
+                if (swap)
                     CodingHelper.Swap(ref seg.Point1, ref seg.Point2);
                 var inter = seg.Intersect(new LineSegment2(
                     new Vector2(-primitive.Scale.X, -primitive.Scale.Z), 
                     new Vector2(-primitive.Scale.X, primitive.Scale.Z)));
                 if (inter.HasValue)
                 {
-                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform);
+                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform, swap);
                     results.Add(rs1);
                     return;
                 }
@@ -376,7 +378,7 @@ namespace Clarity.Ext.StoryLayout.Building
                     new Vector2(primitive.Scale.X, primitive.Scale.Z)));
                 if (inter.HasValue)
                 {
-                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform);
+                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform, swap);
                     results.Add(rs1);
                     return;
                 }
@@ -385,7 +387,7 @@ namespace Clarity.Ext.StoryLayout.Building
                     new Vector2(primitive.Scale.X, primitive.Scale.Z)));
                 if (inter.HasValue)
                 {
-                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform);
+                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform, swap);
                     results.Add(rs1);
                     return;
                 }
@@ -394,7 +396,7 @@ namespace Clarity.Ext.StoryLayout.Building
                     new Vector2(primitive.Scale.X, -primitive.Scale.Z)));
                 if (inter.HasValue)
                 {
-                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform);
+                    var rs1 = To3(seg.Point1, inter.Value, primitive.Transform, swap);
                     results.Add(rs1);
                     return;
                 }
@@ -417,7 +419,9 @@ namespace Clarity.Ext.StoryLayout.Building
                     results.Add(rs1);
                     return;
                 }
-                if (conains1)
+
+                var swap = conains1;
+                if (swap)
                     CodingHelper.Swap(ref seg.Point1, ref seg.Point2);
 
                 var dpp = seg.Point2 - seg.Point1;
@@ -439,33 +443,32 @@ namespace Clarity.Ext.StoryLayout.Building
                     //if (0 <= l && l <= 1)
                         
                 }
-                else
                 {
                     var sqrdscr = MathHelper.Sqrt(discr);
                     var l1 = (-b + sqrdscr) / a;
                     var l2 = (-b - sqrdscr) / a;
                     if (0 <= l1 && l1 <= 1)
                     {
-                        var rs1 = To3(seg.Point1, Vector2.Lerp(seg.Point1, seg.Point2, l1), primitive.Transform);
+                        var rs1 = To3(seg.Point1, Vector2.Lerp(seg.Point1, seg.Point2, l1), primitive.Transform, swap);
                         results.Add(rs1);
                     }
 
                     if (0 <= l2 && l2 <= 1)
                     {
-                        var rs1 = To3(seg.Point1, Vector2.Lerp(seg.Point1, seg.Point2, l2), primitive.Transform);
+                        var rs1 = To3(seg.Point1, Vector2.Lerp(seg.Point1, seg.Point2, l2), primitive.Transform, swap);
                         results.Add(rs1);
                     }
-                    return;
                 }
-                var rs2 = segment;
-                results.Add(rs2);
-                return;
             }
         }
 
-
-
         private static Vector3 To3(Vector2 v) => new Vector3(v.X, 0, v.Y);
-        private static LineSegment3 To3(Vector2 p1, Vector2 p2, Transform transform) => new LineSegment3(To3(p1) * transform, To3(p2) * transform);
+
+        private static LineSegment3 To3(Vector2 p1, Vector2 p2, Transform transform, bool swap)
+        {
+            if (swap)
+                CodingHelper.Swap(ref p1, ref p2);
+            return new LineSegment3(To3(p1) * transform, To3(p2) * transform);
+        }
     }
 }

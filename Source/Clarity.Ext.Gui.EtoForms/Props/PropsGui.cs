@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using Clarity.Core.AppCore.ResourceTree.Assets;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
+using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.UndoRedo;
+using Clarity.App.Worlds.Views;
+using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Resources;
 using Eto.Drawing;

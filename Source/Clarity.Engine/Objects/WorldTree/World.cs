@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using Clarity.Common.CodingUtilities.Collections;
 using Clarity.Common.Infra.ActiveModel;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Platforms;
 
 namespace Clarity.Engine.Objects.WorldTree
@@ -8,6 +10,7 @@ namespace Clarity.Engine.Objects.WorldTree
     {
         public abstract IList<IScene> Scenes { get; }
         public abstract IList<string> Tags { get; }
+        public abstract IPropertyBag Properties { get; set; }
         public abstract int NextId { get; set; }
 
         private readonly Dictionary<int, ISceneNode> idIndex;
@@ -15,6 +18,7 @@ namespace Clarity.Engine.Objects.WorldTree
         protected World()
         {
             idIndex = new Dictionary<int, ISceneNode>();
+            Properties = new PropertyBag();
             NextId = 1;
         }
 
@@ -25,6 +29,12 @@ namespace Clarity.Engine.Objects.WorldTree
         {
             foreach (var scene in Scenes)
                 scene.Update(frameTime);
+        }
+
+        public void OnRoutedEvent(IRoutedEvent evnt)
+        {
+            foreach (var scene in Scenes)
+                scene.OnRoutedEvent(evnt);
         }
 
         public override void AmOnChildEvent(IAmEventMessage message)

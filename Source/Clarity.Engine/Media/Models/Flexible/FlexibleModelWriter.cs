@@ -14,6 +14,9 @@ namespace Clarity.Engine.Media.Models.Flexible
 
                 writer.WriteStartObject();
                 {
+                    // todo: make this for Radius -> Sphere
+                    //writer.WritePropertyName("Version");
+                    //writer.WriteValue(2);
                     writer.WritePropertyName("VertexSets");
                     writer.WriteStartArray();
                     foreach (var vertexSet in model.VertexSets)
@@ -107,8 +110,9 @@ namespace Clarity.Engine.Media.Models.Flexible
                     }
                     writer.WriteEnd();
 
+                    // todo: write sphere
                     writer.WritePropertyName("Radius");
-                    writer.WriteValue(model.Radius);
+                    writer.WriteValue(model.BoundingSphere.Radius + model.BoundingSphere.Center.Length());
                 }
                 writer.WriteEnd();
             }

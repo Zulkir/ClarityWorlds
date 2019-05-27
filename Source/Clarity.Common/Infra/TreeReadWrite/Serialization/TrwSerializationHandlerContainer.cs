@@ -12,7 +12,7 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
         
         public TrwSerializationHandlerContainer(IReadOnlyList<ITrwSerializationHandlerFamily> handlerFamilies)
         {
-            families = handlerFamilies.Reverse().ToArray();
+            families = handlerFamilies.ToArray();
             handlers = new Dictionary<Type, ITrwSerializationHandler>();
         }
 

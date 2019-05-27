@@ -1,9 +1,10 @@
 ﻿using System.IO;
+using Clarity.Common.CodingUtilities;
 
 namespace Clarity.Engine.Media.Images
 {
     public interface IImageLoader
     {
-        IImage Load(Stream stream);
+        bool TryLoad(Stream stream, out IImage image, out ErrorInfo error);
     }
 }

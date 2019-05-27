@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.Navigation;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.Views;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Visualization.Cameras;
 

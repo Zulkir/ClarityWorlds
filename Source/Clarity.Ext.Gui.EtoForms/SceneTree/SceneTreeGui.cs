@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using Clarity.App.Worlds.AppModes;
+using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.Interaction.Manipulation3D;
+using Clarity.App.Worlds.Media.Media2D;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.Views;
+using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.Infra.ActiveModel;
-using Clarity.Core.AppCore.AppModes;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -17,7 +21,6 @@ namespace Clarity.Ext.Gui.EtoForms.SceneTree
     {
         private readonly IWorldTreeService worldTreeService;
         private readonly IViewService viewService;
-        private readonly IAppModeService appModeService;
 
         private readonly IPresentationGuiCommands commands;
 
@@ -40,13 +43,12 @@ namespace Clarity.Ext.Gui.EtoForms.SceneTree
         public SceneTreeGuiItemTag SelectedItemTag => (SceneTreeGuiItemTag)SelectedItem.Tag;
         public ISceneNode SelectedNode => SelectedItemTag.Node;
 
-        public SceneTreeGui(IWorldTreeService worldTreeService, IViewService viewService, IAppModeService appModeService, 
+        public SceneTreeGui(IEventRoutingService eventRoutingService, IWorldTreeService worldTreeService, IViewService viewService, 
             IPresentationGuiCommands commands, ICommonGuiObjects commonGuiObjects)
         {
             itemIndex = new Dictionary<ISceneNode, TreeItem>();
             this.worldTreeService = worldTreeService;
             this.viewService = viewService;
-            this.appModeService = appModeService;
             this.commands = commands;
 
             eyeIcon = Icon.FromResource("Clarity.Ext.Gui.EtoForms.Resources.eye_icon.ico");
@@ -64,18 +66,19 @@ namespace Clarity.Ext.Gui.EtoForms.SceneTree
                 ContextMenu = commonGuiObjects.SelectionContextMenu
             };
             //RebuildFromRoot();
-            worldTreeService.UpdatedHigh += OnWorldUpdated;
+            eventRoutingService.RegisterServiceDependency(typeof(ISceneTreeGui), typeof(IWorldTreeService));
+            eventRoutingService.Subscribe<IWorldTreeUpdatedEvent>(typeof(ISceneTreeGui), nameof(OnWorldUpdated), OnWorldUpdated);
+            eventRoutingService.Subscribe<IAppModeChangedEvent>(typeof(ISceneTreeGui), nameof(OnAppModeChanged), OnAppModeChanged);
             treeView.SelectionChanged += OnSelectionChanged;
             treeView.NodeMouseClick += OnNodeMouseClick;
             treeView.MouseDoubleClick += OnNodeMouseDoubleClick;
 
             viewService.Update += OnViewServiceUpdate;
-            appModeService.ModeChanged += OnAppModeChanged;
         }
 
-        private void OnAppModeChanged()
+        private void OnAppModeChanged(IAppModeChangedEvent appModeChangedEvent)
         {
-            if (appModeService.Mode == AppMode.Presentation)
+            if (appModeChangedEvent.NewAppMode == AppMode.Presentation)
             {
                 disabled = true;
             }
@@ -88,10 +91,11 @@ namespace Clarity.Ext.Gui.EtoForms.SceneTree
             }
         }
 
-        private void OnWorldUpdated(IAmEventMessage message)
+        private void OnWorldUpdated(IWorldTreeUpdatedEvent evnt)
         {
             if (disabled)
                 return;
+            var message = evnt.AmMessage;
             if (message.Obj<WorldHolder>().ValueChanged(x => x.World, out _) ||
                 message.Obj<IWorld>().ItemAddedOrRemoved(x => x.Scenes, out _) ||
                 message.Obj<IScene>().ValueChanged(x => x.Root, out _))
@@ -113,7 +117,7 @@ namespace Clarity.Ext.Gui.EtoForms.SceneTree
             {
                 if (!itemIndex.TryGetValue(childRemovedMsg.Item, out var item))
                     return;
-                foreach (var node in childRemovedMsg.Item.EnumerateAllNodesDeep())
+                foreach (var node in childRemovedMsg.Item.EnumerateSceneNodesDeep())
                     itemIndex.Remove(node);
                 var parentItem = (TreeItem)item.Parent;
                 parentItem.Children.Remove(item);

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals.Algebra;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Objects.Caching;
 using Clarity.Engine.Platforms;
 
@@ -26,5 +27,6 @@ namespace Clarity.Engine.Objects.WorldTree
 
         ICacheContainer CacheContainer { get; }
         void Update(FrameTime frameTime);
+        void OnRoutedEvent(IRoutedEvent evnt);
     }
 }

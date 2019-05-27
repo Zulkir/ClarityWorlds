@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27004.2009
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Core", "Clarity.Core\Clarity.Core.csproj", "{012FD711-33D4-4724-BDAD-801BB7FAEDC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.App.Worlds", "Clarity.App.Worlds\Clarity.App.Worlds.csproj", "{012FD711-33D4-4724-BDAD-801BB7FAEDC0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Ext.Gui.EtoForms", "Clarity.Ext.Gui.EtoForms\Clarity.Ext.Gui.EtoForms.csproj", "{D5451E35-CAFE-459D-B5BF-BA0E2464A1CB}"
 EndProject
@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Native.Linux", "Cla
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Ext.Rendering.Ogl3", "Clarity.Ext.Rendering.Ogl3\Clarity.Ext.Rendering.Ogl3.csproj", "{F1F1FEB3-0F8B-4E98-9767-C6F88DDC4F7F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Core.Tests", "Clarity.Core.Tests\Clarity.Core.Tests.csproj", "{BE83F127-8681-4D72-8915-C4AA01765DAA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.App.Worlds.Tests", "Clarity.App.Worlds.Tests\Clarity.App.Worlds.Tests.csproj", "{BE83F127-8681-4D72-8915-C4AA01765DAA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clarity.Ext.Video.FFmpeg", "Clarity.Ext.Video.FFmpeg\Clarity.Ext.Video.FFmpeg.csproj", "{BEB75E6E-3C93-46EA-A45E-2507CF40F200}"
 EndProject

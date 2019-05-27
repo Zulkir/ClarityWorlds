@@ -1,6 +1,7 @@
 ﻿using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
+using Clarity.Engine.Gui.MessageBoxes;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Media.Text.Rich;
 using ef = Eto.Forms;
@@ -40,7 +41,16 @@ namespace Clarity.Ext.Gui.EtoForms
                 etoDecoration |= ed.FontDecoration.Strikethrough;
         }
 
-        public static Size2 ToClarity(ed.SizeF etoSize) => 
+        public static IntSize2 ToClarity(this ed.Size eSize) =>
+            new IntSize2(eSize.Width, eSize.Height);
+
+        public static Size2 ToClarity(this ed.SizeF etoSize) => 
             new Size2(etoSize.Width, etoSize.Height);
+
+        public static ef.MessageBoxType ToEto(this MessageBoxType cType) =>
+            (ef.MessageBoxType)cType;
+
+        public static ef.MessageBoxButtons ToEto(this MessageBoxButtons cButtons) =>
+            (ef.MessageBoxButtons)cButtons;
     }
 }

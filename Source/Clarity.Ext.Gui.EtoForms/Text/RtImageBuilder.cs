@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Clarity.Engine.Media.Text.Rich;
 using Eto.Drawing;
 using EFontDecoration = Eto.Drawing.FontDecoration;
@@ -17,7 +16,7 @@ namespace Clarity.Ext.Gui.EtoForms.Text
             this.fontFamilyCache = fontFamilyCache;
         }
 
-        public IRtImage BuildImage(IRichTextBox textBox)
+        public byte[] BuildImageRgba(IRichTextBox textBox)
         {
             var text = textBox.Text;
             var layout = textBox.Layout;
@@ -38,12 +37,7 @@ namespace Clarity.Ext.Gui.EtoForms.Text
             }
             graphics.Flush();
 
-            using (var bmpData = bitmap.Lock())
-            {
-                var data = new byte[bmpData.ScanWidth * textBox.Size.Height];
-                Marshal.Copy(bmpData.Data, data, 0, data.Length);
-                return new RtImage(textBox.Size.Width, textBox.Size.Height, data);
-            }
+            return FromEtoImage.GetRawData(bitmap);
         }
         
         private static FontStyle ConvertFontStyle(CFontDecoration fontDecoration)

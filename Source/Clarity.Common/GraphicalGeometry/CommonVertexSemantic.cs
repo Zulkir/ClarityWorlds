@@ -10,6 +10,8 @@
         Binormal,
         TexCoord,
         BoneIndices,
-        BoneWeights
+        BoneWeights,
+        AbstractFloats0,
+        AbstractInts0,
     }
 }

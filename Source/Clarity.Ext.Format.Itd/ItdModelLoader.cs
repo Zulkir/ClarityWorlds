@@ -4,12 +4,12 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Clarity.App.Worlds.Assets;
 using Clarity.Common;
 using Clarity.Common.GraphicalGeometry;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.ResourceTree.Assets;
 using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Resources.RawData;
@@ -36,7 +36,7 @@ namespace Clarity.Ext.Format.Itd
         private readonly object callbackLock = new object();
 
         private readonly List<FlexibleModelPart> modelParts;
-        private readonly List<CgVertexPosNormTex> vertices;
+        private readonly List<VertexPosNormTex> vertices;
         private readonly List<int> indices;
 
         private const int TRUE = 1;
@@ -46,7 +46,7 @@ namespace Clarity.Ext.Format.Itd
         public ItdModelLoader()
         {
             modelParts = new List<FlexibleModelPart>();
-            vertices = new List<CgVertexPosNormTex>();
+            vertices = new List<VertexPosNormTex>();
             indices = new List<int>();
         }
 
@@ -98,15 +98,16 @@ namespace Clarity.Ext.Format.Itd
 
                 RawDataResource vertexDataRes;
                 var vertexArray = vertices
-                    .Select(x => new CgVertexPosNormTex(x.Position.Y, x.Position.Z, x.Position.X, x.Normal.Y, x.Normal.Z, x.Normal.X, x.TexCoord.X, x.TexCoord.Y))
+                    .Select(x => new VertexPosNormTex(x.Position.Y, x.Position.Z, x.Position.X, x.Normal.Y, x.Normal.Z, x.Normal.X, x.TexCoord.X, x.TexCoord.Y))
                     .ToArray();
 
                 var boundingSphere = Sphere.BoundingSphere(vertexArray.Select(x => x.Position).ToList());
-                for (int i = 0; i < vertices.Count; i++)
-                    vertexArray[i].Position -= boundingSphere.Center;
+                // todo: remove (no longer necessary to centralize the model)
+                //for (int i = 0; i < vertices.Count; i++)
+                //    vertexArray[i].Position -= boundingSphere.Center;
 
-                fixed (CgVertexPosNormTex* pVertices = vertexArray)
-                    vertexDataRes = new RawDataResource(ResourceVolatility.Immutable, (IntPtr)pVertices, vertexArray.Length * sizeof(CgVertexPosNormTex));
+                fixed (VertexPosNormTex* pVertices = vertexArray)
+                    vertexDataRes = new RawDataResource(ResourceVolatility.Immutable, (IntPtr)pVertices, vertexArray.Length * sizeof(VertexPosNormTex));
                 pack.AddSubresource("VertexArray", vertexDataRes);
 
                 RawDataResource indexDataRes;
@@ -121,14 +122,13 @@ namespace Clarity.Ext.Format.Itd
                     indexDataRes.GetSubrange(0)
                 };
 
-                var elementInfos = CgVertexPosNormTex.GetElementsInfos(0);
+                var elementInfos = VertexPosNormTex.GetElementsInfos(0);
                 var indicesInfo = new VertexIndicesInfo(1, CommonFormat.R32_UINT);
 
                 var vertexSet = new FlexibleModelVertexSet(ResourceVolatility.Immutable, arraySubranges, elementInfos, indicesInfo);
                 pack.AddSubresource("VertexSet", vertexSet);
-                
-                var radius = boundingSphere.Radius;
-                var model = new FlexibleModel(ResourceVolatility.Immutable, new []{vertexSet}, modelParts, radius);
+
+                var model = new FlexibleModel(ResourceVolatility.Immutable, new []{vertexSet}, modelParts, boundingSphere);
                 pack.AddSubresource("Model", model);
 
                 AssetHashMd5 hash;

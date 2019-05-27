@@ -1,10 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Clarity.Engine.EventRouting
 {
     public interface IEventRoutingCustomList
     {
-        string EventName { get; }
+        Type EventType { get; }
         IReadOnlyList<string> SubscriptionNames { get; }
     }
 }

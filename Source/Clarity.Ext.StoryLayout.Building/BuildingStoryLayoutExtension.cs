@@ -1,5 +1,5 @@
-﻿using Clarity.Common.Infra.Di;
-using Clarity.Core.AppCore.StoryGraph;
+﻿using Clarity.App.Worlds.StoryGraph;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Platforms;
 
 namespace Clarity.Ext.StoryLayout.Building

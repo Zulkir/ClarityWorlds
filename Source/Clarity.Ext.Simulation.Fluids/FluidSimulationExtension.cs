@@ -1,5 +1,5 @@
-﻿using Clarity.Common.Infra.Di;
-using Clarity.Core.AppCore.Tools;
+﻿using Clarity.App.Worlds.Interaction.Tools;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Platforms;
 
 namespace Clarity.Ext.Simulation.Fluids

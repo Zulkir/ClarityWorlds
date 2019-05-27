@@ -5,18 +5,21 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Collections
 {
     public static class DictionaryExtensions
     {
-        public static TValue Search<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key)
+        public static TValue Search<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key)
         {
             return dict.TryGetValue(key, out var value) ? value : default(TValue);
         }
 
-        public static TValue TryGetRef<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key) where TValue : class => 
+        public static TValue TryGetRef<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : class => 
             dict.TryGetValue(key, out TValue value) ? value : null;
 
-        public static TValue? TryGetVal<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key) where TValue : struct =>
+        public static TValue? TryGetVal<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key) where TValue : struct =>
             dict.TryGetValue(key, out TValue value) ? value : (TValue?)null;
 
-        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> create)
+        public static TValue GetOrAdd<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> create) => 
+            GetOrAddEx(dict, key, create);
+
+        public static TValue GetOrAddEx<TKey, TValue>(this IDictionary<TKey, TValue> dict, TKey key, Func<TKey, TValue> create)
         {
             if (dict.TryGetValue(key, out var value)) 
                 return value;

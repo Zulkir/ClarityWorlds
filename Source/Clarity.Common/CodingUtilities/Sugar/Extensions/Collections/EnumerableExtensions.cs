@@ -44,6 +44,11 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Collections
             where TVal : IComparable<TVal> => 
             TryFindMinimal(source, getVal, out var minItem) ? minItem : default(TItem);
 
+        public static TItem? MinimalOrNull<TItem, TVal>(this IEnumerable<TItem> source, Func<TItem, TVal> getVal)
+            where TItem : struct
+            where TVal : IComparable<TVal> =>
+            TryFindMinimal(source, getVal, out var minItem) ? minItem : (TItem?)null;
+
         private static bool TryFindMinimal<TItem, TVal>(IEnumerable<TItem> source, Func<TItem, TVal> getVal, out TItem minItem)
             where TVal : IComparable<TVal>
         {

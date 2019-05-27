@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using Clarity.Common.Infra.TreeReadWrite.Paths;
 using Newtonsoft.Json;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json

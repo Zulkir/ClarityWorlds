@@ -4,10 +4,8 @@ using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Engine.Interaction;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Interaction.Input;
-using Clarity.Engine.Interaction.Input.Mouse;
-using Clarity.Engine.Interaction.RayHittables;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Visualization.Cameras;
@@ -19,15 +17,12 @@ namespace Clarity.App.Transport.Prototype
 {
     public abstract class TransportView : AmObjectBase<TransportView, IViewport>, IView
     {
-        private readonly IRayHitIndex rayHitIndex;
-
         public IReadOnlyList<IViewLayer> Layers { get; }
         private readonly IControlledCamera camera;
         private readonly ViewLayer layer;
 
-        protected TransportView(IStateVisualizer stateVisualizer, IRayHitIndex rayHitIndex)
+        protected TransportView(IStateVisualizer stateVisualizer)
         {
-            this.rayHitIndex = rayHitIndex;
             var scene = Scene.Create(stateVisualizer.RootNode);
             scene.BackgroundColor = Color4.CornflowerBlue;
             camera = new TargetedControlledCameraY(stateVisualizer.RootNode, new TargetedControlledCameraY.Props
@@ -58,21 +53,11 @@ namespace Clarity.App.Transport.Prototype
 
         public bool TryHandleInput(IInputEventArgs args)
         {
-            if (args is IMouseEventArgs margs && margs.IsLeftClickEvent())
-            {
-                var clickInfo = new RayHitInfo(margs.Viewport, layer, margs.State.Position);
-                var hitResult = rayHitIndex.FindEntity(clickInfo);
-                if (hitResult.Successful)
-                {
-                    foreach (var interactionComponent in hitResult.Node.SearchComponents<IInteractionComponent>())
-                        if (interactionComponent.TryHandleInteractionEvent(margs))
-                            return true;
-                }
-            }
-
-            if (camera.TryHandleInput(args))
-                return true;
             return false;
+        }
+
+        public void OnEveryEvent(IRoutedEvent evnt)
+        {
         }
     }
 }

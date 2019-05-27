@@ -15,5 +15,11 @@ namespace Clarity.Common.Infra.TreeReadWrite
 
         public static ITrwWriter XmlWriter(this ITrwFactory factory, Stream stream) =>
             factory.Writer(stream, "xml");
+
+        public static ITrwReader MemReader(this ITrwFactory factory, Stream stream) =>
+            factory.Reader(stream, "mem");
+
+        public static ITrwWriter MemWriter(this ITrwFactory factory, Stream stream) =>
+            factory.Writer(stream, "mem");
     }
 }

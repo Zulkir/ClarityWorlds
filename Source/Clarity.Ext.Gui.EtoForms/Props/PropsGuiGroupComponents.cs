@@ -1,6 +1,6 @@
 ﻿using System;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.AppCore.WorldTree;
+using Clarity.App.Worlds.UndoRedo;
+using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Utilities;
 using Eto.Drawing;
@@ -149,23 +149,11 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                     undoRedo.Common.Add(boundNode.Aspects, aspect);
                     break;
                 }*/
-                case "Limiter0":
-                {
-                    var component = AmFactory.Create<ModelLayerLimitComponent>();
-                    undoRedo.Common.Add(boundNode.Components, component);
-                    break;
-                }
-                case "LimiterMax":
-                {
-                    var component = AmFactory.Create<ModelLayerLimitComponent>();
-                    component.InitialLimit = int.MaxValue;
-                    undoRedo.Common.Add(boundNode.Components, component);
-                    break;
-                }
                 case "RotateOnDC":
                 {
                     var component = AmFactory.Create<RotateOnceComponent>();
-                    undoRedo.Common.Add(boundNode.Components, component);
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
                     break;
                 }
             }

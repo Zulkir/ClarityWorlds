@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2017
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnityClarity", "UnityClarity.csproj", "{FDD40703-3732-2144-031B-9BE0C4CBA8AB}"
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{93875E4C-4743-490F-FB3C-B9085F9E6356}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,10 +9,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{FDD40703-3732-2144-031B-9BE0C4CBA8AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FDD40703-3732-2144-031B-9BE0C4CBA8AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FDD40703-3732-2144-031B-9BE0C4CBA8AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FDD40703-3732-2144-031B-9BE0C4CBA8AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{93875E4C-4743-490F-FB3C-B9085F9E6356}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{93875E4C-4743-490F-FB3C-B9085F9E6356}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{93875E4C-4743-490F-FB3C-B9085F9E6356}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{93875E4C-4743-490F-FB3C-B9085F9E6356}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

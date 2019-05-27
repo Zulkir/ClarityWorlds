@@ -1,10 +1,11 @@
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Serialization.Handlers
 {
-    public class AttributeTrwHandler<T> : TrwSerializationHandlerBase<T>
+    public class AttributeTrwHandler<T> : ObjectDiffableTrwHandlerBase<T, object, MemberInfo>
     {
         private readonly Func<T> createObj;
 
@@ -34,38 +35,44 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization.Handlers
             }
         }
 
-        public override bool ContentIsProperties => true;
+        protected override T CreateBuilder() => createObj();
+        protected override IEnumerable<MemberInfo> EnumerateProps(T obj) => fields.Cast<MemberInfo>().Concat(properties);
+        protected override string GetPropName(MemberInfo prop) => prop.Name;
 
-        public override void SaveContent(ITrwSerializationWriteContext context, T value)
+        protected override Type GetPropType(MemberInfo prop)
         {
-            foreach (var field in fields)
-                context.WriteProperty(field.Name, field.FieldType, field.GetValue(value));
-            foreach (var property in properties.Reverse())
-                context.WriteProperty(property.Name, property.PropertyType, property.GetValue(value));
+            switch (prop)
+            {
+                case FieldInfo fieldInfo: return fieldInfo.FieldType;
+                case PropertyInfo propertyInfo: return propertyInfo.PropertyType;
+                default: throw new ArgumentOutOfRangeException();
+            }
         }
 
-        public override T LoadContent(ITrwSerializationReadContext context)
+        protected override object GetPropValue(T obj, MemberInfo prop)
         {
-            var obj = createObj();
-            var boxed = (object)obj;
-            while (context.Reader.TokenType != TrwTokenType.EndObject)
+            switch (prop)
             {
-                var name = context.Reader.ValueAsString;
-                var field = fields.FirstOrDefault(x => x.Name == name);
-                var property = field == null ? properties.FirstOrDefault(x => x.Name == name) : null;
-                context.Reader.MoveNext();
-                if (field != null)
-                {
-                    var value = context.Read(field.FieldType);
-                    field.SetValue(boxed, value);
-                }
-                else if (property != null)
-                {
-                    var value = context.Read(property.PropertyType);
-                    property.SetValue(boxed, value);
-                }
+                case FieldInfo fieldInfo: return fieldInfo.GetValue(obj);
+                case PropertyInfo propertyInfo: return propertyInfo.GetValue(obj);
+                default: throw new ArgumentOutOfRangeException();
             }
-            return (T)boxed;
+        }
+
+        protected override void SetPropValue(T obj, object boxedBuilder, MemberInfo prop, object value)
+        {
+            switch (prop)
+            {
+                case FieldInfo fieldInfo: fieldInfo.SetValue(boxedBuilder, value); break;
+                case PropertyInfo propertyInfo: propertyInfo.SetValue(boxedBuilder, value); break;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        protected override bool TryGetProp(T obj, string name, out MemberInfo prop)
+        {
+            prop = EnumerateProps(obj).FirstOrDefault(x => x.Name == name);
+            return prop != null;
         }
     }
 }

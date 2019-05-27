@@ -1,4 +1,5 @@
 ﻿using System;
+using Clarity.Common.Numericals.Geometry;
 
 namespace Clarity.Common.Numericals
 {
@@ -35,6 +36,29 @@ namespace Clarity.Common.Numericals
         public static float AspectRatio(int width, int height)
         {
             return (float)Math.Max(width, 1) / Math.Max(height, 1);
+        }
+
+        public static float SrgbToLinear(float x)
+        {
+            return MathHelper.Pow(x, 2.2f);
+        }
+
+        public static float LinearToSrgb(float x)
+        {
+            return MathHelper.Pow(x, 1 / 2.2f);
+        }
+
+        public static bool HasTransparency(IntSize2 size, byte[] alignedSrgbaData)
+        {
+            var rowSpan = AlignedRowSpan(size.Width, 4, 1);
+            for (var y = 0; y < size.Height; y++)
+            {
+                var rowOffset = y * rowSpan;
+                for (var i = 3; i < size.Width * 4; i += 4)
+                    if (alignedSrgbaData[rowOffset + i] != 255)
+                        return true;
+            }
+            return false;
         }
     }
 }

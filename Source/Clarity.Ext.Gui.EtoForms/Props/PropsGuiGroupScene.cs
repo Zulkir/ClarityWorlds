@@ -1,6 +1,6 @@
 ﻿using System;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Core.AppCore.UndoRedo;
 using Clarity.Engine.Media.Skyboxes;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Resources;
@@ -78,7 +78,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             if (boundComponent == null)
                 return;
             var color = new Color4(cBackgroundColor.Value.ToArgb());
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.BackgroundColor, color);
+            boundComponent.BackgroundColor = color;
+            undoRedo.OnChange();
         }
 
         private void OnSkyboxChanged(object sender, EventArgs eventArgs)
@@ -91,7 +92,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 skyboxName == "Storm" ? stormTexture : 
                 skyboxName == "Stars" ? starsTexture : 
                 null;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Skybox, source);
+            boundComponent.Skybox = source;
+            undoRedo.OnChange();
         }
     }
 }

@@ -11,6 +11,7 @@ namespace Clarity.Common.Infra.ActiveModel
         IReadOnlyList<IAmBinding> AmReferingBindings { get; }
         object AmParentBindingToken { get; }
         [NotNull] IReadOnlyList<IAmBinding> Bindings { get; }
+        IAmBinding AmGetBinding(string propertyName);
         void AmCloneNonBoundStateFrom(IAmObject other);
         void Deparent();
 

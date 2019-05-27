@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using Clarity.Common.Numericals;
+using Clarity.Common.Numericals.Geometry;
+using Clarity.Engine.Media.Images;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources;
 
@@ -17,6 +19,7 @@ namespace Clarity.Engine.Media.Movies
 
         private readonly IMovieReader reader;
         private readonly Stack<MovieFrame> previousFrames = new Stack<MovieFrame>();
+        private readonly MoviePlaybackImage frameImage;
 
         public IMovie Movie { get; }
         public MoviePlaybackState State { get; private set; }
@@ -27,13 +30,12 @@ namespace Clarity.Engine.Media.Movies
         private double videoSpeed;
         private bool playingReversed;
 
+        public IImage FrameImage => frameImage;
         public byte[] FrameRawRgba => currentFrame.RgbaData;
         public double FrameTimestamp => currentTimestamp;
 
         public static readonly double[] MovieSpeeds = Enumerable.Range(0, 7).Select(x => 0.125 * Math.Pow(2, x))
             .ToArray();
-
-        public bool HasTransparency => false;
 
         public StandardMoviePlayback(IMovie movie)
             : base(ResourceVolatility.Volatile)
@@ -41,6 +43,7 @@ namespace Clarity.Engine.Media.Movies
             Movie = movie;
             reader = movie.Read();
             videoSpeed = 1.0;
+            frameImage = new MoviePlaybackImage();
             currentFrame = new MovieFrame
             {
                 RgbaData = new byte[GraphicsHelper.AlignedSize(reader.Width, reader.Height)],
@@ -255,6 +258,9 @@ namespace Clarity.Engine.Media.Movies
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+            if (currentFrame.RgbaData != frameImage.RgbaData)
+                // todo: size to frame?
+                frameImage.Update(new IntSize2(reader.Width, reader.Height), currentFrame.RgbaData);
         }
 
         /*

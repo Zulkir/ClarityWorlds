@@ -74,6 +74,16 @@ namespace Clarity.Common.Numericals.Colors
         public Color4 ToColor4() { return new Color4(R, G, B); }
 
         public int ToArgb() { return ToColor4().ToArgb(); }
+
+        public Color3 SrgbToLinear() => new Color3(
+            GraphicsHelper.SrgbToLinear(R), 
+            GraphicsHelper.SrgbToLinear(G),
+            GraphicsHelper.SrgbToLinear(B));
+
+        public Color3 LinearToSrgb() => new Color3(
+            GraphicsHelper.LinearToSrgb(R), 
+            GraphicsHelper.LinearToSrgb(G),
+            GraphicsHelper.LinearToSrgb(B));
         #endregion
 
         #region Math

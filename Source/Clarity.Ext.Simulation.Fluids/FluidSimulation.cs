@@ -3,11 +3,11 @@ using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Clarity.App.Worlds.External.FluidSimulation;
 using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.External.FluidSimulation;
 
 namespace Clarity.Ext.Simulation.Fluids
 {

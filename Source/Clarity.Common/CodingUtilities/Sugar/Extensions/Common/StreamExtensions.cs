@@ -8,7 +8,7 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Common
         public static byte[] ReadToEnd(this Stream stream)
         {
             var buffer = new byte[1024];
-            var result = new byte[Math.Max(stream.Length, 1024)];
+            var result = new byte[1024];
             var resultPos = 0;
             var bytesRead = stream.Read(buffer, 0, buffer.Length);
             while (bytesRead > 0)

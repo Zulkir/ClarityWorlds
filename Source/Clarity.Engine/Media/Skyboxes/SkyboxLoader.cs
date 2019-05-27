@@ -1,6 +1,6 @@
-﻿using System.Data;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
+using Clarity.Common.CodingUtilities;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Infra.TreeReadWrite;
 using Clarity.Common.Numericals.Geometry;
@@ -20,7 +20,7 @@ namespace Clarity.Engine.Media.Skyboxes
             this.trwFactory = trwFactory;
         }
 
-        public ISkybox Load(IReadOnlyFileSystem fileSystem, string path, out string[] imageFileRelativePaths)
+        public bool TryLoad(IReadOnlyFileSystem fileSystem, string path, out ISkybox skybox, out string[] imageFileRelativePaths, out ErrorInfo error)
         {
             dynamic mainFile;
             using (var reader = trwFactory.JsonReader(fileSystem.OpenRead(path)))
@@ -35,15 +35,27 @@ namespace Clarity.Engine.Media.Skyboxes
                 mainFile.Front
             };
             var folderPath = Path.Combine(Path.GetDirectoryName(path));
-            var images = imageFileRelativePaths.Select(x =>
+            var images = new IImage[6];
+            for (var i = 0; i < 6; i++)
             {
-                using (var stream = fileSystem.OpenRead(Path.Combine(folderPath, x)))
-                    return imageLoader.Load(stream);
-            }).ToArray();
+                var relPath = imageFileRelativePaths[i];
+                using (var stream = fileSystem.OpenRead(Path.Combine(folderPath, relPath)))
+                    if (!imageLoader.TryLoad(stream, out images[i], out error))
+                    {
+                        skybox = null;
+                        return false;
+                    }
+            }
+
             var width = images[0].Size.Width;
             if (images.Any(x => x.Size != new IntSize2(width, width)))
-                throw new DataException("Skybox images are not of equal size");
-            return new Skybox(ResourceVolatility.Immutable, width, images);
+            {
+                error = new ErrorInfo("Skybox images are not of equal size");
+                skybox = null;
+                return false;
+            }
+            skybox = new Skybox(ResourceVolatility.Immutable, width, images);
+            return true;
         }
     }
 }

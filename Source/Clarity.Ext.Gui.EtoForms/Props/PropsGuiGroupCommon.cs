@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Globalization;
-using Clarity.Core.AppCore.UndoRedo;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -58,7 +58,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         {
             if (boundNode == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundNode, x => x.Name, cName.Text);
+            boundNode.Name = cName.Text;
+            undoRedo.OnChange();
         }
     }
 }

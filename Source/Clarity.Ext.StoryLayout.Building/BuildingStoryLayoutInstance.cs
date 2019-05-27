@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
+using Clarity.App.Worlds.Navigation;
+using Clarity.App.Worlds.StoryGraph;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.Views;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Visualization.Cameras;
 

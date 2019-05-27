@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using Clarity.Common.CodingUtilities;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
@@ -171,6 +172,28 @@ namespace Clarity.Common.Numericals.Geometry
             }
 
             var finalMostDistantPoint = points.Maximal(x => (center - x).LengthSquared());
+            return new Sphere(center, (center - finalMostDistantPoint).Length());
+        }
+
+        public static Sphere BoundingSphere<T>(IReadOnlyList<T> vertices, Func<T, Vector3> getPosition)
+        {
+            var boundingBox = AaBox.BoundingBox(vertices.Select(getPosition));
+
+            const float normalizedStep = 0.01f;
+            var scale = Math.Max(Math.Max(boundingBox.HalfSize.Width, boundingBox.HalfSize.Height), boundingBox.HalfSize.Depth);
+            var step = scale * normalizedStep;
+
+            var center = boundingBox.Center;
+            for (int i = 0; i < 0.25f / normalizedStep; i++)
+            {
+                var mostDistantPoint = vertices.Select(getPosition).Maximal(x => (center - x).LengthSquared());
+                var towards = mostDistantPoint - center;
+                var towardsLength = towards.Length();
+                if (towardsLength > MathHelper.Eps5)
+                    center += step * towards / towardsLength;
+            }
+
+            var finalMostDistantPoint = vertices.Select(getPosition).Maximal(x => (center - x).LengthSquared());
             return new Sphere(center, (center - finalMostDistantPoint).Length());
         }
     }

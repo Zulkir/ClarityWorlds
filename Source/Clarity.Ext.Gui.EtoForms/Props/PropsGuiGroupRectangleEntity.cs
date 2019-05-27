@@ -1,8 +1,7 @@
 ﻿using System;
+using Clarity.App.Worlds.Media.Media2D;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.AppCore.WorldTree;
-using Clarity.Core.AppFeatures.Text;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -71,7 +70,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             var colorComponent = boundComponent.Node.SearchComponent<ColorRectangleComponent>();
             var eColor = this.cColor.Value;
             var cColor = new Color4(eColor.R, eColor.G, eColor.B, eColor.A);
-            undoRedo.Common.ChangeProperty(colorComponent, x => x.Color, cColor);
+            colorComponent.Color = cColor;
+            undoRedo.OnChange();
         }
 
         private void OnDragByBorderChanged(object sender, EventArgs eventArgs)

@@ -9,15 +9,17 @@ namespace Assets.Scripts.Rendering
     public class UcCgImageCache : ICache
     {
         private readonly IImage image;
+        private readonly bool isNormalMap;
         private Texture2D unityTexture;
         private bool ownsTexture;
         private bool dirty;
 
         public bool IsDisposed { get; private set; }
 
-        public UcCgImageCache(IImage image)
+        public UcCgImageCache(IImage image, bool isNormalMap = false)
         {
             this.image = image;
+            this.isNormalMap = isNormalMap;
             dirty = true;
         }
 
@@ -69,7 +71,7 @@ namespace Assets.Scripts.Rendering
                 pixelArray[image.Size.Width * y + x] = pixel;
             }
 
-            unityTexture = new Texture2D(image.Size.Width, image.Size.Height, TextureFormat.RGBA32, true)
+            unityTexture = new Texture2D(image.Size.Width, image.Size.Height, TextureFormat.RGBA32, true, isNormalMap)
             {
                 filterMode = FilterMode.Trilinear,
                 anisoLevel = 16

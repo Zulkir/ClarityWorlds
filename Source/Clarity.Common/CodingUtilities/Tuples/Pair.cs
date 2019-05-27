@@ -24,7 +24,7 @@ namespace Clarity.Common.CodingUtilities.Tuples
         public override int GetHashCode() =>
             (EqualityComparer<T>.Default.GetHashCode(First) * 397) ^ EqualityComparer<T>.Default.GetHashCode(Second);
 
-        public override string ToString() => $"[{First}, {Second}]";
+        public override string ToString() => $"({First}, {Second})";
 
         public static bool operator ==(Pair<T> p1, Pair<T> p2) => p1.Equals(p2);
         public static bool operator !=(Pair<T> p1, Pair<T> p2) => !(p1 == p2);
@@ -52,6 +52,8 @@ namespace Clarity.Common.CodingUtilities.Tuples
 
         public override int GetHashCode() => 
             (EqualityComparer<T1>.Default.GetHashCode(First) * 397) ^ EqualityComparer<T2>.Default.GetHashCode(Second);
+
+        public override string ToString() => $"({First}, {Second})";
 
         public static bool operator ==(Pair<T1, T2> p1, Pair<T1, T2> p2) => p1.Equals(p2);
         public static bool operator !=(Pair<T1, T2> p1, Pair<T1, T2> p2) => !(p1 == p2);

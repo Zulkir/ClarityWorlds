@@ -69,7 +69,7 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
 
             var obj = typeof(T) == type
                 ? handlers.GetHandler<T>().LoadContent(this)
-                : (T)handlers.GetHandler(type).LoadContent(this); ;
+                : (T)handlers.GetHandler(type).LoadContent(this);
             Reader.CheckAndMoveNext(TrwTokenType.EndObject);
             return obj;
         }

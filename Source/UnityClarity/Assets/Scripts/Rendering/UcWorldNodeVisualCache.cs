@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using Assets.Scripts.Helpers;
+using Assets.Scripts.Rendering.Materials;
 using Clarity.Common.CodingUtilities.Tuples;
-using Clarity.Engine.Media.Images;
+using Clarity.Common.Infra.DependencyInjection;
+using Clarity.Engine.Media.Models.Explicit;
+using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Objects.Caching;
 using Clarity.Engine.Objects.WorldTree;
-using Clarity.Engine.Visualization.BasicGraphics;
-using Clarity.Engine.Visualization.BasicGraphics.Materials;
-using Clarity.Engine.Visualization.Components;
+using Clarity.Engine.Visualization.Elements;
+using Clarity.Engine.Visualization.Elements.Materials;
+using Clarity.Engine.Visualization.Elements.RenderStates;
 using UnityEngine;
 using UnityEngine.Rendering;
 using Object = UnityEngine.Object;
@@ -16,24 +19,27 @@ namespace Assets.Scripts.Rendering
 {
     public class UcWorldNodeVisualCache : ICache
     {
-        private readonly IUcRenderingInfra infra;
+        private readonly IStandardMaterialCache standardMaterialCache;
+
         private readonly GameObject parentObj;
-        private readonly List<Pair<GameObject, Material>> unityObjects;
+        private readonly List<Pair<GameObject, MaterialPropertyBlock>> unityObjects;
         
         public ISceneNode Node { get; }
-        public bool IsDisposed { get; private set; }
 
-        public UcWorldNodeVisualCache(IUcRenderingInfra infra, ISceneNode node)
+        public UcWorldNodeVisualCache(IDiContainer di, ISceneNode node)
         {
-            this.infra = infra;
+            standardMaterialCache = di.Get<IStandardMaterialCache>();
             Node = node;
             parentObj = GameObject.Find("VisualObjects");
-            unityObjects = new List<Pair<GameObject, Material>>();
+            unityObjects = new List<Pair<GameObject, MaterialPropertyBlock>>();
         }
 
         public void Dispose()
         {
-            IsDisposed = true;
+            // todo: MainThreadDisposer
+            //foreach (var pair in unityObjects)
+            //    Object.Destroy(pair.First);
+            //unityObjects.Clear();
         }
 
         public void OnMasterEvent(object message) { }
@@ -45,71 +51,78 @@ namespace Assets.Scripts.Rendering
             foreach (var visualElem in aVisual.GetVisualElements())
             {
                 var unityPair = GetOrAddUnityPair(i);
-                var unityObj = unityPair.First;
-                var unityMaterial = unityPair.Second;
-                if (!(visualElem is ICgModelVisualElement))
+                var uObj = unityPair.First;
+                var uPropBlock = unityPair.Second;
+                if (visualElem.Hide)
                 {
-                    unityObj.SetActive(false);
+                    uObj.SetActive(false);
                     continue;
                 }
-                var modelElem = (ICgModelVisualElement)visualElem;
 
-                var globalTransform = modelElem.Transform * Node.GlobalTransform;
-                unityObj.transform.localPosition = globalTransform.Offset.ToUnity(true);
-                unityObj.transform.localRotation = globalTransform.Rotation.ToUnity(true);
-                unityObj.transform.localScale = globalTransform.Scale * modelElem.NonUniformScale.ToUnity(false);
-
-                var model = modelElem.Model;
-                var modelCache = model.CacheContainer.GetOrAddCache(model, m => new UcCgModelCache(m));
-                var mesh = modelCache.GetUnityMesh();
-                var meshFilter = unityObj.GetComponent<MeshFilter>();
-                meshFilter.mesh = mesh;
-                var meshRenderer = unityObj.GetComponent<MeshRenderer>();
-                meshRenderer.receiveShadows = false;
-                meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
-
-                var cMaterial = modelElem.Material;
-                if (!(cMaterial is IStandardMaterial))
+                if (!(visualElem is IModelVisualElement))
                 {
-                    SetMaterial(i, null);
+                    uObj.SetActive(false);
                     continue;
                 }
-                var cStdMaterial = (IStandardMaterial)cMaterial;
+                var cModelElem = (IModelVisualElement)visualElem;
+                uObj.SetActive(true);
 
-                var baseMaterial = cStdMaterial.IgnoreLighting 
-                    ? cStdMaterial.DiffuseTextureSource is ISingleColorPixelSource 
-                        ? infra.DefaultUnlitColMaterial 
-                        : infra.DefaultUnlitTexMaterial
-                    : infra.DefaultLitMaterial;
+                var globalTransform = cModelElem.Transform * Node.GlobalTransform;
+                uObj.transform.localPosition = globalTransform.Offset.ToUnity(true);
+                uObj.transform.localRotation = globalTransform.Rotation.ToUnity(true);
+                uObj.transform.localScale = globalTransform.Scale * cModelElem.NonUniformScale.ToUnity(false);
 
-                if (unityMaterial == null)
+                var meshFilter = uObj.GetComponent<MeshFilter>();
+                var model = cModelElem.Model;
+                if (model is IFlexibleModel)
                 {
-                    unityMaterial = new Material(baseMaterial);
-                    SetMaterial(i, unityMaterial);
+                    var flexibleModel = (IFlexibleModel)model;
+                    var modelCache = flexibleModel.CacheContainer.GetOrAddCache(flexibleModel, m => new UcFlexibleModelCache(m));
+                    var mesh = modelCache.GetUnityMesh();
+                    meshFilter.mesh = mesh;
                 }
-                else if (unityMaterial.shader != baseMaterial.shader)
+                else if (model is IExplicitModel)
                 {
-                    Object.Destroy(unityMaterial);
-                    unityMaterial = new Material(baseMaterial);
-                    SetMaterial(i, unityMaterial);
-                }
-
-                if (cStdMaterial.DiffuseTextureSource is ISingleColorPixelSource)
-                {
-                    unityMaterial.mainTexture = null;
-                    unityMaterial.color = ((ISingleColorPixelSource)cStdMaterial.DiffuseTextureSource).Color.ToUnity();
-                }
-                else if (cStdMaterial.DiffuseTextureSource is IImage)
-                {
-                    var image = (IImage)cStdMaterial.DiffuseTextureSource;
-                    var imageCache = image.CacheContainer.GetOrAddCache(image, x => new UcCgImageCache(x));
-                    var texture = imageCache.GetUnityTexture();
-                    unityMaterial.mainTexture = texture;
+                    var explicitModel = (IExplicitModel)model;
+                    var modelCache = explicitModel.CacheContainer.GetOrAddCache(explicitModel, m => new UcExplicitModelCache(m));
+                    var mesh = modelCache.GetUnityMesh();
+                    meshFilter.mesh = mesh;
                 }
                 else
                 {
                     throw new NotImplementedException();
                 }
+                
+                var meshRenderer = uObj.GetComponent<MeshRenderer>();
+                meshRenderer.receiveShadows = false;
+                meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
+
+                var cMaterial = cModelElem.Material;
+                if (!(cMaterial is IStandardMaterial))
+                {
+                    uObj.SetActive(false);
+                    continue;
+                }
+                var cStdMaterial = (IStandardMaterial)cMaterial;
+
+                var cRenderState = cModelElem.RenderState;
+                if (!(cRenderState is IStandardRenderState))
+                {
+                    uObj.SetActive(false);
+                    continue;
+                }
+                var cStdRenderState = (IStandardRenderState)cRenderState;
+
+                uObj.SetActive(true);
+
+                var uMaterial = standardMaterialCache.GetOrAddMaterial(new StandardMaterialKey
+                {
+                    CStandardMaterial = cStdMaterial,
+                    CStandardRenderState = cStdRenderState
+                });
+
+                meshRenderer.sharedMaterial = uMaterial;
+                //uPropBlock.SetFloat("_Cull", (int)cModelElem.CullFace);
 
                 i++;
             }
@@ -123,10 +136,10 @@ namespace Assets.Scripts.Rendering
             }
         }
 
-        private Pair<GameObject, Material> GetOrAddUnityPair(int index)
+        private Pair<GameObject, MaterialPropertyBlock> GetOrAddUnityPair(int index)
         {
             while (index >= unityObjects.Count)
-                unityObjects.Add(new Pair<GameObject, Material>(CreateNewUnityObj(unityObjects.Count), null));
+                unityObjects.Add(Tuples.Pair(CreateNewUnityObj(unityObjects.Count), new MaterialPropertyBlock()));
             return unityObjects[index];
         }
 
@@ -137,13 +150,6 @@ namespace Assets.Scripts.Rendering
             obj.AddComponent<MeshRenderer>();
             obj.transform.SetParent(parentObj.transform);
             return obj;
-        }
-
-        private void SetMaterial(int index, Material material)
-        {
-            var obj = unityObjects[index].First;
-            obj.GetComponent<MeshRenderer>().material = material;
-            unityObjects[index] = new Pair<GameObject, Material>(obj, material);
         }
     }
 }

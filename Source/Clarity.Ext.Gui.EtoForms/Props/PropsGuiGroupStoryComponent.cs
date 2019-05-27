@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.StoryGraph.Editing.Flowchart;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.AppCore.WorldTree;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.StoryGraph.Editing.Flowchart;
+using Clarity.App.Worlds.UndoRedo;
+using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -125,7 +125,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             if (boundComponent == null)
                 return;
             var type = typeDict[(string)cDefaultAdaptiveStyle.SelectedValue];
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.StartLayoutType, type);
+            boundComponent.StartLayoutType = type;
+            undoRedo.OnChange();
         }
 
         private void OnShowAux1Changed(object sender, EventArgs eventArgs)

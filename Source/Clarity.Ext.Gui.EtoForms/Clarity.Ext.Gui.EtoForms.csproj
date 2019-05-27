@@ -75,8 +75,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AppModes\AppModesCommands.cs" />
+    <Compile Include="AppModes\IAppModesCommands.cs" />
     <Compile Include="Aspects\HyperLinkAspectCreationDialog.cs" />
-    <Compile Include="ClipBoardService.cs" />
+    <Compile Include="EcClipboard.cs" />
     <Compile Include="Commands\ToolCommand.cs" />
     <Compile Include="CommonGuiObjects.cs" />
     <Compile Include="Common\INameGenerator.cs" />
@@ -84,10 +85,14 @@
     <Compile Include="Converters.cs" />
     <Compile Include="EtoMenuBuilder.cs" />
     <Compile Include="FrameTimeMeasurer.cs" />
+    <Compile Include="FromEtoImage.cs" />
     <Compile Include="Helpers\GuiCommandsHelper.cs" />
     <Compile Include="ICommonGuiObjects.cs" />
     <Compile Include="IFrameTimeMeasurer.cs" />
+    <Compile Include="ImageResourceSaver.cs" />
+    <Compile Include="IWindowManager.cs" />
     <Compile Include="KeyboardInputProvider.cs" />
+    <Compile Include="MessageBoxService.cs" />
     <Compile Include="MouseInputProvider.cs" />
     <Compile Include="EtoGuiExtension.cs" />
     <Compile Include="FlagExtensions.cs" />
@@ -116,6 +121,7 @@
     <Compile Include="Props\PropsGuiGroupGeoModelEntity.cs" />
     <Compile Include="Props\PropsGuiGroupStoryComponent.cs" />
     <Compile Include="RenderControl.cs" />
+    <Compile Include="WindowManager.cs" />
     <Compile Include="RenderingAreaHandlerGtkOgl.cs" />
     <Compile Include="RenderingAreaHandlerWinFormsOgl.cs" />
     <Compile Include="GuiEto.cs" />
@@ -141,13 +147,13 @@
     <Compile Include="UndoRedoGui.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Clarity.App.Worlds\Clarity.App.Worlds.csproj">
+      <Project>{012fd711-33d4-4724-bdad-801bb7faedc0}</Project>
+      <Name>Clarity.App.Worlds</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
       <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
       <Name>Clarity.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Clarity.Core\Clarity.Core.csproj">
-      <Project>{012fd711-33d4-4724-bdad-801bb7faedc0}</Project>
-      <Name>Clarity.Core</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
       <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>

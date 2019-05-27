@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Clarity.Engine.EventRouting
 {
     public class EventRoutingCustomList : IEventRoutingCustomList
     {
-        public string EventName { get; }
+        public Type EventType { get; }
         public IReadOnlyList<string> SubscriptionNames { get; }
 
-        public EventRoutingCustomList(string eventName, IReadOnlyList<string> subscriptionNames)
+        public EventRoutingCustomList(Type eventType, IReadOnlyList<string> subscriptionNames)
         {
-            EventName = eventName;
+            EventType = eventType;
             SubscriptionNames = subscriptionNames;
         }
     }

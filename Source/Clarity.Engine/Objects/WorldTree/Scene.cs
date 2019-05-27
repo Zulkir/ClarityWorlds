@@ -1,7 +1,8 @@
-﻿using Clarity.Common.Infra.ActiveModel;
+﻿using System.Collections.Generic;
+using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals.Colors;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Media.Skyboxes;
-using Clarity.Engine.Objects.WorldTree.RenderStageDistribution;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Utilities;
 
@@ -13,7 +14,7 @@ namespace Clarity.Engine.Objects.WorldTree
         public abstract Color4 BackgroundColor { get; set; }
         public abstract ISkybox Skybox { get; set; }
         public abstract ISceneNode Root { get; set; }
-        public IRenderStageDistribution RenderStageDistribution { get; set; }
+        public IList<ISceneNode> AuxuliaryNodes { get; }
 
         IScene ISceneNodeParent.Scene => this;
 
@@ -22,7 +23,7 @@ namespace Clarity.Engine.Objects.WorldTree
         protected Scene()
         {
             BackgroundColor = Color4.Magenta;
-            RenderStageDistribution = new FocusedOnlyRenderStageDistribution();
+            AuxuliaryNodes = new List<ISceneNode>();
         }
 
         public static Scene Create(ISceneNode root)
@@ -35,6 +36,15 @@ namespace Clarity.Engine.Objects.WorldTree
         public void Update(FrameTime frameTime)
         {
             Root.Update(frameTime);
+            foreach (var auxuliaryNode in AuxuliaryNodes)
+                auxuliaryNode.Update(frameTime);
+        }
+
+        public void OnRoutedEvent(IRoutedEvent evnt)
+        {
+            Root.OnRoutedEvent(evnt);
+            foreach (var auxuliaryNode in AuxuliaryNodes)
+                auxuliaryNode.OnRoutedEvent(evnt);
         }
     }
 }

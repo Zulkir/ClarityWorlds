@@ -1,4 +1,5 @@
 ﻿using Clarity.Common.Infra.ActiveModel;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Platforms;
 using JitsuGen.Core;
 
@@ -11,6 +12,7 @@ namespace Clarity.Engine.Objects.WorldTree
         public ISceneNode Node => AmParent?.Node;
         
         public virtual void Update(FrameTime frameTime) { }
+        public virtual void OnRoutedEvent(IRoutedEvent evnt){}
         public virtual void OnNodeEvent(IAmEventMessage message) { }
     }
 }

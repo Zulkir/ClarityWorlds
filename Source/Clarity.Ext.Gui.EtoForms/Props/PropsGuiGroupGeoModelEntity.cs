@@ -1,10 +1,10 @@
 ﻿using System;
 using Clarity.Common.Numericals.Colors;
 using System.IO;
+using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.Media.Media3D;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Infra.Files;
-using Clarity.Core.AppCore.ResourceTree.Assets;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.AppCore.WorldTree;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Objects.WorldTree;
@@ -100,7 +100,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 return;
             var eColor = colorControl.Value;
             var cColor = new Color4(eColor.R, eColor.G, eColor.B, eColor.A);
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Color, cColor);
+            boundComponent.Color = cColor;
+            undoRedo.OnChange();
         }
 
         private void OnLoadTextureClicked(object sender, EventArgs eventArgs)
@@ -125,54 +126,67 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             };
             var assetLoadResult = assetService.Load(loadInfo);
             var texture = assetLoadResult.Successful ? assetLoadResult.Asset.Resource as IImage : null;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Texture, texture);
+            boundComponent.Texture = texture;
+            undoRedo.OnChange();
         }
 
         private void OnIgnoreLightingChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.IgnoreLighting, cIgnoreLighting.Checked ?? false);
+            boundComponent.IgnoreLighting = cIgnoreLighting.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnNoSpecularChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.NoSpecular, cNoSpecular.Checked ?? false);
+            boundComponent.NoSpecular = cNoSpecular.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnSingleColorChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.SingleColor, cSingleColor.Checked ?? false);
-    }
+            boundComponent.SingleColor = cSingleColor.Checked ?? false;
+            undoRedo.OnChange();
+        }
 
         private void OnOrthoChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Ortho, cOrtho.Checked ?? false);
+            boundComponent.Ortho = cOrtho.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnDontCullChanged(object sender, EventArgs eventArgs)
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.DontCull, cDontCull.Checked ?? false);
+            boundComponent.DontCull = cDontCull.Checked ?? false;
+            undoRedo.OnChange();
         }
 
         private void OnExportClick(object sender, EventArgs eventArgs)
         {
-            var dialog = new SaveFileDialog();
-            dialog.FileName = ".cgm";
-            var result = dialog.ShowDialog(cExport.ParentWindow);
-            if (result != DialogResult.Ok)
-                return;
-            var fileName = dialog.FileName;
-            using (var writer = new StreamWriter(fileName))
-                FlexibleModelWriter.WriteModel(writer, boundComponent.Model);
+            switch (boundComponent.Model)
+            {
+                case IFlexibleModel flexibleModel:
+                {
+                    var dialog = new SaveFileDialog();
+                    dialog.FileName = ".cgm";
+                    var result = dialog.ShowDialog(cExport.ParentWindow);
+                    if (result != DialogResult.Ok)
+                        return;
+                    var fileName = dialog.FileName;
+                    using (var writer = new StreamWriter(fileName))
+                        FlexibleModelWriter.WriteModel(writer, flexibleModel);
+                    break;
+                }
+            }
         }
     }
 }

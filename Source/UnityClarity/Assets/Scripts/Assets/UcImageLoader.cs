@@ -1,5 +1,5 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
+using Clarity.Common.CodingUtilities;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Resources;
@@ -9,12 +9,17 @@ namespace Assets.Scripts.Assets
 {
     public class UcImageLoader : IImageLoader
     {
-        public IImage Load(Stream stream)
+        public bool TryLoad(Stream stream, out IImage image, out ErrorInfo error)
         {
             var texture = new Texture2D(1, 1);
-            if (!texture.LoadImage(stream.ReadToEnd(), true))
-                throw new Exception("Failed to load image data");
-            return new UcImage(texture, ResourceVolatility.Immutable);
+            var data = stream.ReadToEnd();
+            if (!texture.LoadImage(data, true))
+            {
+                image = null;
+                error = new ErrorInfo("Failed to load image data");
+            }
+            image = new UcImage(texture, ResourceVolatility.Immutable);
+            return true;
         }
     }
 }

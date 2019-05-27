@@ -1,13 +1,15 @@
-﻿namespace Clarity.Engine.EventRouting
+﻿using System;
+
+namespace Clarity.Engine.EventRouting
 {
     public struct EventSortingContradiction
     {
-        public string EventName;
+        public Type EventType;
         public string ContradictionString;
 
-        public EventSortingContradiction(string eventName, string contradictionString)
+        public EventSortingContradiction(Type eventType, string contradictionString)
         {
-            EventName = eventName;
+            EventType = eventType;
             ContradictionString = contradictionString;
         }
     }

@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals.Algebra;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Objects.Caching;
 using Clarity.Engine.Platforms;
 
@@ -19,7 +20,7 @@ namespace Clarity.Engine.Objects.WorldTree
 
         public T GetComponent<T>() where T : class, ISceneNodeComponent  => Components.OfType<T>().Last();
         public T SearchComponent<T>() where T : class, ISceneNodeComponent => Components.OfType<T>().LastOrDefault();
-        public IEnumerable<T> SearchComponents<T>() where T : class, ISceneNodeComponent => Components.OfType<T>();
+        public IEnumerable<T> SearchComponents<T>() where T : class, ISceneNodeComponent => Components.OfType<T>().Reverse();
         public bool HasComponent<T>() where T : class, ISceneNodeComponent => Components.OfType<T>().Any();
 
         public bool IsDescendantOf(ISceneNode node) => ParentNode != null && (ParentNode == node || ParentNode.IsDescendantOf(node));
@@ -42,6 +43,14 @@ namespace Clarity.Engine.Objects.WorldTree
                 component.Update(frameTime);
             foreach (var childNode in ChildNodes)
                 childNode.Update(frameTime);
+        }
+
+        public void OnRoutedEvent(IRoutedEvent evnt)
+        {
+            foreach (var component in Components)
+                component.OnRoutedEvent(evnt);
+            foreach (var childNode in ChildNodes)
+                childNode.OnRoutedEvent(evnt);
         }
 
         public override void AmOnChildEvent(IAmEventMessage message)

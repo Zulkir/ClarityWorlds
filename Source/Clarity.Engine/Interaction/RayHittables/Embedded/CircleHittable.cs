@@ -12,16 +12,20 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
         private readonly Transform planeTransform;
         private readonly Func<TComponent, Circle2> getLocalCirlce;
         private readonly Func<TComponent, float> getHitDistanceOffset;
+        private readonly int intTag;
+        private readonly string strTag;
 
         private ISceneNode Node => master.Node;
 
         public CircleHittable(TComponent master, Transform planeTransform,
-            Func<TComponent, Circle2> getLocalCirlce, Func<TComponent, float> getHitDistanceOffset)
+            Func<TComponent, Circle2> getLocalCirlce, Func<TComponent, float> getHitDistanceOffset, int intTag = 0, string strTag = null)
         {
             this.master = master;
             this.getLocalCirlce = getLocalCirlce;
             this.getHitDistanceOffset = getHitDistanceOffset;
             this.planeTransform = planeTransform;
+            this.intTag = intTag;
+            this.strTag = strTag;
         }
 
         public RayHitResult HitWithClick(RayHitInfo clickInfo)
@@ -35,14 +39,25 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
                 return RayHitResult.Failure();
 
             var point = localRay.Point + localRay.Direction * t;
-            var rectangle = getLocalCirlce(master);
-            if (!rectangle.Contains(point.Xy))
+            var cirlce = getLocalCirlce(master);
+            if (!cirlce.Contains(point.Xy))
                 return RayHitResult.Failure();
 
             var globalT = t / globalTransformInverse.Scale;
-            var globalPoint = globalRay.Point + globalRay.Direction * globalT;
             var offset = getHitDistanceOffset(master);
-            return RayHitResult.Success(Node, globalPoint, globalT + offset);
+            var globalPoint = globalRay.Point + globalRay.Direction * globalT;
+            // todo: consider rotation
+            var localPoint = new Vector3(point.Xy - cirlce.Center, 0) / cirlce.Radius;
+            return new RayHitResult
+            {
+                Successful = true,
+                Node = Node,
+                Distance = globalT + offset,
+                GlobalHitPoint = globalPoint,
+                LocalHitPoint = localPoint,
+                IntTag = intTag,
+                StrTag = strTag
+            };
         }
     }
 }

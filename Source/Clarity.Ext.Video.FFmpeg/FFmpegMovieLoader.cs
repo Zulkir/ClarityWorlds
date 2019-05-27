@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Clarity.Core.AppCore.ResourceTree.Assets;
+using Clarity.App.Worlds.Assets;
 
 namespace Clarity.Ext.Video.FFmpeg
 {

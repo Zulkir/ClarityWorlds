@@ -1,5 +1,5 @@
-﻿using Clarity.Common.Infra.Di;
-using Clarity.Core.AppCore.ResourceTree.Assets;
+﻿using Clarity.App.Worlds.Assets;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Media.Movies;
 using Clarity.Engine.Platforms;
 

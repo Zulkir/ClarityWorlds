@@ -9,8 +9,8 @@ namespace Clarity.Engine.EventRouting
         IReadOnlyList<Type> AffectedServiceTypes { get; }
     }
 
-    public interface IRoutedEventSubscription<in TArgs> : IRoutedEventSubscription
+    public interface IRoutedEventSubscription<in TEvent> : IRoutedEventSubscription
     {
-        Action<IEventRoutingContext, TArgs> HandlerAction { get; }
+        Action<TEvent> HandlerAction { get; }
     }
 }

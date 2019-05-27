@@ -1,4 +1,4 @@
-﻿using Clarity.Common.Infra.Di;
+﻿using Clarity.Common.Infra.DependencyInjection;
 
 namespace Clarity.Engine.Platforms
 {

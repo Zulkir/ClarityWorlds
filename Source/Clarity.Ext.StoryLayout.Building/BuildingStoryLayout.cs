@@ -1,27 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.Coroutines;
+using Clarity.App.Worlds.Interaction.Placement;
+using Clarity.App.Worlds.Navigation;
+using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.Views.Cameras;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Core.AppCore.Coroutines;
-using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.RayHittables.Embedded;
-using Clarity.Engine.Media.Images;
-using Clarity.Engine.Media.Models.Flexible;
-using Clarity.Engine.Media.Models.Flexible.Embedded;
+using Clarity.Engine.Media.Models;
+using Clarity.Engine.Media.Models.Explicit;
+using Clarity.Engine.Media.Models.Explicit.Embedded;
 using Clarity.Engine.Objects.WorldTree;
-using Clarity.Engine.Objects.WorldTree.RenderStageDistribution;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Visualization.Cameras.Embedded;
-using Clarity.Engine.Visualization.Components;
+using Clarity.Engine.Visualization.Elements;
+using Clarity.Engine.Visualization.Elements.Materials;
+using Clarity.Engine.Visualization.Elements.RenderStates;
+using Clarity.Engine.Visualization.Elements.Samplers;
 using Clarity.Engine.Visualization.Graphics;
-using Clarity.Engine.Visualization.Graphics.Materials;
 
 namespace Clarity.Ext.StoryLayout.Building
 {
@@ -35,9 +37,9 @@ namespace Clarity.Ext.StoryLayout.Building
         private readonly IInputService inputService;
         private readonly Lazy<INavigationService> navigationServiceLazy;
 
-        private readonly IFlexibleModel planeModel;
-        private readonly IFlexibleModel lineModel;
-        private readonly IFlexibleModel frustumModel;
+        private readonly IModel3D planeModel;
+        private readonly IModel3D lineModel;
+        private readonly IModel3D frustumModel;
         private readonly IMaterial[] colorMaterials;
         private readonly IStandardMaterial floorMaterial;
         private readonly IStandardMaterial ceilingMaterial;
@@ -46,6 +48,7 @@ namespace Clarity.Ext.StoryLayout.Building
         private readonly IStandardMaterial frustumMaterial;
         private readonly IStandardMaterial lineMaterial;
         private readonly IStandardMaterial currentLineMaterial;
+        private readonly IRenderState lineRenderState;
 
         private const float FrustumDistance = 2.414213562373095f;
 
@@ -61,34 +64,52 @@ namespace Clarity.Ext.StoryLayout.Building
             frustumModel = embeddedResources.SimpleFrustumModel();
             colorMaterials = new IMaterial[]
             {
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(1f, 0f, 0f) * 0.8f, 1.0f))) {IgnoreLighting = true},
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(0f, 1f, 0f) * 0.8f, 1.0f))) {IgnoreLighting = true},
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(0f, 0f, 1f) * 0.8f, 1.0f))) {IgnoreLighting = true},
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(1f, 1f, 0f) * 0.8f, 1.0f))) {IgnoreLighting = true},
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(1f, 0f, 1f) * 0.8f, 1.0f))) {IgnoreLighting = true},
-                new StandardMaterial(new SingleColorPixelSource(new Color4(new Color3(0f, 1f, 1f) * 0.8f, 1.0f))) {IgnoreLighting = true},
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(1f, 0f, 0f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(0f, 1f, 0f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(0f, 0f, 1f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(1f, 1f, 0f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(1f, 0f, 1f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
+                StandardMaterial.New().SetDiffuseColor(new Color4(new Color3(0f, 1f, 1f) * 0.8f, 1.0f)).SetIgnoreLighting(true),
             };
-            frustumMaterial = new StandardMaterial(new SingleColorPixelSource(new Color4(0f, 1f, 0f))) {IgnoreLighting = true};
-            lineMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.White)) {IgnoreLighting = true, LineWidth = 3};
-            currentLineMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Red)) {IgnoreLighting = true, LineWidth = 3};
+            frustumMaterial = StandardMaterial.New()
+                .SetDiffuseColor(new Color4(0f, 1f, 0f))
+                .SetIgnoreLighting(true)
+                .FromGlobalCache();
+            lineMaterial = StandardMaterial.New()
+                .SetDiffuseColor(Color4.White)
+                .SetIgnoreLighting(true)
+                .FromGlobalCache();
+            currentLineMaterial = StandardMaterial.New()
+                .SetDiffuseColor(Color4.Red)
+                .SetIgnoreLighting(true)
+                .FromGlobalCache();
+            lineRenderState = StandardRenderState.New().SetLineWidth(3).FromGlobalCache();
 
-            floorMaterial = new StandardMaterial(embeddedResources.Image("Textures/museum_floor.jpg"))
+            var mirrorSampler = new ImageSampler
             {
-                NoSpecular = true,
-            };
-            ceilingMaterial = new StandardMaterial(embeddedResources.Image("Textures/museum_ceiling.jpg"))
-            {
-                NoSpecular = true,
-            };
-            wallMaterial = new StandardMaterial(embeddedResources.Image("Textures/museum_wall.jpg"))
-            {
-                NoSpecular = true,
-            };
-            rawWallMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Green))
-            {
-                IgnoreLighting = true,
-                LineWidth = 2
-            };
+                AddressModeU = ImageSamplerAddressMode.Mirror,
+                AddressModeV = ImageSamplerAddressMode.Mirror,
+                AddressModeW = ImageSamplerAddressMode.Mirror,
+            }.FromGlobalCache();
+
+            floorMaterial = StandardMaterial.New()
+                .SetDiffuseMap(embeddedResources.Image("Textures/museum_floor.jpg"))
+                .SetNoSpecular(true)
+                .SetSampler(mirrorSampler)
+                .FromGlobalCache();
+            ceilingMaterial = StandardMaterial.New()
+                .SetDiffuseMap(embeddedResources.Image("Textures/museum_ceiling.jpg"))
+                .SetNoSpecular(true)
+                .SetSampler(mirrorSampler)
+                .FromGlobalCache();
+            wallMaterial = StandardMaterial.New()
+                .SetDiffuseMap(embeddedResources.Image("Textures/yellow224.png"))
+                .SetNormalMap(embeddedResources.Image("Textures/museum_wall_2_norm.jpg"))
+                .FromGlobalCache();
+            rawWallMaterial = StandardMaterial.New()
+                .SetDiffuseColor(Color4.Green)
+                .SetIgnoreLighting(true)
+                .FromGlobalCache();
         }
 
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
@@ -97,8 +118,6 @@ namespace Clarity.Ext.StoryLayout.Building
             placementAlgorithm.Run();
             var globalWallSegments = new List<BuildingWallSegment>();
             ArrangeAndDecorateInternal(sg.Root, placementAlgorithm, globalWallSegments);
-            var sceneComponent = sg.NodeObjects[sg.Root].Scene;
-            sceneComponent.RenderStageDistribution = new FocusedOnlyRenderStageDistribution();
             return new BuildingStoryLayoutInstance(inputService, placementAlgorithm, globalWallSegments);
         }
 
@@ -120,7 +139,9 @@ namespace Clarity.Ext.StoryLayout.Building
             var hasChildren = children.Any();
 
             var halfSize = placementAlgorithm.HalfSizes[index];
-            node.Transform = placementAlgorithm.RelativeTransforms[index];
+            node.Transform = hasChildren 
+                ? placementAlgorithm.RelativeTransforms[index]
+                : placementAlgorithm.RelativeTransforms[index] * Transform.Translation(0, BuildingConstants.EyeHeight, 0);
 
             var dynamicParts = new StoryNodeDynamicParts();
             var visualElems = new List<IVisualElement>();
@@ -134,13 +155,13 @@ namespace Clarity.Ext.StoryLayout.Building
             if (digResult.WallSegments.Any())
             {
                 var wallModel = BuildWallModel(digResult.WallSegments);
-                    visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
-                        .SetModel(wallModel)
-                        .SetMaterial(wallMaterial)
-                        .SetHide(x => x.HideMain)
-                        //.SetZOffset(GraphicsHelper.MinZOffset * depth)
-                );
-                // todo: remove?
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
+                    .SetModel(wallModel)
+                    .SetMaterial(wallMaterial)
+                    .SetRenderState(StandardRenderState.New()
+                        .SetCullFace(CullFace.Back)
+                        .FromGlobalCache())
+                    .SetHide(x => x.HideMain));
                 foreach (var wallSegment in digResult.WallSegments)
                 {
                     globalWallSegments.Add(new BuildingWallSegment
@@ -152,15 +173,14 @@ namespace Clarity.Ext.StoryLayout.Building
                     });
                 }
 
-
                 var wallPrimitivesModel = BuildWallModel4(digResult.RawWallSegments);
-                visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(wallPrimitivesModel)
                     .SetMaterial(rawWallMaterial)
                     .SetHide(x => !x.ShowAux3));
 
                 var filteredWallPrimitivesModel = BuildWallModel4(digResult.WallSegments);
-                visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(filteredWallPrimitivesModel)
                     .SetMaterial(rawWallMaterial)
                     .SetHide(x => !x.ShowAux4));
@@ -168,11 +188,13 @@ namespace Clarity.Ext.StoryLayout.Building
 
             foreach (var flooring in digResult.Floorings)
             {
-                visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(BuildFloorOrCeiling(new Size3(flooring.HalfWidth, 0, flooring.HalfHeight), PlaneModelSourceNormalDirection.Positive))
                     .SetMaterial(floorMaterial)
+                    .SetRenderState(StandardRenderState.New()
+                        .SetCullFace(CullFace.Back)
+                        .FromGlobalCache())
                     .SetTransform(Transform.Translation(flooring.Center.X, 0, flooring.Center.Y))
-                    .SetCullFace(CgCullFace.Back)
                     .SetHide(x => x.HideMain));
             }
 
@@ -183,23 +205,29 @@ namespace Clarity.Ext.StoryLayout.Building
                     var laneLoc = lane;
                     var navigationService = navigationServiceLazy.Value;
                     var model = BuildLaneModel(lane);
-                    visualElems.Add(new CgModelVisualElement()
+                    visualElems.Add(ModelVisualElement.New()
                         .SetModel(model)
                         .SetMaterial(x => new UnorderedPair<int>(navigationService.Previous.Id, navigationService.Current.Id) == new UnorderedPair<int>(laneLoc.Edge.First, laneLoc.Edge.Second) ? currentLineMaterial : lineMaterial)
-                        // todo: remove *5
-                        .SetZOffset(GraphicsHelper.MinZOffset * 5));
+                        .SetRenderState(StandardRenderState.New()
+                            // todo: remove *5
+                            .SetZOffset(GraphicsHelper.MinZOffset * 5)
+                            .FromGlobalCache()));
                 }
             }
-
-            dynamicParts.Hittable = new RectangleHittable<ISceneNode>(node, Transform.Rotate(Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -1f * depth);
+            
+            dynamicParts.Hittable = hasChildren 
+                ? new RectangleHittable<ISceneNode>(node, Transform.Rotate(Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -0.01f * depth) 
+                : new RectangleHittable<ISceneNode>(node, new Transform(1, Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ), new Vector3(0, -BuildingConstants.EyeHeight, 0)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -0.01f * depth);
 
             if (depth == 1)
             {
-                visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(BuildFloorOrCeiling(halfSize, PlaneModelSourceNormalDirection.Negative))
                     .SetMaterial(ceilingMaterial)
+                    .SetRenderState(StandardRenderState.New()
+                        .SetCullFace(CullFace.Back)
+                        .FromGlobalCache())
                     .SetTransform(Transform.Translation(0, BuildingConstants.CeilingHeight, 0))
-                    .SetCullFace(CgCullFace.Back)
                     .SetHide(x => x.HideMain));
             }
 
@@ -220,11 +248,9 @@ namespace Clarity.Ext.StoryLayout.Building
             }
             else
             {
-                var target = Vector3.UnitY * halfSize.Height;
                 dynamicParts.DefaultViewpointMechanism =
                     new WallDefaultViewpointMechanism(node, new TargetedControlledCameraY.Props
                     {
-                        Target = target,
                         Distance = FrustumDistance,
                         FieldOfView = MathHelper.PiOver4,
                         Pitch = 0,
@@ -233,12 +259,16 @@ namespace Clarity.Ext.StoryLayout.Building
                         ZFar = 1000f
                     });
                 
-                visualElems.Add(new CgModelVisualElement<IStoryComponent>(rootStoryComponent)
+                visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(frustumModel)
                     .SetMaterial(frustumMaterial)
-                    .SetTransform(Transform.Translation(target))
-                    .SetZOffset(GraphicsHelper.MinZOffset * (depth + 1))
+                    .SetRenderState(StandardRenderState.New()
+                        .SetZOffset(GraphicsHelper.MinZOffset * (depth + 1))
+                        .FromGlobalCache())
                     .SetHide(x => !x.ShowAux1));
+
+                dynamicParts.PlacementSurface2D = new PlanarPlacementSurface(node, new Transform(2f, Quaternion.Identity, new Vector3(0, 0, -MathHelper.FrustumDistance)));
+                dynamicParts.PlacementSurface3D = new PlanarPlacementSurface(node, Transform.Scaling(0.1f));
             }
 
             dynamicParts.VisualElements = visualElems;
@@ -246,13 +276,16 @@ namespace Clarity.Ext.StoryLayout.Building
             aspect.SetDynamicParts(dynamicParts);
         }
 
-        private CgModelVisualElement<object> CreateLaneElem(Vector3 prevPoint, Vector3 currPoint, int disambiguator, int depth)
+        private ModelVisualElement<object> CreateLaneElem(Vector3 prevPoint, Vector3 currPoint, int disambiguator, int depth)
         {
-            return new CgModelVisualElement()
+            return ModelVisualElement.New()
                 .SetModel(lineModel)
                 .SetMaterial(lineMaterial)
-                .SetTransform(CalcCorridorSegmentTransform(prevPoint, currPoint, disambiguator))
-                .SetZOffset(GraphicsHelper.MinZOffset * (depth + 1));
+                .SetRenderState(StandardRenderState.New()
+                    .SetLineWidth(3)
+                    .SetZOffset(GraphicsHelper.MinZOffset * (depth + 1))
+                    .FromGlobalCache())
+                .SetTransform(CalcCorridorSegmentTransform(prevPoint, currPoint, disambiguator));
         }
 
         private static Transform CalcCorridorSegmentTransform(Vector3 p1, Vector3 p2, int disambiguator)
@@ -265,15 +298,15 @@ namespace Clarity.Ext.StoryLayout.Building
             return new Transform(scale, rotation, offset);
         }
 
-        private IFlexibleModel BuildLaneModel(BuildingLane lane)
+        private IExplicitModel BuildLaneModel(BuildingLane lane)
         {
             var vertices = lane.GlobalPath
                 .Where(x => x.P0.X != x.P2.X)
                 .Select(x => ApplyDisambiguator(x, lane.Disambiguator))
                 .SelectMany(x => x.ToEnumPolyline(0.01f))
-                .Select(x => new CgVertexPosNormTex(x, Vector3.UnitY, Vector2.Zero))
+                .Select(x => new VertexPos(x))
                 .ToArray();
-            return FlexibleModelHelpers.CreateSimple(null, vertices, null, FlexibleModelPrimitiveTopology.LineStrip);
+            return ExplicitModel.FromVertices(vertices, null, ExplicitModelPrimitiveTopology.LineStrip);
         }
 
         private static BezierQuadratic3 ApplyDisambiguator(BezierQuadratic3 bezier, int disambiguator)
@@ -286,21 +319,9 @@ namespace Clarity.Ext.StoryLayout.Building
             return new BezierQuadratic3(bezier.P0 + offset, bezier.P1 + offset, bezier.P2 + offset);
         }
 
-        private IFlexibleModel BuildWallModel(List<Vector3> points)
+        private static IExplicitModel BuildWallModel(List<BuildingWallSegment> wallSegments)
         {
-            var vertices = points.Select(x => new CgVertexPosNormTex(x, Vector3.UnitY, Vector2.Zero)).ToArray();
-            return FlexibleModelHelpers.CreateSimple(null, vertices, null, FlexibleModelPrimitiveTopology.LineStrip);
-        }
-
-        private IFlexibleModel BuildWallModel2(List<LineSegment3> segments)
-        {
-            var vertices = segments.SelectMany(x => new[]{x.Point1, x.Point2}).Select(x => new CgVertexPosNormTex(x, Vector3.UnitY, Vector2.Zero)).ToArray();
-            return FlexibleModelHelpers.CreateSimple(null, vertices, null, FlexibleModelPrimitiveTopology.LineList);
-        }
-
-        private static IFlexibleModel BuildWallModel(List<BuildingWallSegment> wallSegments)
-        {
-            var vertices = new CgVertexPosNormTex[wallSegments.Count * 4];
+            var vertices = new VertexPosTanNormTex[wallSegments.Count * 4];
             var indices = new int[wallSegments.Count * 6];
             for (int i = 0; i < wallSegments.Count; i++)
             {
@@ -308,13 +329,14 @@ namespace Clarity.Ext.StoryLayout.Building
                 var height = wallSegments[i].Height;
                 var vertexOffset = i * 4;
                 var indexOffset = i * 6;
-                var normal = Vector3.Cross(segment.Point2 - segment.Point1, Vector3.UnitY).Normalize();
+                var tangent = (segment.Point2 - segment.Point1).Normalize();
+                var normal = Vector3.Cross(tangent, Vector3.UnitY).Normalize();
                 var texCoordWidth = Math.Max((float)Math.Round(segment.Length / 2), 1f);
                 var texCoordHeight = Math.Max((float)Math.Round(height / 2), 1f);
-                vertices[vertexOffset + 0] = new CgVertexPosNormTex(segment.Point1, normal, new Vector2(0, 0));
-                vertices[vertexOffset + 1] = new CgVertexPosNormTex(segment.Point1 + height * Vector3.UnitY, normal, new Vector2(0, texCoordHeight));
-                vertices[vertexOffset + 2] = new CgVertexPosNormTex(segment.Point2 + height * Vector3.UnitY, normal, new Vector2(texCoordWidth, texCoordHeight));
-                vertices[vertexOffset + 3] = new CgVertexPosNormTex(segment.Point2, normal, new Vector2(texCoordWidth, 0));
+                vertices[vertexOffset + 0] = new VertexPosTanNormTex(segment.Point1, tangent, normal, new Vector2(0, texCoordHeight));
+                vertices[vertexOffset + 1] = new VertexPosTanNormTex(segment.Point1 + height * Vector3.UnitY, tangent, normal, new Vector2(0, 0));
+                vertices[vertexOffset + 2] = new VertexPosTanNormTex(segment.Point2 + height * Vector3.UnitY, tangent, normal, new Vector2(texCoordWidth, 0));
+                vertices[vertexOffset + 3] = new VertexPosTanNormTex(segment.Point2, tangent, normal, new Vector2(texCoordWidth, texCoordHeight));
                 indices[indexOffset + 0] = vertexOffset;
                 indices[indexOffset + 1] = vertexOffset + 1;
                 indices[indexOffset + 2] = vertexOffset + 2;
@@ -322,25 +344,23 @@ namespace Clarity.Ext.StoryLayout.Building
                 indices[indexOffset + 4] = vertexOffset + 2;
                 indices[indexOffset + 5] = vertexOffset + 3;
             }
-            
-            return FlexibleModelHelpers.CreateSimple(null, vertices, indices, FlexibleModelPrimitiveTopology.TriangleList);
+            return ExplicitModel.FromVertices(vertices, indices, ExplicitModelPrimitiveTopology.TriangleList);
         }
 
-        private static IFlexibleModel BuildWallModel4(List<BuildingWallSegment> wallSegments)
+        private static IExplicitModel BuildWallModel4(List<BuildingWallSegment> wallSegments)
         {
-            var vertices = new CgVertexPosNormTex[wallSegments.Count * 2];
+            var vertices = new VertexPos[wallSegments.Count * 2];
             for (int i = 0; i < wallSegments.Count; i++)
             {
                 var segment = wallSegments[i].Basement;
                 var vertexOffset = i * 2;
-                vertices[vertexOffset + 0] = new CgVertexPosNormTex(segment.Point1, Vector3.UnitY, new Vector2(0, 0));
-                vertices[vertexOffset + 1] = new CgVertexPosNormTex(segment.Point2, Vector3.UnitY, new Vector2(0, 0));
+                vertices[vertexOffset + 0] = new VertexPos(segment.Point1);
+                vertices[vertexOffset + 1] = new VertexPos(segment.Point2);
             }
-            
-            return FlexibleModelHelpers.CreateSimple(null, vertices, null, FlexibleModelPrimitiveTopology.LineList);
+            return ExplicitModel.FromVertices(vertices, null, ExplicitModelPrimitiveTopology.LineList);
         }
 
-        private IFlexibleModel BuildFloorOrCeiling(Size3 halfSize, PlaneModelSourceNormalDirection direction)
+        private IModel3D BuildFloorOrCeiling(Size3 halfSize, PlaneModelSourceNormalDirection direction)
         {
             return embeddedResources.PlaneModel(PlaneModelSourcePlane.Xz, direction, halfSize.Width, halfSize.Depth, 1, 1);
         }

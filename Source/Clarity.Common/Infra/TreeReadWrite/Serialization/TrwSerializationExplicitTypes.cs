@@ -4,6 +4,7 @@
     {
         Never,
         WhenAmbiguous,
+        WhenObject,
         WhenAmbiguousOrObject,
         Always
     }

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Clarity.Common.Infra.TreeReadWrite.Paths;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Formats.Xml
 {
@@ -206,14 +207,7 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Xml
             pathBuilder.OnValue();
         }
 
-        public void SInt8(sbyte val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void UInt8(byte val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void SInt16(short val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void UInt16(ushort val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
         public void SInt32(int val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void UInt32(uint val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void SInt64(long val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
-        public void UInt64(ulong val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
         public void Float32(float val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
         public void Float64(double val) => StructuredVal(val.ToString(CultureInfo.InvariantCulture));
         #endregion

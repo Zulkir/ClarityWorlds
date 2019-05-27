@@ -1,11 +1,13 @@
 ﻿using System;
-using Clarity.Common.Infra.Di;
-using Clarity.Core.AppCore.Gui;
+using Clarity.App.Worlds.Gui;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Gui;
+using Clarity.Engine.Gui.MessageBoxes;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Platforms;
+using Clarity.Engine.Resources.SaveLoad;
 using Clarity.Ext.Gui.EtoForms.AppModes;
 using Clarity.Ext.Gui.EtoForms.Common;
 using Clarity.Ext.Gui.EtoForms.Props;
@@ -51,7 +53,7 @@ namespace Clarity.Ext.Gui.EtoForms
             di.Bind<IPropsGui>().To<PropsGui>();
             di.Bind<RenderControl>().To<RenderControl>();
             di.Bind<IRtImageBuilder>().To<RtImageBuilder>();
-            di.Bind<IClipboardService>().To<ClipboardService>();
+            di.Bind<IClipboard>().To<EcClipboard>();
             di.Bind<IFontFamilyCache>().To<FontFamilyCache>();
             di.Bind<IRichTextMeasurer>().To<RichTextMeasurer>();
             di.Bind<IAppModesCommands>().To<AppModesCommands>();
@@ -60,6 +62,9 @@ namespace Clarity.Ext.Gui.EtoForms
             di.Bind<IMainForm>().To<DefaultMainForm>();
             di.Bind<IMouseInputProvider>().To<MouseInputProvider>();
             di.Bind<IKeyboardInputProvider>().To<KeyboardInputProvider>();
+            di.Bind<IWindowManager>().To<WindowManager>();
+            di.Bind<IMessageBoxService>().To<MessageBoxService>();
+            di.BindMulti<IResourceSaver>().To<ImageResourceSaver>();
         }
 
         public void OnStartup(IDiContainer di)
@@ -67,6 +72,7 @@ namespace Clarity.Ext.Gui.EtoForms
             di.Get<IGui>();
             di.Get<IMouseInputProvider>();
             di.Get<IKeyboardInputProvider>();
+            di.Get<IWindowManager>();
         }
     }
 }

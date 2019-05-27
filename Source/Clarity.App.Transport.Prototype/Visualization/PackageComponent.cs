@@ -8,8 +8,8 @@ using Clarity.Engine.Interaction.RayHittables.Embedded;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Utilities;
-using Clarity.Engine.Visualization.Components;
-using Clarity.Engine.Visualization.Graphics;
+using Clarity.Engine.Visualization.Elements;
+using Clarity.Engine.Visualization.Elements.Effects;
 
 namespace Clarity.App.Transport.Prototype.Visualization
 {
@@ -27,7 +27,7 @@ namespace Clarity.App.Transport.Prototype.Visualization
             this.commonMaterials = commonMaterials;
             this.playback = playback;
             var model = embeddedResources.SphereModel(32);
-            var cubeElem = new CgModelVisualElement<PackageComponent>(this)
+            var cubeElem = new ModelVisualElement<PackageComponent>(this)
                 .SetModel(model)
                 .SetMaterial(x => x.commonMaterials.GetPackageMaterial(x.Package.Entry.Header.Code));
             visualElements = new IVisualElement[] { cubeElem };
@@ -37,6 +37,11 @@ namespace Clarity.App.Transport.Prototype.Visualization
         public IEnumerable<IVisualElement> GetVisualElements()
         {
             return visualElements;
+        }
+
+        public IEnumerable<IVisualEffect> GetVisualEffects()
+        {
+            yield break;
         }
 
         public static ISceneNode CreateNode()

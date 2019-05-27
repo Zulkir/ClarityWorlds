@@ -1,28 +1,27 @@
 ﻿using System;
 using Clarity.App.Transport.Prototype.TransportLogs;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Engine.Media.Images;
-using Clarity.Engine.Visualization.Graphics.Materials;
+using Clarity.Engine.Visualization.Elements.Materials;
 
 namespace Clarity.App.Transport.Prototype.Visualization
 {
     public class CommonMaterials : ICommonMaterials
     {
-        private IMaterial siteMaterial;
-        private IMaterial createPackageMaterial;
-        private IMaterial readPackageMaterial;
-        private IMaterial updatePackageMaterial;
-        private IMaterial deletePackageMaterial;
-        private IMaterial migratePackageMaterial;
+        private readonly IMaterial siteMaterial;
+        private readonly IMaterial createPackageMaterial;
+        private readonly IMaterial readPackageMaterial;
+        private readonly IMaterial updatePackageMaterial;
+        private readonly IMaterial deletePackageMaterial;
+        private readonly IMaterial migratePackageMaterial;
 
         public CommonMaterials()
         {
-            siteMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.White));
-            createPackageMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Green));
-            readPackageMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Blue));
-            updatePackageMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Yellow));
-            deletePackageMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Red));
-            migratePackageMaterial = new StandardMaterial(new SingleColorPixelSource(Color4.Magenta));
+            siteMaterial = StandardMaterial.New().SetDiffuseColor(Color4.White).FromGlobalCache();
+            createPackageMaterial = StandardMaterial.New().SetDiffuseColor(Color4.Green).FromGlobalCache();
+            readPackageMaterial = StandardMaterial.New().SetDiffuseColor(Color4.Blue).FromGlobalCache();
+            updatePackageMaterial = StandardMaterial.New().SetDiffuseColor(Color4.Yellow).FromGlobalCache();
+            deletePackageMaterial = StandardMaterial.New().SetDiffuseColor(Color4.Red).FromGlobalCache();
+            migratePackageMaterial = StandardMaterial.New().SetDiffuseColor(Color4.Magenta).FromGlobalCache();
         }
 
         public IMaterial GetSiteMaterial()
@@ -43,7 +42,6 @@ namespace Clarity.App.Transport.Prototype.Visualization
                 case LogEntryCode.MigrationEnd:  return migratePackageMaterial;
                 default: throw new ArgumentOutOfRangeException(nameof(code), code, null);
             }
-            throw new System.NotImplementedException();
         }
     }
 }

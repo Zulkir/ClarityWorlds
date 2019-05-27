@@ -10,6 +10,7 @@
         public const float PiOver3 = 1.0471975511965976f;
         public const float PiOver4 = 0.78539816339744830961566084581988f;
         public const float Sqrt2 = 1.4142135623730951f;
+        public const float FrustumDistance = 2.414213562373095f;
         public static float Sin(float a) => (float)System.Math.Sin(a);
         public static float Cos(float a) => (float)System.Math.Cos(a);
         public static float Tan(float a) => (float)System.Math.Tan(a);

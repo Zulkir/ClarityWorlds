@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using Clarity.Common.CodingUtilities.Exceptions;
-using Clarity.Common.Infra.Di;
+using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Visualization.Viewports;
+using Clarity.Ext.Rendering.Ogl3.Implementations;
 using ObjectGL.Api.Context;
 using ObjectGL.CachingImpl.Context;
 using ObjectGL.Otk;
@@ -33,11 +34,9 @@ namespace Clarity.Ext.Rendering.Ogl3
 
             var tkContext = (IGraphicsContext)renderingArea.RenderLibHandle;
             var glContext = new Context(new DefaultGL(), new ContextInfra(tkContext));
-            var mainThreadDisposer = new MainThreadDisposer();
-            infra = new GraphicsInfra(glContext, mainThreadDisposer);
-
-            di.Bind<IGraphicsInfra>().AsLastChoice.To(infra);
+            
             di.Bind<IContext>().AsLastChoice.To(glContext);
+            infra = di.Get<IGraphicsInfra>();
 
             renderingRuntime = di.Get<IRenderingRuntime>();
 
@@ -47,7 +46,7 @@ namespace Clarity.Ext.Rendering.Ogl3
             };
             renderLoopDispatcher.Closing += () =>
             {
-                mainThreadDisposer.FinishedWorking = true;
+                infra.MainThreadDisposer.FinishedWorking = true;
             };
         }
 

@@ -1,7 +1,7 @@
 using System;
 using System.Linq;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Numericals.Colors;
-using Clarity.Core.AppCore.UndoRedo;
 using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
@@ -316,19 +316,19 @@ namespace Clarity.Ext.Gui.EtoForms.Props
 
         private void OnAlignmentChanged(object sender, EventArgs eventArgs) => 
             OnParaPropertyChanged((RtParagraphAlignment) cAlignment.SelectedValue,
-                (p, v) => undoRedo.Common.ChangeProperty(p.Style, x => x.Alignment, v));
+                (p, v) => p.Style.Alignment = v);
 
         private void OnDirectionChanged(object sender, EventArgs eventArgs) =>
             OnParaPropertyChanged((RtParagraphDirection)cDirection.SelectedValue,
-                (p, v) => undoRedo.Common.ChangeProperty(p.Style, x => x.Direction, v));
+                (p, v) => p.Style.Direction = v);
 
         private void OnTabCountChanged(object sender, EventArgs eventArgs) =>
             OnParaPropertyChanged((int)cTabCount.Value,
-                (p, v) => undoRedo.Common.ChangeProperty(p.Style, x => x.TabCount, v));
+                (p, v) => p.Style.TabCount = v);
 
         private void OnMarginUpChanged(object sender, EventArgs eventArgs) =>
             OnParaPropertyChanged((int)cMarginUp.Value,
-                (p, v) => undoRedo.Common.ChangeProperty(p.Style, x => x.MarginUp, v));
+                (p, v) => p.Style.MarginUp = v);
 
         private void OnBoldChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged(cBold.Checked ?? false, (s, v) =>
         {
@@ -379,6 +379,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                     setAction(boundComponent.TextBox.Text.Paragraphs[i], value);
             else
                 setAction(boundComponent.TextBox.Text.Paragraphs[boundComponent.CursorPosition.ParaIndex], value);
+            undoRedo.OnChange();
         }
 
         private void OnSpanPropertyChanged<T>(T value, Action<IRtSpanStyle, T> setAction)
@@ -397,6 +398,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             {
                 setAction(boundComponent.InputTextStyle, value);
             }
+            undoRedo.OnChange();
         }
     }
 }

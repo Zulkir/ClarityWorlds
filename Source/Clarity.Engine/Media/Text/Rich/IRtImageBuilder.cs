@@ -2,6 +2,6 @@
 {
     public interface IRtImageBuilder
     {
-        IRtImage BuildImage(IRichTextBox textBox);
+        byte[] BuildImageRgba(IRichTextBox textBox);
     }
 }

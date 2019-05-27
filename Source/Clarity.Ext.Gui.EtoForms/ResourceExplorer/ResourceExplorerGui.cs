@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Clarity.Core.AppCore.ResourceTree.Assets;
+using Clarity.App.Worlds.Assets;
 using Clarity.Engine.Resources;
 using Eto.Forms;
 

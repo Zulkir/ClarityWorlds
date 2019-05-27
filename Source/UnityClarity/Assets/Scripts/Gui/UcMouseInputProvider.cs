@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using Clarity.App.Worlds.Gui;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.OtherTuples;
-using Clarity.Core.AppCore.Gui;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
@@ -17,6 +17,13 @@ namespace Assets.Scripts.Gui
         private readonly Lazy<IGui> guiLazy;
         private MouseState prevState;
         private int wheelPos = 0;
+
+        private const float MaxClickDelay = 0.5f;
+        private bool canBeClick;
+        private bool canBeDoubleClick;
+        private float lastDownTime;
+        private float lastClickTime;
+
 
         public UcMouseInputProvider(IInputService inputService, Lazy<IGui> guiLazy)
         {
@@ -83,13 +90,16 @@ namespace Assets.Scripts.Gui
         {
             if (currState.Position == prevState.Position)
                 return;
+
+            canBeClick = false;
+            canBeDoubleClick = false;
+
             var delta = currState.Position - prevState.Position;
-            var normalizedDelta = currState.NormalizedPosition - prevState.NormalizedPosition;
             var state = prevState.CloneTyped();
             state.Position = currState.Position;
             state.NormalizedPosition = currState.NormalizedPosition;
             state.HmgnPosition = currState.HmgnPosition;
-            FireMove(state, delta, normalizedDelta);
+            FireMove(state, delta);
             prevState = state;
         }
 
@@ -108,6 +118,10 @@ namespace Assets.Scripts.Gui
         {
             if (!Input.GetMouseButtonDown(unityIndex))
                 return;
+
+            canBeClick = true;
+            lastDownTime = Time.time;
+
             var state = prevState.CloneTyped();
             state.Buttons |= clarityButton;
             FireButton(state, clarityButton, MouseEventType.Down);
@@ -118,13 +132,27 @@ namespace Assets.Scripts.Gui
         {
             if (!Input.GetMouseButtonUp(unityIndex))
                 return;
+
+            var eventType = MouseEventType.Up;
+            if (canBeDoubleClick && Time.time - lastClickTime < MaxClickDelay)
+            {
+                eventType = MouseEventType.DoubleClick;
+                canBeDoubleClick = false;
+            }
+            else if (canBeClick && Time.time - lastDownTime < MaxClickDelay)
+            {
+                eventType = MouseEventType.Click;
+                canBeDoubleClick = true;
+                lastClickTime = Time.time;
+            }
+
             var state = prevState.CloneTyped();
             state.Buttons &= ~clarityButton;
-            FireButton(state, clarityButton, MouseEventType.Up);
+            FireButton(state, clarityButton, eventType);
             prevState = state;
         }
 
-        private void FireMove(IMouseState state, IntVector2 delta, Vector2 normalizedDelta)
+        private void FireMove(IMouseState state, IntVector2 delta)
         {
             inputService.OnInputEvent(new MouseEventArgs
             {
@@ -132,7 +160,6 @@ namespace Assets.Scripts.Gui
                 EventButtons = MouseButtons.None,
                 State = state,
                 Delta = delta,
-                NormalizedDelta = normalizedDelta,
                 WheelDelta = 0,
                 KeyModifyers = GetKeyModifyersFromInput(),
                 Viewport = guiLazy.Value.RenderControl.Viewports.Single()
@@ -147,7 +174,6 @@ namespace Assets.Scripts.Gui
                 EventButtons = MouseButtons.None,
                 State = state,
                 Delta = IntVector2.Zero,
-                NormalizedDelta = Vector2.Zero,
                 WheelDelta = wheelDelta,
                 KeyModifyers = GetKeyModifyersFromInput(),
                 Viewport = guiLazy.Value.RenderControl.Viewports.Single()
@@ -162,7 +188,6 @@ namespace Assets.Scripts.Gui
                 EventButtons = button,
                 State = state,
                 Delta = IntVector2.Zero,
-                NormalizedDelta = Vector2.Zero,
                 WheelDelta = 0,
                 KeyModifyers = GetKeyModifyersFromInput(),
                 Viewport = guiLazy.Value.RenderControl.Viewports.Single()

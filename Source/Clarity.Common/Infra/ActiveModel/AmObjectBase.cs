@@ -75,20 +75,25 @@ namespace Clarity.Common.Infra.ActiveModel
             clone.AmCloneNonBoundStateFrom(this);
             return clone;
         }
-        
+
+        public IAmBinding AmGetBinding(string propertyName)
+        {
+            return Bindings.First(x => x.PropertyName == propertyName);
+        }
+
         public void AmCloneNonBoundStateFrom(IAmObject other) =>
             AmCloneNonBoundStateFrom((TAmClass)other);
 
         public IAmSingularBinding<T> AmGetBinding<T>(Expression<Func<TAmClass, T>> path)
         {
             var propertyName = path.GetPropertyName();
-            return (IAmSingularBinding<T>)Bindings.First(x => x.PropertyName == propertyName);
+            return (IAmSingularBinding<T>)AmGetBinding(propertyName);
         }
 
         public IAmListBinding<T> AmGetBinding<T>(Expression<Func<TAmClass, IList<T>>> path)
         {
             var propertyName = path.GetPropertyName();
-            return (IAmListBinding<T>)Bindings.First(x => x.PropertyName == propertyName);
+            return (IAmListBinding<T>)AmGetBinding(propertyName);
         }
 
         public void InternalOnAdoptedBy(IAmBinding newParentBinding, object token)

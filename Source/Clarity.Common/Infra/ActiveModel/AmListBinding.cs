@@ -18,7 +18,7 @@ namespace Clarity.Common.Infra.ActiveModel
         IAmObject IAmBinding.OwnerObject => OwnerObject;
         public string BindingName => $"{typeof(TChild).Name}.{PropertyName}";
         public Type ChildType => typeof(TChild);
-        public Type AbstractValueType => typeof(TChild).MakeArrayType();
+        public Type AbstractValueType => typeof(IList<TChild>);
 
         private static readonly bool ChildIsAmObject = typeof(IAmObject).IsAssignableFrom(typeof(TChild));
 
@@ -56,7 +56,7 @@ namespace Clarity.Common.Infra.ActiveModel
                 (Items[i] as IAmObject)?.InternalUpdateToken(i);
         }
 
-        public object GetAbstractValue() => Items.ToArray();
+        public object GetAbstractValue() => Items;
 
         public void Clear()
         {
@@ -77,11 +77,11 @@ namespace Clarity.Common.Infra.ActiveModel
         {
             if (value == null)
                 throw new ArgumentNullException(nameof(value));
-            if (!(value is TChild[]))
+            if (!(value is IEnumerable<TChild>))
                 throw new ArgumentException($"Value was expected to be of type '{typeof(TChild[]).Name}', but was of type '{value.GetType().Name}'.");
 
             Items.Clear();
-            foreach (var item in (TChild[])value)
+            foreach (var item in (IEnumerable<TChild>)value)
                 Items.Add(item);
         }
 

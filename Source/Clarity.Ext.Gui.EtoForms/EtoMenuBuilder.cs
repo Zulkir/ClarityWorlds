@@ -22,12 +22,13 @@ namespace Clarity.Ext.Gui.EtoForms
             justStartedSection = true;
         }
 
-        public void AddCommand(IGuiCommand command)
+        public void AddCommand(IGuiCommand command, bool enabled = true)
         {
             menu.Items.Add(new Command((s, a) => command.Execute())
             {
                 MenuText = command.Text,
-                Shortcut = Converters.ToEto(command.ShortcutKey, command.ShortcutModifyers)
+                Shortcut = Converters.ToEto(command.ShortcutKey, command.ShortcutModifyers),
+                Enabled = enabled
             });
             justStartedSection = false;
         }

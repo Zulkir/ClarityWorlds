@@ -1,6 +1,6 @@
-﻿using Clarity.Core.AppCore.StoryGraph;
-using Clarity.Core.AppCore.Views;
-using Clarity.Core.AppCore.WorldTree;
+﻿using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.Views;
+using Clarity.App.Worlds.WorldTree;
 using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.StoryGraph

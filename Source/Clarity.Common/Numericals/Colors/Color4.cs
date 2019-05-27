@@ -132,6 +132,9 @@ namespace Clarity.Common.Numericals.Colors
                 ((int)(G * 255.99f) << 8) |
                 (int)(B * 255.99f);
         }
+
+        public Color4 SrgbToLinear() => new Color4(RGB.SrgbToLinear(), A);
+        public Color4 LinearToSrgb() => new Color4(RGB.LinearToSrgb(), A);
         #endregion
 
         #region Math

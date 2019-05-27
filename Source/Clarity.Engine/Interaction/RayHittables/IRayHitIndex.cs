@@ -1,7 +1,9 @@
-﻿namespace Clarity.Engine.Interaction.RayHittables
+﻿using System.Collections.Generic;
+
+namespace Clarity.Engine.Interaction.RayHittables
 {
     public interface IRayHitIndex
     {
-        RayHitResult FindEntity(RayHitInfo clickInfo);
+        IEnumerable<RayHitResult> CastRay(RayHitInfo clickInfo);
     }
 }

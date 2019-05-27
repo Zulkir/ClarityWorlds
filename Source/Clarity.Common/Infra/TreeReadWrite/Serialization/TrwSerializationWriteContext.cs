@@ -8,25 +8,21 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
     public class TrwSerializationWriteContext : ITrwSerializationWriteContext
     {
         public ITrwWriter Writer { get; }
-        public IReadOnlyDictionary<Type, string> TypeAliases => typeAliases;
+        public IDictionary<Type, string> TypeAliases { get; set; }
+        public IDictionary<string, object> Bag { get; }
 
         private readonly ITrwSerializationHandlerContainer handlers;
         private readonly IReadOnlyList<ITrwSerializationTypeRedirect> typeRedirects;
         private readonly TrwSerializationOptions options;
-        private readonly Dictionary<Type, string> typeAliases;
-        private readonly HashSet<string> typeAliasesHashSet;
-
-        public IDictionary<string, object> Bag { get; }
 
         public TrwSerializationWriteContext(ITrwWriter stream, ITrwSerializationHandlerContainer handlers,
             IReadOnlyList<ITrwSerializationTypeRedirect> typeRedirects, TrwSerializationOptions options)
         {
             Writer = stream;
+            TypeAliases = new Dictionary<Type, string>();
             this.handlers = handlers;
             this.typeRedirects = typeRedirects;
             this.options = options;
-            typeAliases = new Dictionary<Type, string>();
-            typeAliasesHashSet = new HashSet<string>();
             Bag = new Dictionary<string, object>();
         }
 
@@ -67,6 +63,9 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
                 case TrwSerializationExplicitTypes.WhenAmbiguous:
                     writeType = ambiguous;
                     break;
+                case TrwSerializationExplicitTypes.WhenObject:
+                    writeType = handler.ContentIsProperties;
+                    break;
                 case TrwSerializationExplicitTypes.WhenAmbiguousOrObject:
                     writeType = ambiguous || handler.ContentIsProperties;
                     break;
@@ -102,12 +101,13 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
 
         public void WriteType(Type value)
         {
+            // todo: special case for mem
             Writer.WriteValue().String(options.AliasTypes ? GetTypeAlias(value) : value.AssemblyQualifiedName);
         }
 
-        private string GetTypeAlias(Type value)
+        private string GetTypeAlias(Type type)
         {
-            return typeAliases.GetOrAdd(value, BuildAlias);
+            return TypeAliases.GetOrAddEx(type, BuildAlias);
         }
 
         private Type ResolveRedirect(Type type)
@@ -123,12 +123,11 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization
             var baseName = (type.FullName ?? "UnknownType").Split('.').Last().Replace('+', '_');
             var candidate = baseName;
             var counter = 1;
-            while (typeAliasesHashSet.Contains(candidate))
+            while (TypeAliases.Values.Contains(candidate))
             {
                 candidate = baseName + counter;
                 counter++;
             }
-            typeAliasesHashSet.Add(candidate);
             return candidate;
         }
     }

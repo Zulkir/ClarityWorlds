@@ -1,0 +1,348 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{012FD711-33D4-4724-BDAD-801BB7FAEDC0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Clarity.App.Worlds</RootNamespace>
+    <AssemblyName>Clarity.App.Worlds</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>../../Build/Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>../../Build/Release</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="CjClutter.ObjLoader.Loader, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\ObjLoader\CjClutter.ObjLoader.Loader.dll</HintPath>
+    </Reference>
+    <Reference Include="JetBrains.Annotations.Dotnet">
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JsonNet\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="PtrMagic, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\PtrMagic\PtrMagic.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.XML" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AppModes\AppMode.cs" />
+    <Compile Include="AppModes\AppModeChangedEvent.cs" />
+    <Compile Include="AppModes\AppModeService.cs" />
+    <Compile Include="AppModes\IAppModeChangedEvent.cs" />
+    <Compile Include="AppModes\IAppModeService.cs" />
+    <Compile Include="AppModes\IPresentationWorldBuilder.cs" />
+    <Compile Include="AppModes\PresentationWorldBuilder.cs" />
+    <Compile Include="Configuration\Config.cs" />
+    <Compile Include="Configuration\ConfigSerializationNecessitiesProvider.cs" />
+    <Compile Include="Configuration\IConfigFileStorage.cs" />
+    <Compile Include="Configuration\ConfigService.cs" />
+    <Compile Include="Configuration\IConfig.cs" />
+    <Compile Include="Configuration\IConfigService.cs" />
+    <Compile Include="Configuration\StandardConfigFileStorage.cs" />
+    <Compile Include="CopyPaste\CopyPasteCommand.cs" />
+    <Compile Include="CopyPaste\ICopyPasteComponent.cs" />
+    <Compile Include="Coroutines\CoroutineService.cs" />
+    <Compile Include="Coroutines\ICoroutineService.cs" />
+    <Compile Include="Gui\FullscreenMode.cs" />
+    <Compile Include="Gui\IGui.cs" />
+    <Compile Include="Gui\IGuiObservable.cs" />
+    <Compile Include="Gui\IGuiObserver.cs" />
+    <Compile Include="Gui\ISceneNodeContextMenuBuilder.cs" />
+    <Compile Include="Gui\SceneNodeContextMenuBuilder.cs" />
+    <Compile Include="Infra\AppVersion.cs" />
+    <Compile Include="Interaction\InputHandler.cs" />
+    <Compile Include="Interaction\ActionOnEventInteractionElement.cs" />
+    <Compile Include="Interaction\LambdaInteractionElement.cs" />
+    <Compile Include="Interaction\Manipulation3D\DragAlongAxisGizmoComponent.cs" />
+    <Compile Include="Interaction\Manipulation3D\Translate3DGizmoComponent.cs" />
+    <Compile Include="Interaction\NavigateOnDoubleClickInteractionElement.cs" />
+    <Compile Include="Interaction\Placement\DummyPlacementSurface.cs" />
+    <Compile Include="Interaction\Placement\IPlacementComponent.cs" />
+    <Compile Include="Interaction\Placement\IPlacementSurface.cs" />
+    <Compile Include="Interaction\Queries\IUserQuery.cs" />
+    <Compile Include="Interaction\Queries\IUserQueryEvent.cs" />
+    <Compile Include="Interaction\Queries\IUserQueryService.cs" />
+    <Compile Include="Interaction\Queries\OptionsUserQuery.cs" />
+    <Compile Include="Interaction\Queries\Scene\UserQuerySceneComponent.cs" />
+    <Compile Include="Interaction\Queries\UserQueryEvent.cs" />
+    <Compile Include="Interaction\Queries\UserQueryService.cs" />
+    <Compile Include="Interaction\RectangleManipulation\EditRectangleGizmoComponent.cs" />
+    <Compile Include="Assets\AssetFileCache.cs" />
+    <Compile Include="Assets\AssetHashMd5.cs" />
+    <Compile Include="Assets\AssetLoaderFlags.cs" />
+    <Compile Include="Assets\AssetLoadInfo.cs" />
+    <Compile Include="Assets\AssetLoadResultByLoader.cs" />
+    <Compile Include="Assets\AssetStorageType.cs" />
+    <Compile Include="Assets\FromAssetResourceSource.cs" />
+    <Compile Include="Assets\IAssetFileCache.cs" />
+    <Compile Include="Assets\SysDrawImageLoader.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandlerFamily.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandler.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AssetForWorldTrwTypeRedirect.cs" />
+    <Compile Include="SaveLoad\Converters\Data\EmptyTypeRenames.cs" />
+    <Compile Include="SaveLoad\Converters\PassthroughSaveLoadConverter.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverterExpandoBase.cs" />
+    <Compile Include="SaveLoad\Converters\Versions\WorldConverter4.cs" />
+    <Compile Include="SaveLoad\GeneratedResourceSaveLoadInfo.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\GeneratedResourceSourceTrwHandler.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\GeneratedResourceSourceTrwHandlerFamily.cs" />
+    <Compile Include="SaveLoad\ISaveLoadEvent.cs" />
+    <Compile Include="SaveLoad\ISaveLoadFactory.cs" />
+    <Compile Include="SaveLoad\LoadWorldPreference.cs" />
+    <Compile Include="SaveLoad\NecessitiesProviders\AmSerializationNecessitiesProvider.cs" />
+    <Compile Include="SaveLoad\NecessitiesProviders\CommonSerializationNecessitiesProvider.cs" />
+    <Compile Include="SaveLoad\Converters\Data\PropertyRenames3.cs" />
+    <Compile Include="SaveLoad\Converters\ISaveLoadConverter.cs" />
+    <Compile Include="SaveLoad\Converters\ISaveLoadConverterContainer.cs" />
+    <Compile Include="SaveLoad\Converters\ISaveLoadConverterTask.cs" />
+    <Compile Include="SaveLoad\Converters\ISaveLoadVersionConverter.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverterTaskBase.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadRenamedTypeDescription.cs" />
+    <Compile Include="SaveLoad\Converters\Tasks\PropertyRenameConverter.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadTypeAliasesConverter.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverterReaderBase.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverter2.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverter3.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadConverterContainer.cs" />
+    <Compile Include="SaveLoad\Converters\SaveLoadVersionConverterBase.cs" />
+    <Compile Include="SaveLoad\Converters\Tasks\TypeRenameConverter.cs" />
+    <Compile Include="SaveLoad\Converters\Data\TypeRenames2.cs" />
+    <Compile Include="SaveLoad\Converters\Data\TypeRenames3.cs" />
+    <Compile Include="SaveLoad\DefaultFileLoadInfo.cs" />
+    <Compile Include="SaveLoad\DefaultFileSaveInfo.cs" />
+    <Compile Include="SaveLoad\IFileLoadInfo.cs" />
+    <Compile Include="SaveLoad\IFileSaveInfo.cs" />
+    <Compile Include="SaveLoad\NecessitiesProviders\WorldSerializationNecessitiesProvider.cs" />
+    <Compile Include="SaveLoad\ReadOnly\IReadOnlyOverrideComponent.cs" />
+    <Compile Include="SaveLoad\ReadOnly\IReadOnlyWorldBuilder.cs" />
+    <Compile Include="SaveLoad\ReadOnly\ReadOnlyWorldBuilder.cs" />
+    <Compile Include="SaveLoad\SaveLoadEvent.cs" />
+    <Compile Include="SaveLoad\SaveLoadEventType.cs" />
+    <Compile Include="SaveLoad\SaveLoadFactory.cs" />
+    <Compile Include="SaveLoad\SaveLoadMetadata.cs" />
+    <Compile Include="SaveLoad\SaveLoadConstants.cs" />
+    <Compile Include="SaveLoad\SaveLoadWorldProperties.cs" />
+    <Compile Include="SaveLoad\SaveWorldFlags.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\ResourceTrwTypeRedirect.cs" />
+    <Compile Include="StoryGraph\BasicStoryLayoutInstance.cs" />
+    <Compile Include="StoryGraph\DirectStoryPath.cs" />
+    <Compile Include="StoryGraph\Editing\AddExplicitStoryGraphEdgeTool.cs" />
+    <Compile Include="StoryGraph\Editing\Flowchart\FlowchartGrid.cs" />
+    <Compile Include="StoryGraph\Editing\Flowchart\FlowchartTunnelDigger.cs" />
+    <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartEditSceneComponent.cs" />
+    <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartNodeGizmoComponent.cs" />
+    <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartEdgeGizmoComponent.cs" />
+    <Compile Include="StoryGraph\Editing\StoryBranchIntoTool.cs" />
+    <Compile Include="StoryGraph\IStoryLayoutInstance.cs" />
+    <Compile Include="StoryGraph\IStoryPath.cs" />
+    <Compile Include="StoryGraph\StoryOperations.cs" />
+    <Compile Include="StoryGraph\StoryServiceRootComponent.cs" />
+    <Compile Include="StoryGraph\StorySubgraphLayoutNestingLocation.cs" />
+    <Compile Include="Interaction\Tools\IToolMenuItem.cs" />
+    <Compile Include="Interaction\InteractionAcceptance.cs" />
+    <Compile Include="Interaction\Tools\ProxyTool.cs" />
+    <Compile Include="UndoRedo\DiffUndoable.cs" />
+    <Compile Include="UndoRedo\UndoRedoDiffIdentityComparer.cs" />
+    <Compile Include="Views\EditingView.cs" />
+    <Compile Include="Views\IFocusableView.cs" />
+    <Compile Include="Navigation\INavigationEvent.cs" />
+    <Compile Include="Views\IViewServiceModel.cs" />
+    <Compile Include="Navigation\INavigationService.cs" />
+    <Compile Include="Navigation\NavigationEvent.cs" />
+    <Compile Include="Navigation\NavigationEventType.cs" />
+    <Compile Include="Navigation\NavigationState.cs" />
+    <Compile Include="Views\PresentationView.cs" />
+    <Compile Include="Views\StoryGraphView.cs" />
+    <Compile Include="Views\Cameras\StoryPathCamera.cs" />
+    <Compile Include="Navigation\NavigationService.cs" />
+    <Compile Include="Views\ThumbnailView.cs" />
+    <Compile Include="Views\ViewServiceModel.cs" />
+    <Compile Include="Media\Media2D\ColorRectangleComponent.cs" />
+    <Compile Include="WorldTree\IPresentationRootComponent.cs" />
+    <Compile Include="Media\Media2D\IRectangleComponent.cs" />
+    <Compile Include="DirtyHacks\DirtyHackService.cs" />
+    <Compile Include="DirtyHacks\IDirtyHackService.cs" />
+    <Compile Include="Views\IFocusNodeComponent.cs" />
+    <Compile Include="Media\Media2D\ImageRectangleComponent.cs" />
+    <Compile Include="StoryGraph\IStoryService.cs" />
+    <Compile Include="Gui\IPresentationGuiCommands.cs" />
+    <Compile Include="WorldTree\IWorldTreeUpdatedEvent.cs" />
+    <Compile Include="Media\Media2D\MovieRectangleComponent.cs" />
+    <Compile Include="Views\Cameras\OrthoDefaultViewpointMechanism.cs" />
+    <Compile Include="Interaction\Placement\PlanarPlacementSurface.cs" />
+    <Compile Include="WorldTree\PresentationComponent.cs" />
+    <Compile Include="Gui\PresentationGuiCommands.cs" />
+    <Compile Include="WorldTree\MiscComponents\RotateOnceComponent.cs" />
+    <Compile Include="StoryGraph\StoryService.cs" />
+    <Compile Include="WorldTree\PresentationRootComponent.cs" />
+    <Compile Include="Media\Media2D\RectangleComponent.cs" />
+    <Compile Include="WorldTree\WorldConstants.cs" />
+    <Compile Include="WorldTree\WorldHolder.cs" />
+    <Compile Include="Assets\SysDrawImage.cs" />
+    <Compile Include="WorldTree\WorldTreeUpdatedEvent.cs" />
+    <Compile Include="Models\CgModelLoader.cs" />
+    <Compile Include="StoryLayouts\NestedCircles\NestedCirclesStoryLayout.cs" />
+    <Compile Include="StoryLayouts\NestedCircles\NestedCirclesStorySpringModel.cs" />
+    <Compile Include="StoryLayouts\NestedSpheres\NestedSpheresStoryLayout.cs" />
+    <Compile Include="StoryLayouts\NestedSpheres\NestedSpheresStorySpringModel.cs" />
+    <Compile Include="Assets\Asset.cs" />
+    <Compile Include="Assets\AssetEventArgs.cs" />
+    <Compile Include="Assets\AssetEventType.cs" />
+    <Compile Include="Assets\IAssetLoader.cs" />
+    <Compile Include="Assets\AssetLoadResult.cs" />
+    <Compile Include="Assets\SysDrawImageAssetLoader.cs" />
+    <Compile Include="Assets\SkyboxAssetLoader.cs" />
+    <Compile Include="CopyPaste\SceneNodeDuplicateUndoable.cs" />
+    <Compile Include="Interaction\CoreInteractionEventCategory.cs" />
+    <Compile Include="Interaction\CoreInteractionEventType.cs" />
+    <Compile Include="Interaction\CoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\FocusOnDoubleClickInteractionElement.cs" />
+    <Compile Include="Interaction\ICoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\MoviePlaybackInteractionElement.cs" />
+    <Compile Include="Interaction\RectangleManipulation\DragRectangleInputLock.cs" />
+    <Compile Include="Interaction\RectangleManipulation\DragRectangleInteractionElement.cs" />
+    <Compile Include="Interaction\RectangleManipulation\EditRectangleInteractionElement.cs" />
+    <Compile Include="Interaction\RectangleManipulation\DragRectangleGizmoComponent.cs" />
+    <Compile Include="Interaction\RectangleManipulation\ResizeRectangleGizmoComponent.cs" />
+    <Compile Include="Interaction\RectangleManipulation\ResizeRectangleGizmoPlace.cs" />
+    <Compile Include="Interaction\RectangleManipulation\ResizeRectangleInputLock.cs" />
+    <Compile Include="Interaction\RectangleManipulation\ResizeRectangleInteractionElement.cs" />
+    <Compile Include="Interaction\SelectOnClickInteractionElement.cs" />
+    <Compile Include="Logging\FileLogWriter.cs" />
+    <Compile Include="Logging\ILogWriter.cs" />
+    <Compile Include="Logging\ILogService.cs" />
+    <Compile Include="Logging\Log.cs" />
+    <Compile Include="Logging\LogMessageType.cs" />
+    <Compile Include="Logging\LogService.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AmTrwTypeRedirect.cs" />
+    <Compile Include="SaveLoad\AssetSaveLoadInfo.cs" />
+    <Compile Include="SaveLoad\ISaveLoadFormat.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\ResourceTrwHandler.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\ResourceTrwHandlerFamily.cs" />
+    <Compile Include="SaveLoad\ZipSaveLoadFormat.cs" />
+    <Compile Include="Interaction\Tools\AddRectangleTool.cs" />
+    <Compile Include="Assets\AssetService.cs" />
+    <Compile Include="Assets\IAssetService.cs" />
+    <Compile Include="CopyPaste\CopyPasteContent.cs" />
+    <Compile Include="CopyPaste\SwapWorldItemsUndoable.cs" />
+    <Compile Include="CopyPaste\WorldCopyPasteService.cs" />
+    <Compile Include="CopyPaste\ICopyPasteContent.cs" />
+    <Compile Include="CopyPaste\IWorldCopyPasteService.cs" />
+    <Compile Include="CopyPaste\WorldPasteUndoable.cs" />
+    <Compile Include="Interaction\Tools\CommonChildPlaneSemantics.cs" />
+    <Compile Include="StoryGraph\StoryComponent.cs" />
+    <Compile Include="StoryGraph\StoryNodeDynamicParts.cs" />
+    <Compile Include="StoryGraph\StoryGraph.cs" />
+    <Compile Include="StoryGraph\IStoryGraph.cs" />
+    <Compile Include="Media\Media3D\ModelComponent.cs" />
+    <Compile Include="Helpers\ICommonNodeFactory.cs" />
+    <Compile Include="StoryGraph\IStoryComponent.cs" />
+    <Compile Include="Interaction\IInteractionElement.cs" />
+    <Compile Include="Media\Media3D\IModelComponent.cs" />
+    <Compile Include="Interaction\Manipulation3D\ITransformable3DComponent.cs" />
+    <Compile Include="Helpers\SceneNodeExtensions.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AmObjectTrwHandler.cs" />
+    <Compile Include="SaveLoad\TrwExtensions\AmObjectSerializationHandlerFamily.cs" />
+    <Compile Include="SaveLoad\ISaveLoadService.cs" />
+    <Compile Include="SaveLoad\SaveLoadService.cs" />
+    <Compile Include="Interaction\Tools\DrawBorderCurveTool.cs" />
+    <Compile Include="Interaction\Tools\MoveEntityTool.cs" />
+    <Compile Include="Interaction\Tools\RotateEntityTool.cs" />
+    <Compile Include="Interaction\Tools\ScaleEntityTool.cs" />
+    <Compile Include="Helpers\CommonNodeFactory.cs" />
+    <Compile Include="Views\Cameras\FreeLandDefaultViewpointMechanism.cs" />
+    <Compile Include="StoryGraph\IStoryLayout.cs" />
+    <Compile Include="Views\Cameras\IDefaultViewpointMechanism.cs" />
+    <Compile Include="Views\Cameras\LandDefaultViewpointMechanism.cs" />
+    <Compile Include="StoryLayouts\Museum\MuseumStoryLayout.cs" />
+    <Compile Include="StoryLayouts\Orbit\OrbitStoryLayout.cs" />
+    <Compile Include="SaveLoad\DefaultStateInitializer.cs" />
+    <Compile Include="Interaction\Tools\IToolFactory.cs" />
+    <Compile Include="Interaction\Tools\ToolFactory.cs" />
+    <Compile Include="StoryLayouts\Simple\SimpleStoryLayout.cs" />
+    <Compile Include="StoryLayouts\Sphere\SphereStoryLayout.cs" />
+    <Compile Include="Views\Cameras\SphereDefaultViewpointMechanism.cs" />
+    <Compile Include="Views\Cameras\WallDefaultViewpointMechanism.cs" />
+    <Compile Include="Views\Cameras\WallDefaultViewpointMechanismZ.cs" />
+    <Compile Include="SaveLoad\IDefaultStateInitializer.cs" />
+    <Compile Include="WorldTree\IWorldTreeService.cs" />
+    <Compile Include="Interaction\Tools\ITool.cs" />
+    <Compile Include="Interaction\Tools\IToolService.cs" />
+    <Compile Include="UndoRedo\IUndoable.cs" />
+    <Compile Include="UndoRedo\IUndoRedoService.cs" />
+    <Compile Include="Views\IViewService.cs" />
+    <Compile Include="WorldTree\WorldTreeService.cs" />
+    <Compile Include="Interaction\Tools\ToolService.cs" />
+    <Compile Include="UndoRedo\UndoRedoService.cs" />
+    <Compile Include="Views\ViewEventArgs.cs" />
+    <Compile Include="Views\ViewEventType.cs" />
+    <Compile Include="Views\ViewService.cs" />
+    <Compile Include="Media\Media2D\RichTextComponent.cs" />
+    <Compile Include="Media\Media2D\RichTextEditInteractionElement.cs" />
+    <Compile Include="External\FluidSimulation\FluidSimulationConfig.cs" />
+    <Compile Include="External\FluidSimulation\FluidSurfaceType.cs" />
+    <Compile Include="External\FluidSimulation\IFluidSimulationComponent.cs" />
+    <Compile Include="External\ObjLoading\MyMaterialStreamProvider.cs" />
+    <Compile Include="External\ObjLoading\ObjGeoModelLoader.cs" />
+    <Compile Include="External\ObjLoading\ObjLoaderExtensions.cs" />
+    <Compile Include="Assets\IAsset.cs" />
+    <Compile Include="Infra\AppLifecycle.cs" />
+    <Compile Include="Helpers\PresentationInfra.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Clarity.Common\Clarity.Common.csproj">
+      <Project>{74936fe0-2b60-43b0-bd5c-3d511c840251}</Project>
+      <Name>Clarity.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Engine\Clarity.Engine.csproj">
+      <Project>{a3c1c459-4b9f-4aab-a939-2a9a8dc9a630}</Project>
+      <Name>Clarity.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\JitsuGen.Core\JitsuGen.Core.csproj">
+      <Project>{24b75709-5d16-4642-a3b2-460aafa9f79d}</Project>
+      <Name>JitsuGen.Core</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Clarity.Core.AppCore.SaveLoad;
+using Clarity.App.Worlds.SaveLoad;
 using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.SaveLoad
@@ -67,7 +67,8 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
             if (saveLoadService.FileName == null || saveLoadService.Format == null)
                 ExecSaveAs(sender, args);
             else
-                saveLoadService.Save();
+                // todo: check save settings
+                saveLoadService.Save(SaveWorldFlags.EditableWorld | SaveWorldFlags.ReadOnlyWorld);
         }
 
         private void ExecSaveAs(object sender, EventArgs args)
@@ -81,7 +82,8 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
                     var format = formats.Single(x => x.Name == saveFileDialog.CurrentFilter.Name);
                     saveLoadService.Format = format;
                     saveLoadService.FileName = saveFileDialog.FileName;
-                    saveLoadService.Save();
+                    // todo: check save settings
+                    saveLoadService.Save(SaveWorldFlags.EditableWorld | SaveWorldFlags.ReadOnlyWorld);
                     break;
             }
         }
@@ -96,7 +98,8 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
                     var format = formats.Single(x => x.Name == openFileDialog.CurrentFilter.Name);
                     saveLoadService.Format = format;
                     saveLoadService.FileName = openFileDialog.FileName;
-                    saveLoadService.Load();
+                    // todo: check save settings
+                    saveLoadService.Load(LoadWorldPreference.EditableOnly);
                     break;
             }
         }

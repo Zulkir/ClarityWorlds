@@ -1,9 +1,10 @@
-﻿using Clarity.Common.Infra.Files;
+﻿using Clarity.Common.CodingUtilities;
+using Clarity.Common.Infra.Files;
 
 namespace Clarity.Engine.Media.Skyboxes
 {
     public interface ISkyboxLoader
     {
-        ISkybox Load(IReadOnlyFileSystem fileSystem, string path, out string[] imageFileRelativePaths);
+        bool TryLoad(IReadOnlyFileSystem fileSystem, string path, out ISkybox skybox, out string[] imageFileRelativePaths, out ErrorInfo error);
     }
 }

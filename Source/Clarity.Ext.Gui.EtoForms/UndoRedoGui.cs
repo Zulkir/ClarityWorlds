@@ -1,15 +1,15 @@
 ﻿using System;
-using Clarity.Core.AppCore.Gui;
-using Clarity.Core.AppCore.UndoRedo;
+using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.UndoRedo;
 using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms
 {
     public class UndoRedoGui : IGuiObserver<IUndoRedoService, object>
     {
-        private IUndoRedoService UndoRedo { get; set; }
-        public Command UndoCommand { get; private set; }
-        public Command RedoCommand { get; private set; }
+        private IUndoRedoService UndoRedo { get; }
+        public Command UndoCommand { get; }
+        public Command RedoCommand { get; }
 
         public UndoRedoGui(IUndoRedoService undoRedo) 
         {

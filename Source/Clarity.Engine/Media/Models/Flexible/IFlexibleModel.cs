@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
-using Clarity.Engine.Resources;
 using JetBrains.Annotations;
 
 namespace Clarity.Engine.Media.Models.Flexible
 {
-    public interface IFlexibleModel : IResource
+    public interface IFlexibleModel : IModel3D
     {
         [NotNull, ItemNotNull]
         IReadOnlyList<IFlexibleModelVertexSet> VertexSets { get; }
@@ -13,8 +12,5 @@ namespace Clarity.Engine.Media.Models.Flexible
         IReadOnlyList<IFlexibleModelPart> Parts { get; }
 
         // todo: default materials
-
-        // todo: remove
-        float Radius { get; }
     }
 }

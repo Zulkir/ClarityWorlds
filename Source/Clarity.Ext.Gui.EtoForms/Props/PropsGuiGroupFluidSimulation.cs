@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
-using Clarity.Core.AppCore.UndoRedo;
-using Clarity.Core.External.FluidSimulation;
+using Clarity.App.Worlds.External.FluidSimulation;
+using Clarity.App.Worlds.UndoRedo;
 using Clarity.Engine.Objects.WorldTree;
 using Eto.Drawing;
 using Eto.Forms;
@@ -85,11 +85,12 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         {
             if (boundComponent == null)
                 return;
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Width, (int)widthControl.Value);
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.Height, (int)heightControl.Value);
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.LevelSetScale, (int)levelSetScaleControl.Value);
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.CellSize, (float)(cellSizeControl.Value / 10f));
-            undoRedo.Common.ChangeProperty(boundComponent, x => x.SurfaceType, (FluidSurfaceType)surfaceTypeDropDown.SelectedValue);
+            boundComponent.Width = (int)widthControl.Value;
+            boundComponent.Height = (int)heightControl.Value;
+            boundComponent.LevelSetScale = (int)levelSetScaleControl.Value;
+            boundComponent.CellSize = (float)(cellSizeControl.Value / 10f);
+            boundComponent.SurfaceType = (FluidSurfaceType)surfaceTypeDropDown.SelectedValue;
+            undoRedo.OnChange();
         }
     }
 }

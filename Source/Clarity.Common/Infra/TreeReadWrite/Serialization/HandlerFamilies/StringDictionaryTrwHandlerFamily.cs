@@ -11,6 +11,8 @@ namespace Clarity.Common.Infra.TreeReadWrite.Serialization.HandlerFamilies
     {
         public bool TryCreateHandlerFor(Type type, ITrwSerializationHandlerContainer container, out ITrwSerializationHandler handler)
         {
+            // todo: separate to IDictionary and IEnumerable<KVP>
+
             handler = null;
 
             var enumType = type.GetInterfaces()

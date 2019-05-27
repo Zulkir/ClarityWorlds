@@ -2,7 +2,7 @@
 using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
-using Clarity.Common.Infra.Di;
+using Clarity.Common.Infra.DependencyInjection;
 using JetBrains.Annotations;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Serialization
