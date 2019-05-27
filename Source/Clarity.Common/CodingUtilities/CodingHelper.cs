@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
+using System.Reflection;
 
 namespace Clarity.Common.CodingUtilities
 {
@@ -46,5 +48,9 @@ namespace Clarity.Common.CodingUtilities
             if (newValue > variable)
                 variable = newValue;
         }
+
+        public static PropertyInfo GetPropertyInfo(LambdaExpression propertyExpression) =>
+            (PropertyInfo)((MemberExpression)propertyExpression.Body).Member;
+
     }
 }

@@ -13,6 +13,7 @@ namespace Clarity.App.Worlds.StoryGraph
         Type StartLayoutType { get; set; }
         bool IsLayoutRoot { get; }
 
+        // todo: remove
         Color4? BackgroundColor { get; set; }
         bool InstantTransition { get; set; }
         bool SkipOrder { get; set; }

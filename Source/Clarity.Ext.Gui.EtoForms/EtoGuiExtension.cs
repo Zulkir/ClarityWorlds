@@ -10,6 +10,7 @@ using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources.SaveLoad;
 using Clarity.Ext.Gui.EtoForms.AppModes;
 using Clarity.Ext.Gui.EtoForms.Common;
+using Clarity.Ext.Gui.EtoForms.FluentGui;
 using Clarity.Ext.Gui.EtoForms.Props;
 using Clarity.Ext.Gui.EtoForms.ResourceExplorer;
 using Clarity.Ext.Gui.EtoForms.SaveLoad;
@@ -65,6 +66,7 @@ namespace Clarity.Ext.Gui.EtoForms
             di.Bind<IWindowManager>().To<WindowManager>();
             di.Bind<IMessageBoxService>().To<MessageBoxService>();
             di.BindMulti<IResourceSaver>().To<ImageResourceSaver>();
+            di.Bind<IFluentGuiService>().To<FluentGuiService>();
         }
 
         public void OnStartup(IDiContainer di)

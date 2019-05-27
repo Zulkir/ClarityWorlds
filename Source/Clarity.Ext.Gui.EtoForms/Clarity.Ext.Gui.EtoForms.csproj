@@ -84,6 +84,19 @@
     <Compile Include="Common\NameGenerator.cs" />
     <Compile Include="Converters.cs" />
     <Compile Include="EtoMenuBuilder.cs" />
+    <Compile Include="FluentGui\FluentDropDown.cs" />
+    <Compile Include="FluentGui\FluentPanel.cs" />
+    <Compile Include="FluentGui\FluentGuiBuilder.cs" />
+    <Compile Include="FluentGui\FluentGuiService.cs" />
+    <Compile Include="FluentGui\FluentCheckBox.cs" />
+    <Compile Include="FluentGui\FluentLabel.cs" />
+    <Compile Include="FluentGui\FluentButton.cs" />
+    <Compile Include="FluentGui\FluentGroupBox.cs" />
+    <Compile Include="FluentGui\FluentTextBox.cs" />
+    <Compile Include="FluentGui\IFluentContainerControl.cs" />
+    <Compile Include="FluentGui\IFluentControl.cs" />
+    <Compile Include="FluentGui\IFluentGuiBuilder.cs" />
+    <Compile Include="FluentGui\IFluentGuiService.cs" />
     <Compile Include="FrameTimeMeasurer.cs" />
     <Compile Include="FromEtoImage.cs" />
     <Compile Include="Helpers\GuiCommandsHelper.cs" />
@@ -120,6 +133,7 @@
     <Compile Include="Props\PropsGuiGroupScene.cs" />
     <Compile Include="Props\PropsGuiGroupGeoModelEntity.cs" />
     <Compile Include="Props\PropsGuiGroupStoryComponent.cs" />
+    <Compile Include="FluentGui\FluentColorPicker.cs" />
     <Compile Include="RenderControl.cs" />
     <Compile Include="WindowManager.cs" />
     <Compile Include="RenderingAreaHandlerGtkOgl.cs" />

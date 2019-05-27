@@ -19,6 +19,7 @@ using Clarity.Engine.Resources;
 using Clarity.Engine.Utilities;
 using Clarity.Ext.Gui.EtoForms.AppModes;
 using Clarity.Ext.Gui.EtoForms.Commands;
+using Clarity.Ext.Gui.EtoForms.FluentGui;
 using Clarity.Ext.Gui.EtoForms.Props;
 using Clarity.Ext.Gui.EtoForms.ResourceExplorer;
 using Clarity.Ext.Gui.EtoForms.SaveLoad;
@@ -42,7 +43,7 @@ namespace Clarity.Ext.Gui.EtoForms
 
         public DefaultMainForm(IUndoRedoService undoRedoService, IToolFactory toolFactory, IToolService toolService,
             RenderControl renderControl, IAppModesCommands appModesCommands,
-            ISaveLoadGuiCommands saveLoadGuiCommands, ISceneTreeGui sceneTreeGui, IPropsGui propsGui, 
+            ISaveLoadGuiCommands saveLoadGuiCommands, ISceneTreeGui sceneTreeGui, IPropsGui propsGui, IFluentGuiService fluentGuiService,
             IAmDiBasedObjectFactory objectFactory, IAssetService assetService, IEmbeddedResources embeddedResources,
             IResourceExplorerGui resourceExplorerGui, IReadOnlyList<IToolMenuItem> toolMenuItems, IStoryGraphGui storyGraphGui,
             IReadOnlyList<IAssetLoader> assetLoaders, IViewService viewService, ICommonGuiObjects commonGuiObjects,
@@ -103,7 +104,7 @@ namespace Clarity.Ext.Gui.EtoForms
                         MessageBox.Show(assetLoadResult.Message);
                         return null;
                     }
-                    var asset = assetLoadResult.Asset;
+                    var asset = assetLoadResult.Asset;      
                     var resource = asset.Resource is ResourcePack pack ? pack.MainSubresource : asset.Resource;
                     switch (resource)
                     {
@@ -156,7 +157,7 @@ namespace Clarity.Ext.Gui.EtoForms
             };
 
             var rightLayout = new TableLayout();
-            rightLayout.Rows.Add(new TableRow(new TableCell(propsGui.PropsPanel)));
+            rightLayout.Rows.Add(new TableRow(propsGui.PropsPanel, fluentGuiService.RootEtoControl));
 
             var layout = new TableLayout();
             layout.Rows.Add(
