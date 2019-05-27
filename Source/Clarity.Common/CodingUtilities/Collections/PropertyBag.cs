@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 
 namespace Clarity.Common.CodingUtilities.Collections
 {
@@ -39,6 +40,19 @@ namespace Clarity.Common.CodingUtilities.Collections
         public void SetValue<TVal>(string property, TVal val)
         {
             dict[property] = val;
+        }
+
+        public object Clone()
+        {
+            var clone = new PropertyBag();
+            foreach (var kvp in dict)
+            {
+                if (kvp.Value is ICloneable cloneableValue)
+                    clone.SetValue(kvp.Key, cloneableValue.CloneTyped());
+                else
+                    clone.SetValue(kvp.Key, kvp.Value);
+            }
+            return clone;
         }
     }
 }

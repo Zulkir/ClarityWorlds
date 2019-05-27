@@ -58,6 +58,11 @@ namespace Clarity.Common.Infra.ActiveModel
             AmParentBinding?.DetachChild(this);
         }
 
+        public bool AmIsDescendantOf(IAmObject amObject)
+        {
+            return AmParent == amObject || (AmParent?.AmIsDescendantOf(amObject) ?? false);
+        }
+
         public object Clone()
         {
             return InternalClone(new Dictionary<IAmObject, IAmObject>(ReferenceEqualityComparer.Singleton));

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
@@ -23,17 +22,14 @@ namespace Clarity.App.Worlds.StoryLayouts.Orbit
         public string UserFriendlyName => "Orbit";
         public Type Type => typeof(OrbitStoryLayout);
 
-        private readonly IWorldTreeService worldTreeService;
-
         private readonly IModel3D frustumModel;
         private readonly IModel3D circleModel;
 
         private readonly IStandardMaterial frustumMaterial;
         private readonly IStandardMaterial circleMaterial;
 
-        public OrbitStoryLayout(IEmbeddedResources embeddedResources, IWorldTreeService worldTreeService)
+        public OrbitStoryLayout(IEmbeddedResources embeddedResources)
         {
-            this.worldTreeService = worldTreeService;
             frustumModel = embeddedResources.SimpleFrustumModel();
             circleModel = embeddedResources.CircleModel(256);
             frustumMaterial = StandardMaterial.New()
@@ -49,7 +45,7 @@ namespace Clarity.App.Worlds.StoryLayouts.Orbit
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
             ArrangeAndDecorateLevel(sg, sg.Root, sg.Depth, true);
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
 
         private void ArrangeAndDecorateLevel(IStoryGraph sg, int nodeIndex, int scaleLevel, bool isRoot)

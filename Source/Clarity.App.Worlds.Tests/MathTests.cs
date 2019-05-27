@@ -1,5 +1,6 @@
 ﻿using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
+using Clarity.Common.Numericals.Geometry;
 using NUnit.Framework;
 
 namespace Clarity.App.Worlds.Tests
@@ -53,5 +54,13 @@ namespace Clarity.App.Worlds.Tests
         }
 
         private static float AbsDiff(Vector3 v1, Vector3 v2) { return (v1 - v2).Length(); }
+
+        [Test]
+        public void ProjectPointOnPlane()
+        {
+            var plane = new Plane(Vector3.UnitY, Vector3.UnitY);
+            var point = 2 * Vector3.UnitY;
+            Assert.That(plane.Project(point), Is.EqualTo(Vector3.UnitY));
+        }
     }
 }

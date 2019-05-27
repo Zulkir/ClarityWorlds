@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Helpers;
+using Assets.Scripts.Infra;
 using Assets.Scripts.Rendering.Materials;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Infra.DependencyInjection;
@@ -30,7 +32,7 @@ namespace Assets.Scripts.Rendering
         {
             standardMaterialCache = di.Get<IStandardMaterialCache>();
             Node = node;
-            parentObj = GameObject.Find("VisualObjects");
+            parentObj = di.Get<IGlobalObjectService>().VisualObjects;
             unityObjects = new List<Pair<GameObject, MaterialPropertyBlock>>();
         }
 
@@ -44,7 +46,7 @@ namespace Assets.Scripts.Rendering
 
         public void OnMasterEvent(object message) { }
 
-        public void PrepareUnityObjectsForRendering()
+        public void PrepareUnityObjectsForRendering(int cullingLayer)
         {
             var aVisual = Node.GetComponent<IVisualComponent>();
             int i = 0;
@@ -64,35 +66,46 @@ namespace Assets.Scripts.Rendering
                     uObj.SetActive(false);
                     continue;
                 }
+                uObj.layer = cullingLayer;
                 var cModelElem = (IModelVisualElement)visualElem;
                 uObj.SetActive(true);
 
                 var globalTransform = cModelElem.Transform * Node.GlobalTransform;
-                uObj.transform.localPosition = globalTransform.Offset.ToUnity(true);
-                uObj.transform.localRotation = globalTransform.Rotation.ToUnity(true);
+                uObj.transform.localPosition = globalTransform.Offset.ToUnity();
+                uObj.transform.localRotation = globalTransform.Rotation.ToUnity();
                 uObj.transform.localScale = globalTransform.Scale * cModelElem.NonUniformScale.ToUnity(false);
 
                 var meshFilter = uObj.GetComponent<MeshFilter>();
+                // todo: remove this stuff as soon as WalkableAreas are actually Walkable
+                var meshCollider = uObj.GetComponent<MeshCollider>();
                 var model = cModelElem.Model;
                 if (model is IFlexibleModel)
                 {
                     var flexibleModel = (IFlexibleModel)model;
                     var modelCache = flexibleModel.CacheContainer.GetOrAddCache(flexibleModel, m => new UcFlexibleModelCache(m));
                     var mesh = modelCache.GetUnityMesh();
-                    meshFilter.mesh = mesh;
+                    meshFilter.sharedMesh = mesh;
                 }
                 else if (model is IExplicitModel)
                 {
                     var explicitModel = (IExplicitModel)model;
                     var modelCache = explicitModel.CacheContainer.GetOrAddCache(explicitModel, m => new UcExplicitModelCache(m));
                     var mesh = modelCache.GetUnityMesh();
-                    meshFilter.mesh = mesh;
+                    meshFilter.sharedMesh = mesh;
                 }
                 else
                 {
                     throw new NotImplementedException();
                 }
-                
+
+                meshCollider.sharedMesh =
+                    cModelElem.ModelPartIndex == 0 &&
+                    meshFilter.sharedMesh != null && 
+                    meshFilter.sharedMesh.GetTopology(cModelElem.ModelPartIndex) == MeshTopology.Triangles && 
+                    cullingLayer == 0 
+                    ? meshFilter.sharedMesh 
+                    : null;
+
                 var meshRenderer = uObj.GetComponent<MeshRenderer>();
                 meshRenderer.receiveShadows = false;
                 meshRenderer.shadowCastingMode = ShadowCastingMode.Off;
@@ -121,7 +134,10 @@ namespace Assets.Scripts.Rendering
                     CStandardRenderState = cStdRenderState
                 });
 
-                meshRenderer.sharedMaterial = uMaterial;
+                // todo: check if there is a performance penalty for this sub-mesh solution and fix if there is
+                var sharedMaterials = Enumerable.Range(0, model.PartCount).Select(x => standardMaterialCache.InvisibleMaterial).ToArray();
+                sharedMaterials[cModelElem.ModelPartIndex] = uMaterial;
+                meshRenderer.sharedMaterials = sharedMaterials;
                 //uPropBlock.SetFloat("_Cull", (int)cModelElem.CullFace);
 
                 i++;
@@ -148,6 +164,7 @@ namespace Assets.Scripts.Rendering
             var obj = new GameObject($"{Node.Name}_vis_{index}");
             obj.AddComponent<MeshFilter>();
             obj.AddComponent<MeshRenderer>();
+            obj.AddComponent<MeshCollider>();
             obj.transform.SetParent(parentObj.transform);
             return obj;
         }

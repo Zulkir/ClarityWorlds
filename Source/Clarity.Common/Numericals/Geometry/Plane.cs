@@ -54,7 +54,7 @@ namespace Clarity.Common.Numericals.Geometry
 
         public Vector3 Project(Vector3 point)
         {
-            return point - Normal * (Vector3.Dot(point, Normal) - D);
+            return point - Normal * (Vector3.Dot(point, Normal) + D);
         }
 
         public static void Intersect(Plane p1, Plane p2, out Line3? lineResult)

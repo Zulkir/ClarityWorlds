@@ -87,7 +87,16 @@
     <Compile Include="Gui\Menus\IGuiSubmenu.cs" />
     <Compile Include="Gui\MessageBoxes\MessageBoxButtons.cs" />
     <Compile Include="Gui\MessageBoxes\MessageBoxType.cs" />
+    <Compile Include="Gui\MessagePopups\IMessagePopupService.cs" />
     <Compile Include="Interaction\IInteractionComponent.cs" />
+    <Compile Include="Interaction\Input\VRController\IVRControllerEventArgs.cs" />
+    <Compile Include="Interaction\Input\VRController\IVRControllerInputProvider.cs" />
+    <Compile Include="Interaction\Input\VRController\IVRControllerState.cs" />
+    <Compile Include="Interaction\Input\VRController\VRControllerButtons.cs" />
+    <Compile Include="Interaction\Input\VRController\VRControllerEventArgs.cs" />
+    <Compile Include="Interaction\Input\VRController\VRControllerEventArgsExtentions.cs" />
+    <Compile Include="Interaction\Input\VRController\VRControllerEventType.cs" />
+    <Compile Include="Interaction\Input\VRController\VRControllerState.cs" />
     <Compile Include="Media\Images\IImageLoader.cs" />
     <Compile Include="Media\Images\ImageResourceLoader.cs" />
     <Compile Include="Media\Models\Explicit\ExplicitModel.cs" />

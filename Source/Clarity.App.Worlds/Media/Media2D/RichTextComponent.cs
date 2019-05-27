@@ -6,6 +6,7 @@ using Clarity.App.Worlds.SaveLoad.ReadOnly;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.Common.CodingUtilities.Collections;
+using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
@@ -261,6 +262,13 @@ namespace Clarity.App.Worlds.Media.Media2D
             var cImage = AmFactory.Create<ImageRectangleComponent>();
             cImage.Image = GetTextImage().WithSource(x => new GeneratedResourceSource(x, typeof(IImage)));
             yield return cImage;
+        }
+
+        public override void AmOnChildEvent(IAmEventMessage message)
+        {
+            if (message.Object == TextBox || message.Object.AmIsDescendantOf(TextBox))
+                imageIsDirty = true;
+            base.AmOnChildEvent(message);
         }
     }
 }

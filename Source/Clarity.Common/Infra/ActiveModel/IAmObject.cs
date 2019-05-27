@@ -15,6 +15,8 @@ namespace Clarity.Common.Infra.ActiveModel
         void AmCloneNonBoundStateFrom(IAmObject other);
         void Deparent();
 
+        bool AmIsDescendantOf(IAmObject amObject);
+
         // todo: to an Internal prop
         void InternalOnAdoptedBy(IAmBinding newParentBinding, object token);
         void InternalOnDisowned();

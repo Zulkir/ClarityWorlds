@@ -57,6 +57,11 @@ namespace Clarity.Common.Numericals.Algebra
         public override bool Equals(object obj) { return obj is Transform && Equals((Transform)obj); }
         #endregion
 
+        public Transform WithOffset(Vector3 newOffset)
+        {
+            return new Transform(Scale, Rotation, newOffset);
+        }
+
         #region Math
         public Matrix4x4 ToMatrix4x4()
         {
@@ -86,12 +91,6 @@ namespace Clarity.Common.Numericals.Algebra
             var p2 = (r.Point + r.Direction) * tr;
             return new Ray3(p1, p2 - p1);
             //return new Ray3(r.Point * tr, r.Direction * tr.Rotation);
-        }
-
-        public static Sphere operator *(Sphere s, Transform tr) { return Apply(s, tr); }
-        public static Sphere Apply(Sphere s, Transform tr)
-        {
-            return new Sphere(s.Center * tr, s.Radius * tr.Scale);
         }
 
         public static Transform operator *(Transform left, Transform right) { return Combine(left, right); }

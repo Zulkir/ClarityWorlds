@@ -6,6 +6,11 @@ namespace Clarity.Engine.Objects.WorldTree
 {
     public static class SceneExtensions
     {
+        public static ISceneNode GetNodeById(this IScene scene, int id)
+        {
+            return scene.World?.GetNodeById(id) ?? scene.EnumerateAllNodes().FirstOrDefault(x => x.Id == id);
+        }
+
         public static IEnumerable<ISceneNode> EnumerateAllNodes(this IScene scene, bool includeAuxiliary = true)
         {
             return includeAuxiliary 

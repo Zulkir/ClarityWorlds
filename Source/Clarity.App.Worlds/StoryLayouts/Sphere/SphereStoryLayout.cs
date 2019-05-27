@@ -1,7 +1,6 @@
 using System;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
@@ -46,14 +45,11 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
             }
         }
 
-        private readonly IWorldTreeService worldTreeService;
-
         private readonly IModel3D frustumModel;
         private readonly IStandardMaterial frustumMaterial;
 
-        public SphereStoryLayout(IEmbeddedResources embeddedResources, IWorldTreeService worldTreeService)
+        public SphereStoryLayout(IEmbeddedResources embeddedResources)
         {
-            this.worldTreeService = worldTreeService;
             frustumModel = embeddedResources.SimpleFrustumModel();
             frustumMaterial = StandardMaterial.New()
                 .SetDiffuseColor(Color4.Green)
@@ -64,7 +60,7 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
             ArrangeAndDecorateRoot(sg, sg.Root, sg.Depth);
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
 
         private void ArrangeAndDecorateRoot(IStoryGraph sg, int nodeIndex, int scaleLevel)

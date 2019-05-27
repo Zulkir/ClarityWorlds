@@ -3,6 +3,7 @@ using Clarity.Common;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
+using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.OtherTuples;
 using Clarity.Engine.Media.Models.Explicit;
 using Clarity.Engine.Media.Models.Flexible;
@@ -147,7 +148,9 @@ namespace Clarity.Ext.Rendering.Ogl3.Handlers
                 ScrollingEnabled = (Bool32)(cWarpScroll != null),
                 ScrollingAmount = cWarpScroll?.VisibleScrollAmount ?? 0.0f,
                 BlackIsTransparent = (Bool32)(material.RtTransparencyMode == RtTransparencyMode.BlackIsTransparent),
-                WhiteIsTransparent = (Bool32)(material.RtTransparencyMode == RtTransparencyMode.WhiteIsTransparent)
+                WhiteIsTransparent = (Bool32)(material.RtTransparencyMode == RtTransparencyMode.WhiteIsTransparent),
+                IsPulsating = (Bool32)(material.HighlightEffect == HighlightEffect.Pulsating),
+                PulsatingColor = Color4.Orange
             });
 
             // todo: Use ObjectGL bindings

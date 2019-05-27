@@ -15,6 +15,7 @@ namespace Assets.Scripts.Gui
         private readonly IInputService inputService;
         private readonly Lazy<IGui> guiLazy;
         private readonly bool[] keys = new bool[100];
+        
 
         public UcKeyboardInputProvider(IInputService inputService, Lazy<IGui> guiLazy)
         {

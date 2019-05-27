@@ -196,5 +196,11 @@ namespace Clarity.Common.Numericals.Geometry
             var finalMostDistantPoint = vertices.Select(getPosition).Maximal(x => (center - x).LengthSquared());
             return new Sphere(center, (center - finalMostDistantPoint).Length());
         }
+
+        public static Sphere operator *(Sphere s, Transform tr) { return Apply(s, tr); }
+        public static Sphere Apply(Sphere s, Transform tr)
+        {
+            return new Sphere(s.Center * tr, s.Radius * tr.Scale);
+        }
     }
 }

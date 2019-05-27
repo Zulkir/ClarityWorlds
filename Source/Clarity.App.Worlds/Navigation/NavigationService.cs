@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.AppModes;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.Common.CodingUtilities.Collections;
 using Clarity.Engine.EventRouting;
@@ -14,6 +15,7 @@ namespace Clarity.App.Worlds.Navigation
     {
         private readonly IEventRoutingService eventRoutingService;
         private readonly IStoryService storyService;
+        private readonly IAppModeService appMode;
         private readonly Stack<int> previousStack;
         private readonly Stack<int> nextStack;
         private int current;
@@ -29,11 +31,12 @@ namespace Clarity.App.Worlds.Navigation
             State == NavigationState.AtBackwardFork ||
             State == NavigationState.AtForwardFork;
 
-        public NavigationService(IEventRoutingService eventRoutingService, IStoryService storyService)
+        public NavigationService(IEventRoutingService eventRoutingService, IStoryService storyService, IAppModeService appMode)
         {
             current = -1;
             this.eventRoutingService = eventRoutingService;
             this.storyService = storyService;
+            this.appMode = appMode;
             previousStack = new Stack<int>();
             nextStack = new Stack<int>();
             storyService.GraphChanged += OnStoryGraphChanged;
@@ -240,7 +243,7 @@ namespace Clarity.App.Worlds.Navigation
 
         private void FireEvent(NavigationEventType type, int id, bool causedByFocusing)
         {
-            var moveInstantly = type == NavigationEventType.Reset ||
+            var moveInstantly = type == NavigationEventType.Reset || appMode.NavigationMode == AppNavigationMode.Vr ||
                                 type == NavigationEventType.MoveToSpecific && sg.Aspects[id].InstantTransition;
             eventRoutingService.FireEvent<INavigationEvent>(new NavigationEvent(type, moveInstantly, causedByFocusing));
         }

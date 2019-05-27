@@ -114,6 +114,7 @@ namespace Clarity.App.Worlds.WorldTree
 
         public void Execute(CopyPasteCommand command)
         {
+            var siblings = Siblings;
             switch (command)
             {
                 case CopyPasteCommand.Cut:
@@ -125,7 +126,8 @@ namespace Clarity.App.Worlds.WorldTree
                     break;
                 case CopyPasteCommand.Duplicate:
                     var nodeCopy = Node.CloneTyped();
-                    nodeCopy.Id = 0;
+                    foreach (var copyNode in nodeCopy.EnumerateSceneNodesDeep())
+                        copyNode.Id = 0;
                     Siblings.Insert(Siblings.IndexOf(Node), nodeCopy);
                     break;
                 case CopyPasteCommand.Paste:
@@ -135,34 +137,39 @@ namespace Clarity.App.Worlds.WorldTree
                     if (focusNode == null)
                         return;
                     var copy = worldCopyPaste.Node.CloneTyped();
-                    copy.Id = 0;
+                    foreach (var copyNode in copy.EnumerateSceneNodesDeep())
+                        copyNode.Id = 0;
                     focusNode.ChildNodes.Add(copy);
                     break;
                 case CopyPasteCommand.Delete:
                     Node.Deparent();
                     break;
                 case CopyPasteCommand.MoveTop:
+                {
                     Node.Deparent();
-                    Siblings.Insert(0, Node);
+                    siblings.Insert(0, Node);
                     break;
+                }
                 case CopyPasteCommand.MoveUp:
                 {
-                    var index = Siblings.IndexOf(Node);
+                    var index = siblings.IndexOf(Node);
                     Node.Deparent();
-                    Siblings.Insert(index - 1, Node);
+                    siblings.Insert(index - 1, Node);
                     break;
                 }
                 case CopyPasteCommand.MoveDown:
                 {
-                    var index = Siblings.IndexOf(Node);
+                    var index = siblings.IndexOf(Node);
                     Node.Deparent();
-                    Siblings.Insert(index + 1, Node);
+                    siblings.Insert(index + 1, Node);
                     break;
                 }
                 case CopyPasteCommand.MoveBottom:
+                {
                     Node.Deparent();
-                    Siblings.Add(Node);
+                    siblings.Add(Node);
                     break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException(nameof(command), command, null);
             }

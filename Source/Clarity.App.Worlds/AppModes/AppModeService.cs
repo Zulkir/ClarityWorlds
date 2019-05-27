@@ -5,6 +5,7 @@ namespace Clarity.App.Worlds.AppModes
     public class AppModeService : IAppModeService
     {
         public AppMode Mode { get; private set; }
+        public AppNavigationMode NavigationMode { get; private set; }
 
         private readonly IEventRoutingService eventRoutingService;
 
@@ -17,6 +18,12 @@ namespace Clarity.App.Worlds.AppModes
         {
             Mode = mode;
             eventRoutingService.FireEvent<IAppModeChangedEvent>(new AppModeChangedEvent(mode));
+        }
+
+        public void SetNavigationMode(AppNavigationMode navigationMode)
+        {
+            NavigationMode = navigationMode;
+            // todo Fire Event
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Visualization.Viewports;
 using UnityEngine;
@@ -19,6 +20,16 @@ namespace Assets.Scripts.Rendering
         public IViewport MainViewport => Viewports?.FirstOrDefault();
 
         private ViewportsLayout tableLayout;
+        private IntSize2 lastSize;
+
+        public void OnUpdate()
+        {
+            var currentSize = new IntSize2(Width, Height);
+            if (lastSize == currentSize)
+                return;
+            ResizeViewports();
+            lastSize = currentSize;
+        }
 
         public void SetViewports(IReadOnlyList<IViewport> viewports, ViewportsLayout layout)
         {

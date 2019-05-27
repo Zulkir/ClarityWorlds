@@ -27,7 +27,7 @@ namespace Assets.Scripts.Rendering
         {
             if (ownsTexture && unityTexture == null)
                 return;
-            // todo: make work
+            // todo: make work (Main Thread Disposer)
             //Object.Destroy(unityTexture);
             unityTexture = null;
             ownsTexture = false;

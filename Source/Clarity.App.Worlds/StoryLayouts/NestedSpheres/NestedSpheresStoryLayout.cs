@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.Interaction.Placement;
-using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
@@ -28,8 +26,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
         public Type Type => typeof(NestedSpheresStoryLayout);
 
         private readonly ICoroutineService coroutineService;
-        private readonly IWorldTreeService worldTreeService;
-        private readonly Lazy<INavigationService> navigationServiceLazy;
 
         private readonly IModel3D mainModel;
         private readonly IModel3D lineModel;
@@ -39,11 +35,9 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
         private readonly IRenderState sphereRenderState;
         private readonly IRenderState lineRenderState;
 
-        public NestedSpheresStoryLayout(IEmbeddedResources embeddedResources, ICoroutineService coroutineService, IWorldTreeService worldTreeService, Lazy<INavigationService> navigationServiceLazy)
+        public NestedSpheresStoryLayout(IEmbeddedResources embeddedResources, ICoroutineService coroutineService)
         {
             this.coroutineService = coroutineService;
-            this.worldTreeService = worldTreeService;
-            this.navigationServiceLazy = navigationServiceLazy;
             mainModel = embeddedResources.SphereModel(64, true);
             lineModel = embeddedResources.LineModel();
             sphereMaterials = new IMaterial[]
@@ -66,7 +60,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
         {
             var springModel = new NestedSpheresStorySpringModel(coroutineService, x => ArrangeAndDecorateInternal(sg.Root, 0, x, sg), sg);
             springModel.Apply();
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
 
         private void ArrangeAndDecorateInternal(int nodeIndex, int level, NestedSpheresStorySpringModel springModel, IStoryGraph sg)

@@ -89,7 +89,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         {
             var zNear = visibleProps.ZNear;
             var zFar = visibleProps.ZFar;
-            return new CameraProjection(zNear, zFar, visibleProps.FieldOfView);
+            return new CameraProjection(CameraProjectionType.Perspective, zNear, zFar, visibleProps.FieldOfView);
         }
 
         public Color4 VeilColor => new Color4(0, 0, 0, 0);

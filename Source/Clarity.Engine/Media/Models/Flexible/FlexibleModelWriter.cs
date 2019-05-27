@@ -35,6 +35,23 @@ namespace Clarity.Engine.Media.Models.Flexible
                                         Marshal.Copy(ptr + arraySubrange.StartOffset, bytes, 0, arraySubrange.Length);
                                         arraySubrange.RawDataResource.Unmap(false);
                                         writer.WritePropertyName("Data");
+
+                                        // Inverse normals code
+                                        //fixed (byte* pBytes = bytes)
+                                        //{
+                                        //    var normalElemInfo = vertexSet.ElementInfos
+                                        //        .FirstOrDefault(x => x.CommonSemantic == CommonVertexSemantic.Normal);
+                                        //    if (normalElemInfo != null && normalElemInfo.ArrayIndex == i)
+                                        //    {
+                                        //        for (var j = normalElemInfo.Offset;
+                                        //            j < bytes.Length;
+                                        //            j += normalElemInfo.Stride)
+                                        //        {
+                                        //            *(Vector3*)&pBytes[j] = -*(Vector3*)(ptr + j);
+                                        //        }
+                                        //    }
+                                        //}
+
                                         writer.WriteValue(bytes);
                                     }
                                     writer.WriteEnd();
