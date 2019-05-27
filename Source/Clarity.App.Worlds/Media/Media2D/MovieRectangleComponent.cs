@@ -107,7 +107,7 @@ namespace Clarity.App.Worlds.Media.Media2D
 
             progressBar = new ModelVisualElement<MovieRectangleComponent>(this)
                 .SetModel(model)
-                .SetMaterial(StandardMaterial.New(this)
+                .SetMaterial(StandardMaterial.New()
                     .SetDiffuseColor(Color4.Red)
                     .SetIgnoreLighting(true)
                     .FromGlobalCache())

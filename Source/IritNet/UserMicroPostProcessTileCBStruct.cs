@@ -1,4 +1,4 @@
-﻿namespace IritNet
+namespace IritNet
 {
     public unsafe struct UserMicroPostProcessTileCBStruct
     {
@@ -7,8 +7,8 @@
         public fixed int UVWTotalRep[3];  /* Number of tiles to place in 3 directions in each*/
         /* Bezier patch/global (following GlobalPlacement) of deformation map.  */
         public fixed int NumBranchesUV[2]; /* 1 + Number of C0 discontinuities in u and v    */
-        /* directions of trivariate tiles.		    */
+        /* directions of trivariate tiles.                    */
         public IrtHmgnMatType Mat;  /* Mapping of [0, 1]^3 to tile position in defmat. */
-        public void *CBFuncData;  /* Input data pointer given by UserMicroParamStruct. */
+        public void* CBFuncData;  /* Input data pointer given by UserMicroParamStruct. */
     }
 }

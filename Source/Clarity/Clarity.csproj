@@ -83,6 +83,10 @@
       <Project>{d5451e35-cafe-459d-b5bf-ba0e2464a1cb}</Project>
       <Name>Clarity.Ext.Gui.EtoForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clarity.Ext.Import.Pptx\Clarity.Ext.Import.Pptx.csproj">
+      <Project>{02a39959-5e9e-42ff-8367-2f14d9a51acb}</Project>
+      <Name>Clarity.Ext.Import.Pptx</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clarity.Ext.Rendering.Ogl3\Clarity.Ext.Rendering.Ogl3.csproj">
       <Project>{f1f1feb3-0f8b-4e98-9767-c6f88ddc4f7f}</Project>
       <Name>Clarity.Ext.Rendering.Ogl3</Name>
@@ -94,6 +98,10 @@
     <ProjectReference Include="..\Clarity.Ext.StoryLayout.Building\Clarity.Ext.StoryLayout.Building.csproj">
       <Project>{c0008e26-6102-4f8e-a3b3-c9737892f19b}</Project>
       <Name>Clarity.Ext.StoryLayout.Building</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Clarity.Ext.TextImlets.Latex\Clarity.Ext.TextImlets.Latex.csproj">
+      <Project>{4e385750-ed77-49f3-ab2f-d14120293dec}</Project>
+      <Name>Clarity.Ext.TextImlets.Latex</Name>
     </ProjectReference>
     <ProjectReference Include="..\Clarity.Ext.Video.FFmpeg\Clarity.Ext.Video.FFmpeg.csproj">
       <Project>{beb75e6e-3c93-46ea-a45e-2507cf40f200}</Project>

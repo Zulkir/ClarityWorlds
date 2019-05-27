@@ -236,6 +236,7 @@ namespace Clarity.App.Worlds.External.ObjLoading
             var sphere = Sphere.BoundingSphere(finalVertices, x => x.Position);
             var model = new FlexibleModel(ResourceVolatility.Immutable, new [] {vertexSet}, modelParts, sphere);
             pack.AddSubresource("Model", model);
+            pack.MainSubresource = model;
 
             var hash = AssetHashMd5.FromSingleFile(fileData);
             var fileName = Path.GetFileName(loadInfo.LoadPath);

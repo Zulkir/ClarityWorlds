@@ -30,13 +30,18 @@ namespace Clarity.App.Worlds.Helpers
         {
             var node = objectFactory.Create<SceneNode>();
             node.Name = "World";
-            node.Components.Add(PresentationComponent.Create());
+            
             if (withStoryComponent)
             {
                 node.Components.Add(PresentationRootComponent.Create(Guid.NewGuid()));
+                node.Components.Add(AmFactory.Create<StoryServiceRootComponent>());
                 var storyComponent = objectFactory.Create<StoryComponent>();
                 storyComponent.StartLayoutType = typeof(SphereStoryLayout);
                 node.Components.Add(storyComponent);
+            }
+            else
+            {
+                node.Components.Add(PresentationComponent.Create());
             }
             return node;
         }
@@ -88,6 +93,7 @@ namespace Clarity.App.Worlds.Helpers
             var rectComponent = objectFactory.Create<RectangleComponent>();
             rectComponent.DragByBorders = true;
             var richTextComponent = objectFactory.Create<RichTextComponent>();
+            richTextComponent.TextBox.Text = text;
             node.Components.Add(rectComponent);
             node.Components.Add(richTextComponent);
             return node;

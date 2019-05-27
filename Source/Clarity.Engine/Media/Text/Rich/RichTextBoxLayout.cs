@@ -19,14 +19,27 @@ namespace Clarity.Engine.Media.Text.Rich
             Text = text;
         }
 
+        public bool TryGetSpanAt(Vector2 point, out RichTextBoxLayoutSpan lspan)
+        {
+            return TryGetClosestSpanAt(point, out lspan) && lspan.Bounds.ContainsPoint(point);
+        }
+
         public RtPosition GetPosition(Vector2 point, RichTextPositionPreference preference)
         {
+            return TryGetClosestSpanAt(point, out var lspan)
+                ? GetPositionInLspan(point, lspan) // todo: use preference
+                : new RtPosition(0, 0, 0);
+        }
+
+        private bool TryGetClosestSpanAt(Vector2 point, out RichTextBoxLayoutSpan lspan)
+        {
             if (LayoutSpans.Count == 0)
-                return new RtPosition(0, 0, 0);
-            var closestRect = LayoutSpans.Minimal(x => x.DistanceFrom(point));
-            var pos = GetPositionInLspan(point, closestRect);
-            // todo: use preference
-            return pos;
+            {
+                lspan = default(RichTextBoxLayoutSpan);
+                return false;
+            }
+            lspan = LayoutSpans.Minimal(x => x.DistanceFrom(point));
+            return true;
         }
 
         private static RtPosition GetPositionInLspan(Vector2 point, RichTextBoxLayoutSpan lspan)
@@ -74,7 +87,7 @@ namespace Clarity.Engine.Media.Text.Rich
         {
             var globalIndex = Text.GetGlobalIndex(pos);
 
-            if (globalIndex == Text.Length)
+            if (globalIndex == Text.LayoutTextLength)
             {
                 newPos =  pos;
                 return false;

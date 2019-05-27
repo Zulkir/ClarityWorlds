@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
-using System.Text;
-using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals.Colors;
@@ -16,9 +14,10 @@ namespace Clarity.Engine.Media.Text.Rich
         public abstract IList<IRtParagraph> Paragraphs { get; }
         public abstract IRtOverallStyle Style { get; set; }
 
-        public int Length => Paragraphs.Sum(x => x.Length + 1) - 1;
-        public bool IsEmpty => Paragraphs.All(x => x.IsEmpty);
-        public string DebugText => string.Join("\n", Paragraphs.Select(x => ((RtParagraph)x).DebugText));
+        public int LayoutTextLength => Paragraphs.Sum(x => x.LayoutTextLength + 1) - 1;
+        public string LayoutText => string.Join("\n", Paragraphs.Select(x => x.LayoutText));
+        public string RawText => string.Join("\n", Paragraphs.Select(x => x.RawText));
+        public string DebugText => string.Join("\n", Paragraphs.Select(x => x.DebugText));
 
         protected RichText()
         {
@@ -101,22 +100,24 @@ namespace Clarity.Engine.Media.Text.Rich
                 nextSpanIndex = pos.SpanIndex;
                 return;
             }
-            if (pos.CharIndex == span.Length)
+            if (pos.CharIndex == span.LayoutTextLength)
             {
                 nextSpanIndex = pos.SpanIndex + 1;
                 return;
             }
-            var secondSpan = AmFactory.Create<RtSpan>();
+            if (!(span is IRtPureSpan pureSpan))
+                throw new InvalidOperationException("Cannot split non-pure spans in the middle");
+            var secondSpan = AmFactory.Create<RtPureSpan>();
             secondSpan.Style = span.Style.CloneTyped();
-            secondSpan.Text = span.Text.Substring(pos.CharIndex);
-            span.Text = span.Text.Substring(0, pos.CharIndex);
+            secondSpan.Text = pureSpan.Text.Substring(pos.CharIndex);
+            pureSpan.Text = pureSpan.Text.Substring(0, pos.CharIndex);
             para.Spans.Insert(pos.SpanIndex + 1, secondSpan);
             nextSpanIndex = pos.SpanIndex + 1;
         }
 
-        private static IRtSpan CreateSpan(string text, IRtSpanStyle style)
+        private static IRtPureSpan CreateSpan(string text, IRtSpanStyle style)
         {
-            var span = AmFactory.Create<RtSpan>();
+            var span = AmFactory.Create<RtPureSpan>();
             span.Text = text;
             span.Style = style;
             return span;
@@ -128,12 +129,12 @@ namespace Clarity.Engine.Media.Text.Rich
             foreach (var para in Paragraphs.Take(pos.ParaIndex))
             {
                 foreach (var span in para.Spans)
-                    globalSpanOffset += span.Length;
+                    globalSpanOffset += span.LayoutTextLength;
                 globalSpanOffset++;
             }
             var exactPara = Paragraphs[pos.ParaIndex];
             foreach (var span in exactPara.Spans.Take(pos.SpanIndex))
-                globalSpanOffset += span.Length;
+                globalSpanOffset += span.LayoutTextLength;
 
             globalSpanOffset += pos.CharIndex;
             return globalSpanOffset;
@@ -148,23 +149,23 @@ namespace Clarity.Engine.Media.Text.Rich
                 for (var spanIndex = 0; spanIndex < para.Spans.Count; spanIndex++)
                 {
                     var span = para.Spans[spanIndex];
-                    if (remainingChars > span.Length)
+                    if (remainingChars > span.LayoutTextLength)
                     {
-                        remainingChars -= span.Length;
+                        remainingChars -= span.LayoutTextLength;
                         continue;
                     }
-                    if (remainingChars < span.Length || spanIndex == para.Spans.Count - 1)
+                    if (remainingChars < span.LayoutTextLength || spanIndex == para.Spans.Count - 1)
                         return new RtPosition(paraIndex, spanIndex, remainingChars);
                     switch (preference)
                     {
                         case RichTextPositionPreference.ClosestWord:
-                            var leftSpanChar = para.Spans[spanIndex].Text.Last();
-                            var rightSpanChar = para.Spans[spanIndex + 1].Text.First();
+                            var leftSpanChar = para.Spans[spanIndex].LayoutText.Last();
+                            var rightSpanChar = para.Spans[spanIndex + 1].LayoutText.First();
                             if (IsWhitespace(leftSpanChar) && !IsWhitespace(rightSpanChar))
                                 return new RtPosition(paraIndex, spanIndex + 1, 0);
-                            return new RtPosition(paraIndex, spanIndex, span.Length);
+                            return new RtPosition(paraIndex, spanIndex, span.LayoutTextLength);
                         case RichTextPositionPreference.PreviousSpan:
-                            return new RtPosition(paraIndex, spanIndex, span.Length);
+                            return new RtPosition(paraIndex, spanIndex, span.LayoutTextLength);
                         case RichTextPositionPreference.NextSpan:
                             return new RtPosition(paraIndex, spanIndex + 1, 0);
                         default:
@@ -224,21 +225,6 @@ namespace Clarity.Engine.Media.Text.Rich
                 for (int i = 0; i <= range.LastCharPos.SpanIndex; i++)
                     yield return lastPara.Spans[i];
             }
-        }
-
-        public string ToRawString()
-        {
-            var builder = new StringBuilder();
-            foreach (var para in Paragraphs.ExceptLast())
-            {
-                foreach (var span in para.Spans)
-                    builder.Append(span.Text);
-                builder.Append("\n");
-            }
-            var lastPara = Paragraphs.Last();
-            foreach (var span in lastPara.Spans)
-                builder.Append(span.Text);
-            return builder.ToString();
         }
     }
 }

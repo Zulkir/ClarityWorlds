@@ -109,6 +109,7 @@
     <Compile Include="Assets\FromAssetResourceSource.cs" />
     <Compile Include="Assets\IAssetFileCache.cs" />
     <Compile Include="Assets\SysDrawImageLoader.cs" />
+    <Compile Include="SaveLoad\Import\IPresentationImporter.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandlerFamily.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandler.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetForWorldTrwTypeRedirect.cs" />

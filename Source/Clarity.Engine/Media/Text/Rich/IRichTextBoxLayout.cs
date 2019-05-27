@@ -8,6 +8,7 @@ namespace Clarity.Engine.Media.Text.Rich
     {
         IReadOnlyList<RichTextBoxLayoutSpan> LayoutSpans { get; }
         IReadOnlyList<RichTextBoxLayoutSpan> ExternalLayoutSpans { get; }
+        bool TryGetSpanAt(Vector2 point, out RichTextBoxLayoutSpan lspan);
         RtPosition GetPosition(Vector2 point, RichTextPositionPreference preference);
         void GetCursorPoint(RtPosition pos, out Vector2 point, out float height);
         IRtSpanStyle GetSpanStyleAt(RtPosition pos);

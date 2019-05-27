@@ -165,6 +165,7 @@ namespace Clarity.Ext.Format.Dicom
             };
             var model = new FlexibleModel(ResourceVolatility.Immutable, new[] { vertexSet }, new[] { modelPart }, new Sphere(Vector3.Zero, 50));
             pack.AddSubresource("Model", model);
+            pack.MainSubresource = model;
 
             CheckSuccess(DicomProject.AnalyzerKillDicomAnalyzer(&dicomManager));
 

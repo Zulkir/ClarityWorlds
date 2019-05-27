@@ -1,8 +1,11 @@
-﻿using Clarity.Common.CodingUtilities;
+﻿using System;
+using System.Runtime.InteropServices;
+using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Gui.MessageBoxes;
 using Clarity.Engine.Interaction.Input.Keyboard;
+using Clarity.Engine.Media.Images;
 using Clarity.Engine.Media.Text.Rich;
 using ef = Eto.Forms;
 using ed = Eto.Drawing;
@@ -52,5 +55,18 @@ namespace Clarity.Ext.Gui.EtoForms
 
         public static ef.MessageBoxButtons ToEto(this MessageBoxButtons cButtons) =>
             (ef.MessageBoxButtons)cButtons;
+
+        public static ed.Image ToEto(this IImage cImage)
+        {
+            var eImage = new ed.Bitmap(cImage.Size.Width, cImage.Size.Height, ed.PixelFormat.Format32bppRgba);
+            using (var eData = eImage.Lock())
+            {
+                if (eData.ScanWidth != cImage.Size.Width * 4)
+                    throw new NotImplementedException();
+                var rawData = cImage.GetRawData();
+                Marshal.Copy(rawData, 0, eData.Data, rawData.Length);
+            }
+            return eImage;
+        }
     }
 }

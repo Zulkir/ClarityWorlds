@@ -2,12 +2,12 @@ namespace IritNet
 {
     public unsafe struct UserCrvArngmntStruct
     {
-        public  CagdCrvStruct *CagdCrvs;
-        public  UserCAPtStruct *Pts;
-        public  UserCACrvStruct *Crvs;
-        public  UserCARegionStruct **Regions;
-        public  IPObjectStruct *Output;               /* CA output is kept here. */
-             
+        public  CagdCrvStruct* CagdCrvs;
+        public  UserCAPtStruct* Pts;
+        public  UserCACrvStruct* Crvs;
+        public  UserCARegionStruct** Regions;
+        public  IPObjectStruct* Output;               /* CA output is kept here. */
+        
         public double EndPtEndPtTol;  /* Tolerance to consider crvs' end points same. */
         public double InternalTol;    /* Internal tolerance for CCI, inflections etc. */
         public double PlanarityTol;   /* Tolerance of curves to be considered planar. */
@@ -20,6 +20,6 @@ namespace IritNet
         public int NumOfOrigCrvs;                     /* Number of curves in the input. */
         public int NumOfCrvs;                                /* Current number of curves. */
         public int NumOfRegions;                               /* Current number of regions. */
-        public  byte *Error; /* Last error string description will be placed here. */
+        public  byte* Error; /* Last error string description will be placed here. */
     }
 }

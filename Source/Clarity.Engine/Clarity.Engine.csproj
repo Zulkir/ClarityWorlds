@@ -88,6 +88,7 @@
     <Compile Include="Gui\MessageBoxes\MessageBoxButtons.cs" />
     <Compile Include="Gui\MessageBoxes\MessageBoxType.cs" />
     <Compile Include="Gui\MessagePopups\IMessagePopupService.cs" />
+    <Compile Include="Gui\WindowQueries\IWindowQueryService.cs" />
     <Compile Include="Interaction\IInteractionComponent.cs" />
     <Compile Include="Interaction\Input\VRController\IVRControllerEventArgs.cs" />
     <Compile Include="Interaction\Input\VRController\IVRControllerInputProvider.cs" />
@@ -111,12 +112,18 @@
     <Compile Include="Media\Text\Rich\IRichTextBoxLayout.cs" />
     <Compile Include="Media\Text\Rich\IRichTextBoxLayoutBuilder.cs" />
     <Compile Include="Media\Text\Rich\IRichTextMeasurer.cs" />
+    <Compile Include="Media\Text\Rich\IRtEmbeddingSpan.cs" />
+    <Compile Include="Media\Text\Rich\IRtEmbeddingHandler.cs" />
+    <Compile Include="Media\Text\Rich\IRtEmbeddingHandlerContainer.cs" />
     <Compile Include="Media\Text\Rich\IRtListStyle.cs" />
+    <Compile Include="Media\Text\Rich\IRtSpan.cs" />
     <Compile Include="Media\Text\Rich\RichTextBoxLayout.cs" />
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutBuilder.cs" />
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutSpan.cs" />
     <Compile Include="Media\Text\Rich\RichTextDirection.cs" />
     <Compile Include="Media\Text\Rich\RichTextPositionPreference.cs" />
+    <Compile Include="Media\Text\Rich\RtEmbeddingSpan.cs" />
+    <Compile Include="Media\Text\Rich\RtEmbeddingHandlerContainer.cs" />
     <Compile Include="Media\Text\Rich\RtListType.cs" />
     <Compile Include="Objects\Caching\CacheContainer.cs" />
     <Compile Include="Objects\Caching\ICache.cs" />
@@ -315,7 +322,7 @@
     <Compile Include="Media\Text\Rich\IRtOverallStyle.cs" />
     <Compile Include="Media\Text\Rich\IRtParagraph.cs" />
     <Compile Include="Media\Text\Rich\IRtParagraphStyle.cs" />
-    <Compile Include="Media\Text\Rich\IRtSpan.cs" />
+    <Compile Include="Media\Text\Rich\IRtPureSpan.cs" />
     <Compile Include="Media\Text\Rich\IRtSpanStyle.cs" />
     <Compile Include="Media\Text\Rich\RichText.cs" />
     <Compile Include="Media\Text\Rich\RichTextBox.cs" />
@@ -328,7 +335,7 @@
     <Compile Include="Media\Text\Rich\RtPosition.cs" />
     <Compile Include="Media\Text\Rich\RtRange.cs" />
     <Compile Include="Media\Text\Rich\RtSimpleDiff.cs" />
-    <Compile Include="Media\Text\Rich\RtSpan.cs" />
+    <Compile Include="Media\Text\Rich\RtPureSpan.cs" />
     <Compile Include="Media\Text\Rich\RtSpanStyle.cs" />
     <Compile Include="Media\Text\Rich\RtTransparencyMode.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

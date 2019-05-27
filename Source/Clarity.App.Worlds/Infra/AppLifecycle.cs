@@ -29,6 +29,7 @@ using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Media.Images;
+using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Serialization;
 
@@ -91,6 +92,7 @@ namespace Clarity.App.Worlds.Infra
             di.Bind<IPresentationGuiCommands>().To<PresentationGuiCommands>();
             di.Bind<ISceneNodeContextMenuBuilder>().To<SceneNodeContextMenuBuilder>();
             di.Bind<IReadOnlyWorldBuilder>().To<ReadOnlyWorldBuilder>();
+            di.Bind<IRtEmbeddingHandlerContainer>().To<RtEmbeddingHandlerContainer>();
             di.Bind<IDirtyHackService>().To<DirtyHackService>();
         }
 

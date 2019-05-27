@@ -15,7 +15,7 @@ namespace Clarity.Engine.Media.Text.Rich
             spanStyle.FontFamily = fontFamily;
             spanStyle.FontDecoration = fontDecoration;
             spanStyle.TextColor = fontColor;
-            var span = AmFactory.Create<RtSpan>();
+            var span = AmFactory.Create<RtPureSpan>();
             span.Text = text;
             span.Style = spanStyle;
 

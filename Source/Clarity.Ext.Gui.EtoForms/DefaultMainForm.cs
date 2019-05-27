@@ -8,6 +8,7 @@ using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Numericals.Colors;
@@ -203,6 +204,14 @@ namespace Clarity.Ext.Gui.EtoForms
             fileMenuItem.Items.Add(saveLoadGuiCommands.New);
             fileMenuItem.Items.Add(saveLoadGuiCommands.Open);
             fileMenuItem.Items.AddSeparator();
+            if (saveLoadGuiCommands.ImportCommands.HasItems())
+            {
+                var importMenu = new ButtonMenuItem {Text = "&Import"};
+                foreach (var importCommand in saveLoadGuiCommands.ImportCommands)
+                    importMenu.Items.Add(importCommand);
+                fileMenuItem.Items.Add(importMenu);
+                fileMenuItem.Items.AddSeparator();
+            }
             fileMenuItem.Items.Add(saveLoadGuiCommands.Save);
             fileMenuItem.Items.Add(saveLoadGuiCommands.SaveAs);
             fileMenuItem.Items.AddSeparator();

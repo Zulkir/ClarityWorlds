@@ -32,10 +32,12 @@ namespace Clarity.Engine.Media.Text.Rich
 
         public ICacheContainer CacheContainer { get; }
 
+        public static float DefaultPixelScaling { get; } = 512;
+
         protected RichTextBox(IRichTextBoxLayoutBuilder layoutBuilder)
         {
             this.layoutBuilder = layoutBuilder;
-            PixelScaling = 512;
+            PixelScaling = DefaultPixelScaling;
             CacheContainer = new CacheContainer();
             Text = AmFactory.Create<RichText>();
         }

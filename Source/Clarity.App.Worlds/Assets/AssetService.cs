@@ -64,6 +64,7 @@ namespace Clarity.App.Worlds.Assets
 
             if (loadInfo.AssetName != null)
             {
+                // todo: check if need handle duplicate names here
                 if (assets.ContainsKey(loadInfo.AssetName))
                     throw new ArgumentException($"Asset with the name '{loadInfo.AssetName}' is already registered.");
             }

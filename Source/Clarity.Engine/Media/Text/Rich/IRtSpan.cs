@@ -6,11 +6,13 @@ namespace Clarity.Engine.Media.Text.Rich
     public interface IRtSpan : IAmObject
     {
         [NotNull]
-        string Text { get; set; }
-        [NotNull]
-        IRtSpanStyle Style { get; set; }
+        IRtSpanStyle Style { get; }
 
-        int Length { get; }
         bool IsEmpty { get; }
+
+        int LayoutTextLength { get; }
+        string LayoutText { get; }
+        string RawText { get; }
+        string DebugText { get; }
     }
 }

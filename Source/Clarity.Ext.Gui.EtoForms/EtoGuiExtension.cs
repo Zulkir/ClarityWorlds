@@ -3,6 +3,7 @@ using Clarity.App.Worlds.Gui;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Gui.MessageBoxes;
+using Clarity.Engine.Gui.WindowQueries;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Media.Text.Rich;
@@ -64,6 +65,7 @@ namespace Clarity.Ext.Gui.EtoForms
             di.Bind<IKeyboardInputProvider>().To<KeyboardInputProvider>();
             di.Bind<IWindowManager>().To<WindowManager>();
             di.Bind<IMessageBoxService>().To<MessageBoxService>();
+            di.Bind<IWindowQueryService>().To<WindowQueryService>();
             di.BindMulti<IResourceSaver>().To<ImageResourceSaver>();
         }
 

@@ -145,6 +145,7 @@
     <Compile Include="Text\TextImageAtomWithDrawInfo.cs" />
     <Compile Include="Text\RtImageBuilder.cs" />
     <Compile Include="UndoRedoGui.cs" />
+    <Compile Include="WindowQueryService.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clarity.App.Worlds\Clarity.App.Worlds.csproj">

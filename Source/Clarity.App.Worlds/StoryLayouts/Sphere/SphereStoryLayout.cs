@@ -1,4 +1,5 @@
 using System;
+using Clarity.App.Worlds.Interaction.Placement;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
 using Clarity.Common.Numericals;
@@ -20,6 +21,13 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
     {
         public string UserFriendlyName => "Sphere";
         public Type Type => typeof(SphereStoryLayout);
+
+        private const float MaxAspectRatio = 2f;
+        private const float HalfHeight = 1f;
+        private const float HalfWidth = MaxAspectRatio * HalfHeight;
+        private const float MinVerticalDistance = 2 * (HalfHeight * 1.1f);
+        private const float MinHorizontalDistance = MaxAspectRatio * MinVerticalDistance;
+        private const float MinRadiusDistance = 5f;
 
         private struct PitchYaw
         {
@@ -59,66 +67,87 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
 
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
-            ArrangeAndDecorateRoot(sg, sg.Root, sg.Depth);
+            ArrangeAndDecorateRoot(sg, sg.Root);
             return new BasicStoryLayoutInstance(sg);
         }
 
-        private void ArrangeAndDecorateRoot(IStoryGraph sg, int nodeIndex, int scaleLevel)
+        private void ArrangeAndDecorateRoot(IStoryGraph sg, int nodeIndex)
         {
-            var aStory = sg.Aspects[nodeIndex];
+            var cStory = sg.Aspects[nodeIndex];
             var node = sg.NodeObjects[nodeIndex];
-            var abstractChildren = sg.Children[nodeIndex];
-            var numChildren = abstractChildren.Count;
+            var children = sg.Children[nodeIndex];
+            var numChildren = children.Count;
 
-            var scale = MathHelper.Pow(4, scaleLevel - 1);
-
-            var distr = CalculateDistribution(numChildren);
-            var radius = distr.RelativeRadius * scale;
-            
-            for (int i = 0; i < numChildren; i++)
+            if (numChildren < 2)
             {
-                var pitch = distr.Angles[i].Pitch;
-                var yaw = -distr.Angles[i].Yaw;
-                //var internalRadius = radius / 2;
+                var viewpointProps = new TargetedControlledCameraY.Props
+                {
+                    Target = Vector3.Zero,
+                    Distance = MathHelper.FrustumDistance,
+                    FieldOfView = MathHelper.PiOver4,
+                    ZNear = 0.1f,
+                    ZFar = 100.0f
+                };
 
-                var pos = radius * new Vector3(
-                    MathHelper.Cos(yaw) * MathHelper.Cos(pitch),
-                    MathHelper.Sin(yaw) * MathHelper.Cos(pitch),
-                    MathHelper.Sin(pitch));
-                var zAxis = (-pos).Normalize();
-                var xAxis = Vector3.Cross(Vector3.UnitZ, zAxis).Normalize();
-                var yAxis = Vector3.Cross(zAxis, xAxis);
+                cStory.SetDynamicParts(new StoryNodeDynamicParts
+                {
+                    DefaultViewpointMechanism = new WallDefaultViewpointMechanism(node, viewpointProps),
+                    Hittable = new DummyHittable(),
+                    VisualElements = new IVisualElement[0]
+                });
 
-                var rotation = Quaternion.RotationToFrame(xAxis, yAxis);
-
-                var adaptiveChild = abstractChildren[i];
-                sg.NodeObjects[adaptiveChild].Transform = new Transform(scale / MathHelper.Sqrt(2), rotation, pos);
-                ArrangeAndDecorateInternal(sg, adaptiveChild, scaleLevel - 1);
+                foreach (var child in children)
+                    ArrangeAndDecorateRoot(sg, child);
             }
-
-            var viewpointProps = new LookAroundCamera.Props
+            else
             {
-                Distance = 24 * scale,
-                FieldOfView = 0.75f * MathHelper.Pi,
-                ZNear = 0.1f * scale,
-                ZFar = 100.0f * scale,
-                Pitch = 0//MathHelper.PiOver2 + 0.1f
-            };
+                var distr = CalculateDistribution(numChildren);
+                var radius = distr.RelativeRadius;
 
-            aStory.SetDynamicParts(new StoryNodeDynamicParts
-            {
-                DefaultViewpointMechanism = new SphereDefaultViewpointMechanism(node, viewpointProps),
-                Hittable = new DummyHittable(),
-                VisualElements = new IVisualElement[0]
-            });
+                for (int i = 0; i < numChildren; i++)
+                {
+                    var pitch = distr.Angles[i].Pitch;
+                    var yaw = distr.Angles[i].Yaw;
+                    //var internalRadius = radius / 2;
+                    ArrangeAndDecorateInternal(sg, children[i],
+                        AaRectangle2.FromCenter(new Vector2(yaw, pitch), HalfWidth / radius, HalfHeight / radius),
+                        radius);
+                }
+
+                var viewpointProps = new LookAroundCamera.Props
+                {
+                    Distance = distr.RelativeRadius,
+                    FieldOfView = 0.75f * MathHelper.Pi,
+                    ZNear = 0.1f,
+                    ZFar = 100.0f,
+                    Pitch = 0//MathHelper.PiOver2 + 0.1f
+                };
+
+                cStory.SetDynamicParts(new StoryNodeDynamicParts
+                {
+                    DefaultViewpointMechanism = new SphereDefaultViewpointMechanism(node, viewpointProps),
+                    Hittable = new DummyHittable(),
+                    VisualElements = new IVisualElement[0]
+                });
+            }
+        }
+
+        private static Vector3 ToCartesian(float yaw, float pitch, float radius)
+        {
+            var adjustedYaw = MathHelper.Pi - yaw;
+            return radius * new Vector3(
+               MathHelper.Sin(adjustedYaw) * MathHelper.Cos(pitch),
+               MathHelper.Sin(pitch),
+               MathHelper.Cos(adjustedYaw) * MathHelper.Cos(pitch));
         }
 
         private static SphereDistribution CalculateDistribution(int numChildren)
         {
+            // todo: estimate good radius from number
             float radius = 2f;
             var angles = new PitchYaw[numChildren];
             while (!TryCalculateDistributionForRadius(radius, angles))
-                radius += 0.1f;
+                radius *= 1.1f;
             return new SphereDistribution(radius, angles);
         }
 
@@ -173,63 +202,77 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
         {
             var bigRadius = RadiusAt(radius, pitch + PitchStep(radius));
             return bigRadius > 1 
-                ? 1.8f * 2 * MathHelper.Asin(1f / bigRadius)
+                ? MinHorizontalDistance * MathHelper.Asin(1f / bigRadius)
                 : float.PositiveInfinity;
         }
 
         private static float PitchStep(float radius) =>
-            1.2f * 2 * MathHelper.Asin(1f / radius);
+            MinVerticalDistance * MathHelper.Asin(1f / radius);
 
         private static float RadiusAt(float radius, float pitch) =>
             radius * MathHelper.Cos(pitch);
         
-        private void ArrangeAndDecorateInternal(IStoryGraph sg, int nodeIndex, int scaleLevel)
+        private void ArrangeAndDecorateInternal(IStoryGraph sg, int nodeId, AaRectangle2 yawPitchBounds, float radius)
         {
-            var aStory = sg.Aspects[nodeIndex];
-            var node = sg.NodeObjects[nodeIndex];
-            var abstractChildren = sg.Children[nodeIndex];
-            var numChildren = abstractChildren.Count;
+            var cStory = sg.Aspects[nodeId];
+            var node = sg.NodeObjects[nodeId];
+            var children = sg.Children[nodeId];
+            var numChildren = children.Count;
 
-            var halfSize = 1f;
-            var fov = MathHelper.PiOver4;
-            var distance = halfSize / MathHelper.Tan(fov / 2);
+            var yaw = yawPitchBounds.Center.X;
+            var pitch = yawPitchBounds.Center.Y;
+            var pos = ToCartesian(yaw, pitch, radius);
+            var zAxis = (-pos).Normalize();
+            var xAxis = Vector3.Cross(Vector3.UnitY, zAxis).Normalize();
+            var yAxis = Vector3.Cross(zAxis, xAxis);
+            var rotation = Quaternion.RotationToFrame(xAxis, yAxis);
+            node.Transform = new Transform(1, rotation, pos);
 
-            for (int i = 0; i < numChildren; i++)
+            var numRows = (int)Math.Ceiling(MathHelper.Sqrt(numChildren));
+            var numCols = (int)Math.Ceiling((float)numChildren / numRows);
+            var totalHeightRequired = MinVerticalDistance * numRows;
+            var totalWidthRequired = MinHorizontalDistance * numRows;
+            var minChildrenRadius = Math.Max(totalWidthRequired / yawPitchBounds.Width, totalHeightRequired / yawPitchBounds.Height);
+            var childRadius = Math.Max(radius + MinRadiusDistance, minChildrenRadius);
+
+            for (var i = 0; i < numChildren; i++)
             {
-                var adaptiveChild = abstractChildren[i];
-                //var angle = MathHelper.TwoPi * i / abstractChildren.Length - MathHelper.PiOver4;
-                //var rotation = Quaternion.Identity;
-                //var radius = halfSize * GetBestRadius(abstractChildren.Length);
-                //var offset = new Vector3(radius * MathHelper.Sin(angle), radius * MathHelper.Cos(angle), 0);
-
-                var rotation = Quaternion.Identity;
-                var middleIndex = (numChildren - 1) / 2f;
-                var offset = new Vector3(20 * (i - middleIndex) / numChildren, -8, 0);
-
-                sg.NodeObjects[adaptiveChild].Transform = new Transform(1f, rotation, offset);
-                ArrangeAndDecorateInternal(sg, adaptiveChild, scaleLevel - 1);
+                var child = children[i];
+                var row = i / numCols;
+                var col = i % numCols;
+                var childYawWidth = yawPitchBounds.Width / numCols;
+                var childYawHeight = yawPitchBounds.Height / numRows;
+                var childYaw = yawPitchBounds.MinX + childYawWidth * (row + 0.5f);
+                var childPitch = yawPitchBounds.MinY + childYawHeight * (col * 0.5f);
+                var childYawPitchBounds = AaRectangle2.FromCenter(new Vector2(childYaw, childPitch), HalfWidth / childRadius, HalfHeight / childRadius);
+                ArrangeAndDecorateInternal(sg, child, childYawPitchBounds, childRadius);
             }
             
             var visuals = new []
             {
-                ModelVisualElement.New().SetModel(frustumModel).SetMaterial(frustumMaterial)
+                ModelVisualElement.New()
+                    .SetModel(frustumModel)
+                    .SetMaterial(frustumMaterial)
+                    .SetTransform(new Transform(0.5f, Quaternion.Identity, new Vector3(0, 0, 0.5f * MathHelper.FrustumDistance)))
             };
 
             var viewpointProps = new TargetedControlledCameraY.Props
             {
                 Target = Vector3.Zero,
-                Distance = distance,
-                FieldOfView = fov,
-                ZNear = 0.1f * distance,
-                ZFar = 100.0f * distance
+                Distance = MathHelper.FrustumDistance,
+                FieldOfView = MathHelper.PiOver4,
+                ZNear = 0.1f,
+                ZFar = 100.0f
             };
 
-            var transform2D = new Transform(2, Quaternion.Identity, -distance * Vector3.UnitZ);
-            aStory.SetDynamicParts(new StoryNodeDynamicParts
+            var transform2D = new Transform(2, Quaternion.Identity, -MathHelper.FrustumDistance * Vector3.UnitZ);
+            cStory.SetDynamicParts(new StoryNodeDynamicParts
             {
                 DefaultViewpointMechanism = new WallDefaultViewpointMechanism(node, viewpointProps),
                 Hittable = GetHittableComponent(node, transform2D),
-                VisualElements = visuals
+                VisualElements = visuals,
+                PlacementSurface2D = new PlanarPlacementSurface(node, Transform.Identity),
+                PlacementSurface3D = new PlanarPlacementSurface(node, new Transform(0.05f, Quaternion.Identity, new Vector3(0, 0, 0.5f * MathHelper.FrustumDistance)))
             });
         }
 
@@ -238,6 +281,8 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
             return new RectangleHittable<ISceneNodeBound>(
                 layout, planeTransform, x => new AaRectangle2(Vector2.Zero, 1, 1), x => 0.0001f);
         }
+
+        // todo: remove
 
         private static Color4 ColorForScale(int scaleLevel)
         {

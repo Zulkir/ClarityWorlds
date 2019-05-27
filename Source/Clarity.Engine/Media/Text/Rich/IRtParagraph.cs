@@ -11,10 +11,11 @@ namespace Clarity.Engine.Media.Text.Rich
         [NotNull]
         IRtParagraphStyle Style { get; set; }
 
-        int Length { get; }
-        bool IsEmpty { get; }
+        int LayoutTextLength { get; }
 
+        string LayoutText { get; }
         string RawText { get; }
+        string DebugText { get; }
 
         void Normalize();
     }

@@ -7,7 +7,9 @@ using Clarity.Ext.Gui.EtoForms;
 using Clarity.Ext.Rendering.Ogl3;
 using Clarity.Ext.Simulation.Fluids;
 using Clarity.Ext.Format.Itd;
+using Clarity.Ext.Import.Pptx;
 using Clarity.Ext.StoryLayout.Building;
+using Clarity.Ext.TextImlets.Latex;
 using Clarity.Ext.Video.FFmpeg;
 
 namespace Clarity
@@ -34,6 +36,8 @@ namespace Clarity
                 new DicomFormatExtension(),
                 new BuildingStoryLayoutExtension(),
                 new OalExtension(),
+                new PptxImportExtension(),
+                new LatexImletExtension(),
             };
             var environment = new DesktopEnvironment(extensions);
             var appLifecycle = new AppLifecycle();

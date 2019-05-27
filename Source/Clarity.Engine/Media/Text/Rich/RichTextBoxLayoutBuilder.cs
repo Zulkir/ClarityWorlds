@@ -4,6 +4,7 @@ using System.Linq;
 using Clarity.Common.CodingUtilities.Collections;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
+using Clarity.Engine.Media.Images;
 using Clarity.Engine.Media.Text.Common;
 
 namespace Clarity.Engine.Media.Text.Rich
@@ -25,18 +26,24 @@ namespace Clarity.Engine.Media.Text.Rich
             public RtPosition TextPosition;
             public string Text;
             public IRtSpanStyle Style;
+            public IRtEmbeddingSpan Embedding;
+            public IRtEmbeddingHandler EmbeddingHandler;
+            public IImage EmbeddingImage;
             public RichTextDirection TextDirection;
             public RtParagraphDirection ParagraphDirection;
             public bool CanBreakAfter;
+
         }
 
         private readonly IRichTextMeasurer measurer;
         private readonly ITextLineBreaker lineBreaker;
+        private readonly IRtEmbeddingHandlerContainer embeddingHandlerContainer;
 
-        public RichTextBoxLayoutBuilder(IRichTextMeasurer measurer, ITextLineBreaker lineBreaker)
+        public RichTextBoxLayoutBuilder(IRichTextMeasurer measurer, ITextLineBreaker lineBreaker, IRtEmbeddingHandlerContainer embeddingHandlerContainer)
         {
             this.measurer = measurer;
             this.lineBreaker = lineBreaker;
+            this.embeddingHandlerContainer = embeddingHandlerContainer;
         }
 
         public IRichTextBoxLayout Build(IRichText text, IntSize2 size)
@@ -154,45 +161,70 @@ namespace Clarity.Engine.Media.Text.Rich
                 });
             }*/
 
-            var paragraphRawText = para.RawText;
+            var paraLayoutText = para.LayoutText;
             var paraPos = 0;
             for (var spanIndex = 0; spanIndex < para.Spans.Count; spanIndex++)
             {
                 var span = para.Spans[spanIndex];
-                if (span.Text.Length == 0)
-                    continue;
-
-                var previousBreakCharIndex = 0;
-                for (var charIndex = 1; charIndex < span.Text.Length; charIndex++)
+                switch (span)
                 {
-                    if (lineBreaker.CanBreakAt(paragraphRawText, paraPos + charIndex))
+                    case IRtEmbeddingSpan embeddingSpan:
                     {
+                        var handler = embeddingHandlerContainer.GetHandler(embeddingSpan);
+                        var image = handler.BuildImage(embeddingSpan);
+                        subspans.Add(new Subspan
+                        {
+                            TextPosition = new RtPosition(paragraphIndex, spanIndex, 0),
+                            Text = "☒",
+                            Style = span.Style,
+                            CanBreakAfter = true,
+                            ParagraphDirection = para.Style.Direction,
+                            TextDirection = text.Style.Direction,
+                            Embedding = embeddingSpan,
+                            EmbeddingHandler = handler,
+                            EmbeddingImage = image
+                        });
+                        break;
+                    }
+                    case IRtPureSpan pureSpan:
+                    {
+                        if (pureSpan.Text.Length == 0)
+                            continue;
+
+                        var previousBreakCharIndex = 0;
+                        for (var charIndex = 1; charIndex < pureSpan.Text.Length; charIndex++)
+                        {
+                            if (lineBreaker.CanBreakAt(paraLayoutText, paraPos + charIndex))
+                            {
+                                subspans.Add(new Subspan
+                                {
+                                    TextPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
+                                    Text = pureSpan.Text.Substring(previousBreakCharIndex, charIndex - previousBreakCharIndex),
+                                    Style = span.Style,
+                                    // todo: consider text direction
+                                    CanBreakAfter = true,
+                                    ParagraphDirection = para.Style.Direction,
+                                    TextDirection = text.Style.Direction
+                                });
+                                previousBreakCharIndex = charIndex;
+                            }
+                        }
+
                         subspans.Add(new Subspan
                         {
                             TextPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
-                            Text = span.Text.Substring(previousBreakCharIndex, charIndex - previousBreakCharIndex),
+                            Text = pureSpan.Text.Substring(previousBreakCharIndex),
                             Style = span.Style,
                             // todo: consider text direction
                             CanBreakAfter = true,
                             ParagraphDirection = para.Style.Direction,
                             TextDirection = text.Style.Direction
                         });
-                        previousBreakCharIndex = charIndex;
+                        break;
                     }
                 }
 
-                subspans.Add(new Subspan
-                {
-                    TextPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
-                    Text = span.Text.Substring(previousBreakCharIndex),
-                    Style = span.Style,
-                    // todo: consider text direction
-                    CanBreakAfter = true,
-                    ParagraphDirection = para.Style.Direction,
-                    TextDirection = text.Style.Direction
-                });
-
-                paraPos += span.Text.Length;
+                paraPos += span.LayoutTextLength;
             }
 
             if (subspans.Count == 0)
@@ -286,7 +318,10 @@ namespace Clarity.Engine.Media.Text.Rich
                         Strip = strip,
                         CharOffsets = charOffsets,
                         Text = subspan.Text,
-                        Style = subspan.Style
+                        Style = subspan.Style,
+                        Embedding = subspan.Embedding,
+                        EmbeddingHandler = subspan.EmbeddingHandler,
+                        EmbeddingImage = subspan.EmbeddingImage
                     };
 
                     rectOffsetX += subspanSize.Width;
@@ -348,10 +383,18 @@ namespace Clarity.Engine.Media.Text.Rich
             var index = 0;
             while (index < subspans.Count)
             {
-                toMerge.Clear();
                 var first = subspans[index];
-                toMerge.Add(first);
                 index++;
+
+                if (first.EmbeddingImage != null)
+                {
+                    resultList.Add(first);
+                    continue;
+                }
+
+                toMerge.Clear();
+                toMerge.Add(first);
+                
                 // todo: consider span direction
                 while (index < subspans.Count && subspans[index].TextPosition.SpanIndex == toMerge[0].TextPosition.SpanIndex)
                 {
@@ -382,6 +425,11 @@ namespace Clarity.Engine.Media.Text.Rich
 
         private Size2 MeasureSubspan(Subspan subspan)
         {
+            if (subspan.EmbeddingImage != null)
+            {
+                var intSize = subspan.EmbeddingImage.Size.Width;
+                return new Size2(intSize, subspan.EmbeddingImage.Size.Height);
+            }
             if (subspan.Text.Length == 0)
             {
                 var size = measurer.MeasureString(" ", subspan.Style);
@@ -399,7 +447,7 @@ namespace Clarity.Engine.Media.Text.Rich
 
         private static bool CanTrim(Subspan subspan)
         {
-            return subspan.Text.All(y => y == ' ' || y == '　');
+            return subspan.EmbeddingImage == null && subspan.Text.All(y => y == ' ' || y == '　');
         }
     }
 }

@@ -9,7 +9,8 @@ namespace Clarity.Ext.Gui.EtoForms.Text
     {
         private readonly Dictionary<string, FontFamily> dict = new Dictionary<string, FontFamily>();
 
+        // todo: handle more correctly
         public FontFamily GetFontFamily(string fontFamilyName) => 
-            dict.GetOrAdd(fontFamilyName, x => Fonts.AvailableFontFamilies.Single(y => y.Name == x));
+            dict.GetOrAdd(fontFamilyName, x => Fonts.AvailableFontFamilies.FirstOrDefault(y => y.Name == x) ?? Fonts.AvailableFontFamilies.First(y => y.Name == "Arial"));
     }
 }

@@ -221,6 +221,7 @@ namespace Clarity.Ext.StoryLayout.Building
                         .SetRenderState(StandardRenderState.New()
                             // todo: remove *5
                             .SetZOffset(GraphicsHelper.MinZOffset * 5)
+                            .SetLineWidth(3)
                             .FromGlobalCache()));
                 }
             }

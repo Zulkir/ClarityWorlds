@@ -5,7 +5,7 @@
         public struct Union
         {
             public CagdCrvStruct* LimitCrvs;
-            public CagdSrfStruct* Srf { get => (CagdSrfStruct*)LimitCrvs; set => LimitCrvs = (CagdCrvStruct*)value; }
+            public CagdSrfStruct* Srf { get { return (CagdSrfStruct*)LimitCrvs; } set { LimitCrvs = (CagdCrvStruct*)value; } }
         }
 
         public CagdCrvQuadTileStruct *Pnext;

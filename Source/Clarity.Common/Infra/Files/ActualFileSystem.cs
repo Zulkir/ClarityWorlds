@@ -24,5 +24,7 @@ namespace Clarity.Common.Infra.Files
         public Stream OpenWriteNew(string path) => File.Create(AdjustPath(path));
         public void DeleteFile(string path) => File.Delete(AdjustPath(path));
         public void DeleteFolder(string path) => Directory.Delete(AdjustPath(path), true);
+
+        public static ActualFileSystem Singleton { get; } = new ActualFileSystem();
     }
 }

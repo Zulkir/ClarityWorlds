@@ -1,4 +1,5 @@
-﻿using Eto.Forms;
+﻿using System.Collections.Generic;
+using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.SaveLoad
 {
@@ -8,5 +9,6 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
         Command Save { get; }
         Command SaveAs { get; }
         Command Open { get; }
+        IReadOnlyList<Command> ImportCommands { get; }
     }
 }

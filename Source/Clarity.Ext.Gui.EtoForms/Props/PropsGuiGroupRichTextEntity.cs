@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using Clarity.App.Worlds.UndoRedo;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Objects.WorldTree;
+using Clarity.Engine.Utilities;
 using Eto.Drawing;
 using Eto.Forms;
 using FontDecoration = Clarity.Engine.Media.Text.Rich.FontDecoration;
@@ -28,6 +30,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         private readonly DropDown cFontFamily;
         private readonly NumericUpDown cFontSize;
         private readonly ColorPicker cTextColor;
+        private readonly Button cInsertFormula;
         private IRichTextComponent boundComponent;
         private int suppressControlEvents = 0;
 
@@ -127,7 +130,10 @@ namespace Clarity.Ext.Gui.EtoForms.Props
 
             cTextColor = new ColorPicker();
             cTextColor.ValueChanged += OnTextColorChanged;
-            
+
+            cInsertFormula = new Button { Text = "Insert Formula"};
+            cInsertFormula.Click += OnInsertFormulaClick;
+
             var layout = new TableLayout(
                 new TableRow(new TableCell(new Label { Text = "Bgnd Mode" }), new TableCell(cTransparencyMode)),
                 new TableRow(new TableCell(new Label { Text = "Bgnd Color" }), new TableCell(cBackgroundColor)),
@@ -140,7 +146,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 new TableRow(new TableCell(new Label {Text = "Size"}), new TableCell(cFontSize)),
                 new TableRow(new TableCell(new Label {Text = "Color"}), new TableCell(cTextColor)),
                 new TableRow(new TableCell(cBold), new TableCell(cItalic)),
-                new TableRow(new TableCell(cUnderline), new TableCell(cStrikeThrough)))
+                new TableRow(new TableCell(cUnderline), new TableCell(cStrikeThrough)),
+                new TableRow(cInsertFormula))
             {
                 Padding = new Padding(5),
                 Spacing = new Size(5, 5),
@@ -152,8 +159,6 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 Content = layout
             };
         }
-
-        
 
         public bool Actualize(ISceneNode node)
         {
@@ -399,6 +404,21 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 setAction(boundComponent.InputTextStyle, value);
             }
             undoRedo.OnChange();
+        }
+
+        private void OnInsertFormulaClick(object sender, EventArgs e)
+        {
+            if (IgnoreEvents)
+                return;
+
+            var cText = boundComponent;
+            var newSpan = AmFactory.Create<RtEmbeddingSpan>();
+            newSpan.Style = cText.InputTextStyle.CloneTyped();
+            newSpan.SourceCode = @"y=\frac{x^2}{2}+\alpha";
+            newSpan.EmbeddingType = "latex";
+            cText.TextBox.Text.SplitSpan(cText.CursorPosition, out var insertSpanIndex);
+            cText.TextBox.Text.GetPara(cText.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
+            cText.CursorPosition = cText.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
         }
     }
 }
