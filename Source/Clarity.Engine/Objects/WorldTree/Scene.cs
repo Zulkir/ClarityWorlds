@@ -8,14 +8,16 @@ using Clarity.Engine.Utilities;
 
 namespace Clarity.Engine.Objects.WorldTree
 {
-    public abstract class Scene : AmObjectBase<Scene>, IScene
+    public abstract class Scene : AmObjectBase<Scene, IWorld>, IScene
     {
+        
         public abstract string Name { get; set; }
         public abstract Color4 BackgroundColor { get; set; }
         public abstract ISkybox Skybox { get; set; }
         public abstract ISceneNode Root { get; set; }
         public IList<ISceneNode> AuxuliaryNodes { get; }
 
+        public IWorld World => AmParent;
         IScene ISceneNodeParent.Scene => this;
 
         public ISceneNode AsNode => null;

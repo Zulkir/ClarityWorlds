@@ -7,6 +7,7 @@ namespace Clarity.App.Worlds.Views
 {
     public abstract class ViewServiceModel : AmObjectBase<ViewServiceModel>, IViewServiceModel
     {
+        // todo: remove all of this stuff
         [AmReference]
         public abstract IRenderGuiControl RenderControl { get; set; }
         [AmReference]

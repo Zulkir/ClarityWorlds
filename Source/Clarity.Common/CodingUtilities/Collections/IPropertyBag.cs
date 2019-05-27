@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Clarity.Common.CodingUtilities.Collections
 {
-    public interface IPropertyBag
+    public interface IPropertyBag : ICloneable
     {
         IEnumerable<string> Keys { get; }
         bool ContainsProperty(string property);

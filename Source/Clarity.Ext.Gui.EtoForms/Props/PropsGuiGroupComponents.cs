@@ -23,7 +23,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             aspectTypesControl = new DropDown
             {
                 Width = 120,
-                DataStore = new[] { "AdditionalView", "Limiter0", "LimiterMax", "RotateOnDC" },
+                DataStore = new[] { "AdditionalView", "Limiter0", "LimiterMax", "RotateOnDC", "ManipOnPresent" },
                 SelectedIndex = 0
             };
 
@@ -152,6 +152,13 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 case "RotateOnDC":
                 {
                     var component = AmFactory.Create<RotateOnceComponent>();
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
+                    break;
+                }
+                case "ManipOnPresent":
+                {
+                    var component = AmFactory.Create<ManipulateInPresentationComponent>();
                     boundNode.Components.Add(component);
                     undoRedo.OnChange();
                     break;

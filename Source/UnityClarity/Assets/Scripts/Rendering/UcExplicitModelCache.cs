@@ -34,19 +34,24 @@ namespace Assets.Scripts.Rendering
             if (!dirty)
                 return unityMesh;
 
-            unityMesh = new Mesh();
-            
-            // todo: correctly process multi-part models
-            var part = cgModel.IndexSubranges[0];
+            unityMesh = new Mesh
+            {
+                subMeshCount = cgModel.IndexSubranges.Length,
+                vertices = cgModel.Positions?.Select(x => x.ToUnity()).ToArray(),
+                normals = cgModel.Normals?.Select(x => x.ToUnity()).ToArray(),
+                tangents = cgModel.Tangents?.Select(x => x.ToUnity4()).ToArray(),
+                uv = cgModel.TexCoords?.Select(x => x.ToUnity(true)).ToArray()
+            };
 
-            unityMesh.vertices = cgModel.Positions?.Select(x => x.ToUnity(true)).ToArray();
-            unityMesh.normals = cgModel.Normals?.Select(x => x.ToUnity(true)).ToArray();
-            unityMesh.tangents = cgModel.Tangents?.Select(x => x.ToUnity4(true)).ToArray();
-            unityMesh.uv = cgModel.TexCoords?.Select(x => x.ToUnity(true)).ToArray();
-            unityMesh.SetIndices(cgModel.Indices, TopologyToUnity(cgModel.Topology), 0);
+            for (var partIndex = 0; partIndex < cgModel.IndexSubranges.Length; partIndex++)
+            {
+                var indexSubrange = cgModel.IndexSubranges[partIndex];
+                var indices = new int[indexSubrange.IndexCount];
+                Array.Copy(cgModel.Indices, indexSubrange.FirstIndex, indices, 0, indexSubrange.IndexCount);
+                unityMesh.SetIndices(indices, TopologyToUnity(cgModel.Topology), partIndex);
+            }
 
             dirty = false;
-
             return unityMesh;
         }
 

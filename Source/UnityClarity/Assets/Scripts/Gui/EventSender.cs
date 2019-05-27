@@ -7,6 +7,8 @@ namespace Assets.Scripts.Gui
     {
         public event Action OnGUIEvent;
         public event Action UpdateEvent;
+        public event Action LateUpdateEvent;
+        public event Action FixedUpdateEvent;
 
         // ReSharper disable once UnusedMember.Local
         // ReSharper disable once InconsistentNaming
@@ -15,10 +17,20 @@ namespace Assets.Scripts.Gui
             OnGUIEvent?.Invoke();
         }
 
-        // ReSharper disable once UnusedMember.Local
         private void Update()
         {
             UpdateEvent?.Invoke();
+        }
+
+        // ReSharper disable once UnusedMember.Local
+        private void LateUpdate()
+        {
+            LateUpdateEvent?.Invoke();
+        }
+
+        private void FixedUpdate()
+        {
+            FixedUpdateEvent?.Invoke();
         }
     }
 }

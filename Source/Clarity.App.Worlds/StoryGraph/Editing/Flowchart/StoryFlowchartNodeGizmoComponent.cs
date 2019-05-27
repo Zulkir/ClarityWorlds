@@ -63,7 +63,10 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
                 .SetDiffuseColor(x => x.DiffuseColorToUse())
                 .SetDiffuseMap(x => x.DiffuseMapToUse())
                 .SetIgnoreLighting(true)
-                .SetHighlightEffect(x => x.viewService.SelectedNode == ReferencedNode ? HighlightEffect.RainbowBorder : HighlightEffect.None);
+                .SetHighlightEffect(x => 
+                    x.viewService.SelectedNode == ReferencedNode ? HighlightEffect.RainbowBorder :
+                    x.viewService.ClosestStoryNode == ReferencedNode ? HighlightEffect.Pulsating : 
+                    HighlightEffect.None);
 
             visualElement = new ModelVisualElement<StoryFlowchartNodeGizmoComponent>(this)
                 .SetModel(squareModel)

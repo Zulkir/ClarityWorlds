@@ -1,4 +1,5 @@
 ﻿using System;
+using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
@@ -61,18 +62,32 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         }
         #endregion
 
+        public struct CameraBounds
+        {
+            public AaRectangle2 PlaneBounds;
+            public float MinDistance;
+            public float MaxDistance;
+        }
+
         private readonly ISceneNode node;
         private Props realProps;
         private Props visibleProps;
 
         public ISceneNode Node { get { return node; } }
         public bool AcceptsInput { get; }
+        public CameraBounds Bounds { get; private set; }
 
-        public PlaneOrthoBoundControlledCamera(ISceneNode node, Props initialProps, bool acceptsInput)
+        public PlaneOrthoBoundControlledCamera(ISceneNode node, Props initialProps, bool acceptsInput, CameraBounds? bounds = null)
         {
             this.node = node;
             AcceptsInput = acceptsInput;
             realProps = visibleProps = initialProps;
+            Bounds = bounds ?? new CameraBounds
+            {
+                PlaneBounds = new AaRectangle2(Vector2.Zero, float.MaxValue / 2, float.MaxValue / 2),
+                MaxDistance = float.MaxValue,
+                MinDistance = 0
+            };
         }
 
         public CameraFrame GetLocalFrame() { return visibleProps.GetFrame(); }
@@ -82,7 +97,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
             var zNear = visibleProps.ZNear;
             var zFar = visibleProps.ZFar;
             var scale = visibleProps.GetScale();
-            return new CameraProjection(zNear, zFar, scale);
+            return new CameraProjection(CameraProjectionType.Orthographic, zNear, zFar, scale);
         }
 
         public Color4 VeilColor => new Color4(0, 0, 0, 0);
@@ -140,6 +155,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
                     var scale = 0.00925f * realProps.GetScale();
                     var offset = -Vector2.UnitX * scale * eventArgs.Delta.X + Vector2.UnitY * scale * eventArgs.Delta.Y;
                     realProps.Target += offset;
+                    EnforceBounds();
                     return true;
                 }
             }
@@ -148,12 +164,12 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
                 var scale = 0.1f;
                 var distanceScale = 1f - scale * eventArgs.WheelDelta;
                 if (eventArgs.KeyModifyers == KeyModifyers.None)
-                {
                     realProps.Distance *= distanceScale;
-                }
+                EnforceBounds();
                 return true;
             }
 
+            EnforceBounds();
             return false;
         }
 
@@ -161,6 +177,17 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         {
             var amount = Math.Min(20f * frameTime.DeltaSeconds, 1f);
             visibleProps = Props.Lerp(visibleProps, realProps, amount);
+        }
+
+        public void SetProperties(Props props) => realProps = props;
+        public void SetVisualToReal() => visibleProps = realProps;
+        public void SetBounds(CameraBounds bounds) => Bounds = bounds;
+
+        private void EnforceBounds()
+        {
+            CodingHelper.ForceIntoBounds(ref realProps.Target.X, Bounds.PlaneBounds.MinX, Bounds.PlaneBounds.MaxX);
+            CodingHelper.ForceIntoBounds(ref realProps.Target.Y, Bounds.PlaneBounds.MinY, Bounds.PlaneBounds.MaxY);
+            CodingHelper.ForceIntoBounds(ref realProps.Distance, Bounds.MinDistance, Bounds.MaxDistance);
         }
 
         public static PlaneOrthoBoundControlledCamera Default(ISceneNode node)

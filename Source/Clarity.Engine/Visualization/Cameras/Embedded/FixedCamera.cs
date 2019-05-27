@@ -31,7 +31,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
 
         public CameraProjection GetProjectionProps()
         {
-            return new CameraProjection(zNear, zFar, fov);
+            return new CameraProjection(CameraProjectionType.Perspective, zNear, zFar, fov);
         }
 
         public Color4 VeilColor => new Color4(0, 0, 0, 0);

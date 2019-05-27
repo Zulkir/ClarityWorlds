@@ -1,5 +1,6 @@
 ﻿using System;
 using Clarity.Common.Infra.AwaitableCoroutines;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Platforms;
 
 namespace Clarity.App.Worlds.Coroutines
@@ -12,13 +13,18 @@ namespace Clarity.App.Worlds.Coroutines
         private readonly IAwcTaskQueue<AwcWaitSecondsTask> waitSecondsQueue;
         private readonly IAwcTaskQueue<AwcWaitConditionTask> waitConditionQueue;
 
-        public CoroutineService(IRenderLoopDispatcher dispatcher)
+        public CoroutineService(IEventRoutingService eventRoutingService)
         {
             Runtime = new AwcScriptRuntime();
             waitUpdatesQueue = Runtime.GetQueue<AwcWaitUpdatesTask>();
             waitSecondsQueue = Runtime.GetQueue<AwcWaitSecondsTask>();
             waitConditionQueue = Runtime.GetQueue<AwcWaitConditionTask>();
-            dispatcher.Update += x => Runtime.OnUpdate(x.TotalSeconds);
+            eventRoutingService.Subscribe<INewFrameEvent>(typeof(ICoroutineService), nameof(OnNewFrameEvent), OnNewFrameEvent);
+        }
+
+        private void OnNewFrameEvent(INewFrameEvent evnt)
+        {
+            Runtime.OnUpdate(evnt.FrameTime.TotalSeconds);
         }
 
         public AwcAwaiter<AwcWaitUpdatesTask> WaitUpdates(int numUpdates) => 

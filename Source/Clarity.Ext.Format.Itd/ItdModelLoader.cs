@@ -130,6 +130,7 @@ namespace Clarity.Ext.Format.Itd
 
                 var model = new FlexibleModel(ResourceVolatility.Immutable, new []{vertexSet}, modelParts, boundingSphere);
                 pack.AddSubresource("Model", model);
+                pack.MainSubresource = model;
 
                 AssetHashMd5 hash;
                 using (var stream = loadInfo.FileSystem.OpenRead(loadInfo.LoadPath))

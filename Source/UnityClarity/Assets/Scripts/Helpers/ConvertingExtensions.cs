@@ -14,30 +14,42 @@ namespace Assets.Scripts.Helpers
         public static Vector2 ToClarity(this u.Vector2 uv) =>
             new Vector2(uv.x, uv.y);
 
-        public static Vector3 ToClarity(this u.Vector3 uv, bool invertZ) =>
+        public static Vector3 ToClarity(this u.Vector3 uv, bool invertZ = true) =>
             new Vector3(uv.x, uv.y, invertZ ? -uv.z : uv.z);
 
-        public static Vector4 ToClarity(this u.Vector4 uv, bool invertZ) =>
+        public static Vector4 ToClarity(this u.Vector4 uv, bool invertZ = true) =>
             new Vector4(uv.x, uv.y, invertZ ? -uv.z : uv.z, uv.w);
 
         public static Color4 ToClarity(this u.Color uc) =>
             new Color4(uc.r, uc.g, uc.b, uc.a);
 
+        public static Quaternion ToClarity(this u.Quaternion uq, bool invertZ = false) =>
+            invertZ
+                ? new Quaternion(uq.x, uq.y, -uq.z, uq.w)
+                : new Quaternion(uq.x, uq.y, uq.z, uq.w);
+
+        public static Transform ToClarity(this u.Transform ut)
+        {
+            // todo: handle non-identity scale somehow
+            return new Transform(1, ut.rotation.ToClarity(), ut.position.ToClarity());
+        }
+
+
         public static u.Vector2 ToUnity(this Vector2 cv, bool oneMinusV) =>
             new u.Vector2(cv.X, oneMinusV ? 1f - cv.Y : cv.Y);
 
-        public static u.Vector3 ToUnity(this Vector3 cv, bool invertZ) =>
+        public static u.Vector3 ToUnity(this Vector3 cv, bool invertZ = true) =>
             new u.Vector3(cv.X, cv.Y, invertZ ? -cv.Z : cv.Z);
 
-        public static u.Vector4 ToUnity4(this Vector3 cv, bool invertZ) =>
+        public static u.Vector4 ToUnity4(this Vector3 cv, bool invertZ = true) =>
             new u.Vector4(cv.X, cv.Y, invertZ ? -cv.Z : cv.Z, 1);
 
         public static u.Vector4 ToUnity(this Vector4 cv, bool invertZ) =>
             new u.Vector4(cv.X, cv.Y, invertZ ? -cv.Z : cv.Z, cv.W);
 
-        public static u.Quaternion ToUnity(this Quaternion cq, bool invertZ) =>
+        public static u.Quaternion ToUnity(this Quaternion cq, bool invertZ = false) =>
             invertZ
-                ? new u.Quaternion(cq.X, cq.Y, -cq.Z, cq.W)
+                ? new u.Quaternion(cq.X, cq.Y, cq.Z, cq.W)
                 : new u.Quaternion(cq.X, cq.Y, -cq.Z, cq.W);
 
         public static u.Color ToUnity(this Color4 cc) =>

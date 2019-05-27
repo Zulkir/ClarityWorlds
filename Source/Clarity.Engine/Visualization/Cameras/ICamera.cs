@@ -5,6 +5,7 @@ using Clarity.Engine.Platforms;
 
 namespace Clarity.Engine.Visualization.Cameras
 {
+    // todo: create a universal camera class and refactor away all the redundant Get*** methods (to eother Frame/ProjProps or somewhere else)
     public interface ICamera
     {
         // todo: remove from here

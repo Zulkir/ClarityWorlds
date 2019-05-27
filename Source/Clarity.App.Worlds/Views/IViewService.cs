@@ -8,6 +8,7 @@ namespace Clarity.App.Worlds.Views
     {
         IRenderGuiControl RenderControl { get; }
         ISceneNode SelectedNode { get; set; }
+        ISceneNode ClosestStoryNode { get; }
         IFocusableView MainView { get; }
 
         event EventHandler<ViewEventArgs> Update;

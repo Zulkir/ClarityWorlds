@@ -60,6 +60,7 @@
     <Compile Include="AppModes\AppMode.cs" />
     <Compile Include="AppModes\AppModeChangedEvent.cs" />
     <Compile Include="AppModes\AppModeService.cs" />
+    <Compile Include="AppModes\AppNavigationMode.cs" />
     <Compile Include="AppModes\IAppModeChangedEvent.cs" />
     <Compile Include="AppModes\IAppModeService.cs" />
     <Compile Include="AppModes\IPresentationWorldBuilder.cs" />
@@ -165,6 +166,9 @@
     <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartNodeGizmoComponent.cs" />
     <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartEdgeGizmoComponent.cs" />
     <Compile Include="StoryGraph\Editing\StoryBranchIntoTool.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\ICollisionMesh.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\IStoryLayoutZoning.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\StoryLayoutZoneProperties.cs" />
     <Compile Include="StoryGraph\IStoryLayoutInstance.cs" />
     <Compile Include="StoryGraph\IStoryPath.cs" />
     <Compile Include="StoryGraph\StoryOperations.cs" />
@@ -202,6 +206,7 @@
     <Compile Include="Media\Media2D\MovieRectangleComponent.cs" />
     <Compile Include="Views\Cameras\OrthoDefaultViewpointMechanism.cs" />
     <Compile Include="Interaction\Placement\PlanarPlacementSurface.cs" />
+    <Compile Include="WorldTree\MiscComponents\ManipulateInPresentationComponent.cs" />
     <Compile Include="WorldTree\PresentationComponent.cs" />
     <Compile Include="Gui\PresentationGuiCommands.cs" />
     <Compile Include="WorldTree\MiscComponents\RotateOnceComponent.cs" />

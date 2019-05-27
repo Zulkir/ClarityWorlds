@@ -33,6 +33,7 @@ namespace Clarity.App.Worlds.Views
 
         public ISceneNode FocusNode { get; private set; }
         private bool hasFreeCamera;
+        private bool hasWarpCamera;
 
         private readonly UserQuerySceneComponent querySceneComponent;
 
@@ -85,6 +86,7 @@ namespace Clarity.App.Worlds.Views
                     {
                         mainLayer.Camera = layoutInstance.CreateFreeCamera(cameraProps);
                         hasFreeCamera = true;
+                        hasWarpCamera = false;
                         return true;
                     }
                 }
@@ -96,9 +98,33 @@ namespace Clarity.App.Worlds.Views
                     hasFreeCamera = false;
                 }
             }
+            if (kargs.ComplexEventType == KeyEventType.Down && kargs.EventKey == Key.K)
+            {
+                var layoutInstance = storyService.RootLayoutInstance;
+                var cameraProps = mainLayer.Camera.GetProps();
+                if (!hasWarpCamera)
+                {
+                    if (layoutInstance.AllowsFreeCamera)
+                    {
+                        mainLayer.Camera = layoutInstance.CreateWarpCamera(cameraProps);
+                        hasWarpCamera = true;
+                        hasFreeCamera = false;
+                        return true;
+                    }
+                }
+                else
+                {
+                    var closestNode = layoutInstance.GetClosestNodeId(cameraProps);
+                    navigationService.GoToSpecific(closestNode);
+                    FocusOn(storyService.GlobalGraph.NodeObjects[closestNode].GetComponent<IFocusNodeComponent>());
+                    hasWarpCamera = false;
+                }
+            }
+
             return false;
         }
         
+
         public void FocusOn(IFocusNodeComponent aFocusNode)
         {
             var newNode = aFocusNode.Node;

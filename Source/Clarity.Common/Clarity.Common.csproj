@@ -319,6 +319,7 @@
     <Compile Include="Numericals\Geometry\Size3.cs" />
     <Compile Include="Numericals\Geometry\Sphere.cs" />
     <Compile Include="Numericals\Geometry\Triangle2.cs" />
+    <Compile Include="Numericals\Geometry\Triangle3.cs" />
     <Compile Include="Numericals\Geometry\Winding.cs" />
     <Compile Include="Numericals\GraphicsHelper.cs" />
     <Compile Include="Numericals\IntSet.cs" />

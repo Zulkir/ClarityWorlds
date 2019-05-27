@@ -103,8 +103,28 @@ namespace Clarity.Ext.Gui.EtoForms
                         MessageBox.Show(assetLoadResult.Message);
                         return null;
                     }
+
                     var asset = assetLoadResult.Asset;
-                    var resource = asset.Resource is ResourcePack pack ? pack.MainSubresource : asset.Resource;
+                    IResource resource;
+                    if (asset.Resource == null)
+                    {
+                        MessageBox.Show($"The asset contains no resource.");
+                        return null;
+                    }
+                    if (asset.Resource is ResourcePack pack)
+                    {
+                        resource = pack.MainSubresource;
+                        if (resource == null)
+                        {
+                            MessageBox.Show($"The asset is a pack with no main subresource.");
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        resource = asset.Resource;
+                    }
+
                     switch (resource)
                     {
                         case IImage image:
@@ -121,6 +141,7 @@ namespace Clarity.Ext.Gui.EtoForms
                             entity.Components.Add(modelComponent);
                             return toolFactory.MoveEntity(entity, true);
                         default:
+                            MessageBox.Show($"Unable to instantiate an asset of type '{resource.GetType().Name}'.");
                             return null;
                     }
                 })

@@ -4,6 +4,7 @@
     {
         None,
         RainbowBorder,
-        BlackWhiteBorder
+        BlackWhiteBorder,
+        Pulsating
     }
 }

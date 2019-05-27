@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Clarity.App.Worlds.Navigation;
+﻿using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.StoryGraph.FreeNavigation;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Visualization.Cameras;
@@ -12,12 +12,16 @@ namespace Clarity.Ext.StoryLayout.Building
         private readonly IInputService inputService;
         private readonly BuildingStoryLayoutPlacementAlgorithm placementAlgorithm;
         private readonly IStoryGraph sg;
-        private readonly List<BuildingWallSegment> globalWallSegments;
+        private readonly ICollisionMesh collisionMesh;
+        private readonly IStoryLayoutZoning zoning;
 
-        public BuildingStoryLayoutInstance(IInputService inputService, BuildingStoryLayoutPlacementAlgorithm placementAlgorithm, List<BuildingWallSegment> globalWallSegments)
+
+        public BuildingStoryLayoutInstance(IInputService inputService, BuildingStoryLayoutPlacementAlgorithm placementAlgorithm, 
+            ICollisionMesh collisionMesh, IStoryLayoutZoning zoning)
         {
             this.placementAlgorithm = placementAlgorithm;
-            this.globalWallSegments = globalWallSegments;
+            this.collisionMesh = collisionMesh;
+            this.zoning = zoning;
             this.inputService = inputService;
             sg = placementAlgorithm.StoryGraph;
         }
@@ -34,9 +38,22 @@ namespace Clarity.Ext.StoryLayout.Building
 
         public bool AllowsFreeCamera => true;
 
+        public bool AllowsWarpCamera => true;
+
+        public ICollisionMesh GetCollisionMesh()
+        {
+            return collisionMesh;
+        }
+
         public IControlledCamera CreateFreeCamera(CameraProps initialCameraProps)
         {
-            return new BuildingFreeCamera(initialCameraProps, inputService, globalWallSegments, placementAlgorithm);
+            return new BuildingFreeCamera(initialCameraProps, inputService, collisionMesh, zoning);
+        }
+
+        public IControlledCamera CreateWarpCamera(CameraProps initialCameraProps)
+        {
+            return new BuildingFreeCamera(initialCameraProps, inputService, collisionMesh, zoning);
+            //return new BuildingWarpCamera(initialCameraProps, collisionMesh, placementAlgorithm, inputService);
         }
     }
 }

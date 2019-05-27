@@ -2,7 +2,6 @@
 using System.Linq;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
@@ -24,15 +23,13 @@ namespace Clarity.App.Worlds.StoryLayouts.Simple
         public string UserFriendlyName => "Simple";
         public Type Type => typeof(SimpleStoryLayout);
 
-        private readonly IWorldTreeService worldTreeService;
         private readonly IKeyboardInputProvider keyboardInputProvider;
         private readonly IModel3D planeModel;
         private readonly IStandardMaterial[] planeMaterials;
 
-        public SimpleStoryLayout(IKeyboardInputProvider keyboardInputProvider, IEmbeddedResources embeddedResources, IWorldTreeService worldTreeService)
+        public SimpleStoryLayout(IKeyboardInputProvider keyboardInputProvider, IEmbeddedResources embeddedResources)
         {
             this.keyboardInputProvider = keyboardInputProvider;
-            this.worldTreeService = worldTreeService;
 
             planeModel = embeddedResources.SimplePlaneXyModel();
             planeMaterials = new[]
@@ -51,7 +48,7 @@ namespace Clarity.App.Worlds.StoryLayouts.Simple
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
             ArrangeAndDecorateInternal(sg, sg.Root, sg.Depth);
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
 
         private void ArrangeAndDecorateInternal(IStoryGraph sg, int nodeIndex, int scaleLevel)
