@@ -1,6 +1,9 @@
 ﻿using System;
 using Clarity.App.Transport.Prototype.Dummy;
-using Clarity.App.Transport.Prototype.Simulation;
+using Clarity.App.Transport.Prototype.FirstProto;
+using Clarity.App.Transport.Prototype.FirstProto.Simulation;
+using Clarity.App.Transport.Prototype.FirstProto.Visualization;
+using Clarity.App.Transport.Prototype.Runtime;
 using Clarity.App.Transport.Prototype.Visualization;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Interaction.Input;
@@ -34,8 +37,8 @@ namespace Clarity.App.Transport.Prototype
         {
             base.BindDefaults(di);
 
-            di.Bind<IWindowingSystem>().To<Gui>();
-            di.Bind<Gui>().To<Gui>();
+            di.Bind<IWindowingSystem>().To<TransportGui>();
+            di.Bind<TransportGui>().To<TransportGui>();
             if (EtoEnvironment.Platform.IsWindows)
             {
                 di.Bind<Platform>().To<Eto.WinForms.Platform>();
@@ -54,22 +57,33 @@ namespace Clarity.App.Transport.Prototype
             di.Bind<IAppModesCommands>().To<AppModesCommands>();
             di.Bind<IStoryGraphGui>().To<StoryGraphGui>();
             di.Bind<IFrameTimeMeasurer>().To<FrameTimeMeasurer>();
+            di.Bind<ICommonGuiObjects>().To<CommonGuiObjects>();
             di.Bind<IMainForm>().To<PrototypeMainForm>();
             di.Bind<IMouseInputProvider>().To<MouseInputProvider>();
             di.Bind<IKeyboardInputProvider>().To<KeyboardInputProvider>();
-            di.Bind<IPlayback>().To<Playback>();
+            di.Bind<IOldPlayback>().To<OldPlayback>();
             di.Bind<IInputHandler>().To<InputHandler>();
             di.Bind<IStateVisualizer>().To<StateVisualizer>();
             di.Bind<ISimFrameGenerator>().To<SimFrameGenerator>();
             di.Bind<ICommonMaterials>().To<CommonMaterials>();
             di.Bind<IImageLoader>().To<DummyImageLoader>();
+
+            di.Bind<IAppRuntime>().To<AppRuntime>();
+            di.Bind<ITableService>().To<TableService>();
+            di.Bind<IDataSourceRuntime>().To<DataSourceRuntime>();
+            di.Bind<IOriginDataLogService>().To<OriginDataLogService>();
+            di.Bind<IDataQueriesService>().To<DataQueriesService>();
+            di.Bind<IVisualQueriesRuntime>().To<VisualQueriesRuntime>();
+            di.Bind<IPlaybackService>().To<PlaybackService>();
+            di.Bind<IAppProcedures>().To<AppProcedures>();
+            di.Bind<IDataRetrievalService>().To<DataRetrievalService>();
         }
 
         protected virtual void Run(IDiContainer di)
         {
             di.Get<IMouseInputProvider>();
             di.Get<IKeyboardInputProvider>();
-            di.Get<Gui>().Run();
+            di.Get<TransportGui>().Run();
         }
     }
 }

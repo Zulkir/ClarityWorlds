@@ -23,7 +23,7 @@ namespace Clarity.Common.Numericals.Algebra
             X = xy.X; Y = xy.Y; Z = z; W = w;
         }
 
-        public Vector4(Vector3 xyz, float w)
+        public Vector4(in Vector3 xyz, float w)
         {
             X = xyz.X; Y = xyz.Y; Z = xyz.Z; W = w;
         }
@@ -80,7 +80,7 @@ namespace Clarity.Common.Numericals.Algebra
                 W.ToString(CultureInfo.InvariantCulture));
         }
 
-        public static bool Equals(Vector4 s1, Vector4 s2)
+        public static bool Equals(in Vector4 s1, in Vector4 s2)
         {
             return
                 s1.X == s2.X &&
@@ -89,15 +89,15 @@ namespace Clarity.Common.Numericals.Algebra
                 s1.W == s2.W;
         }
 
-        public static bool operator ==(Vector4 s1, Vector4 s2) { return Equals(s1, s2); }
-        public static bool operator !=(Vector4 s1, Vector4 s2) { return !Equals(s1, s2); }
-        public bool Equals(Vector4 other) { return Equals(this, other); }
-        public override bool Equals(object obj) { return obj is Vector4 && Equals((Vector4)obj); }
+        public static bool operator ==(in Vector4 s1, in Vector4 s2) => Equals(s1, s2);
+        public static bool operator !=(in Vector4 s1, in Vector4 s2) => !Equals(s1, s2);
+        public bool Equals(Vector4 other) => Equals(this, other);
+        public override bool Equals(object obj) => obj is Vector4 && Equals((Vector4)obj);
         #endregion
 
         #region Math
-        public float Length() { return MathHelper.Sqrt(LengthSquared()); }
-        public float LengthSquared() { return X * X + Y * Y + Z * Z + W * W; }
+        public float Length() => MathHelper.Sqrt(LengthSquared());
+        public float LengthSquared() => X * X + Y * Y + Z * Z + W * W;
 
         public Vector4 Normalize()
         {
@@ -105,11 +105,11 @@ namespace Clarity.Common.Numericals.Algebra
             return new Vector4(X * invLength, Y * invLength, Z * invLength, W * invLength);
         }
 
-        public static Vector4 operator -(Vector4 v) { return v.Negate(); }
-        public Vector4 Negate() { return new Vector4(-X, -Y, -Z, -W); }
+        public static Vector4 operator -(in Vector4 v) => v.Negate();
+        public Vector4 Negate() => new Vector4(-X, -Y, -Z, -W);
 
-        public static Vector4 operator +(Vector4 v1, Vector4 v2) { return Add(v1, v2); }
-        public static Vector4 Add(Vector4 v1, Vector4 v2)
+        public static Vector4 operator +(in Vector4 v1, in Vector4 v2) => Add(v1, v2);
+        public static Vector4 Add(in Vector4 v1, in Vector4 v2)
         {
             return new Vector4(
                 v1.X + v2.X,
@@ -118,8 +118,8 @@ namespace Clarity.Common.Numericals.Algebra
                 v1.W + v2.W);
         }
 
-        public static Vector4 operator -(Vector4 left, Vector4 right) { return Subtract(left, right); }
-        public static Vector4 Subtract(Vector4 left, Vector4 right)
+        public static Vector4 operator -(in Vector4 left, in Vector4 right) => Subtract(left, right);
+        public static Vector4 Subtract(in Vector4 left, in Vector4 right)
         {
             return new Vector4(
                 left.X - right.X,
@@ -128,15 +128,15 @@ namespace Clarity.Common.Numericals.Algebra
                 left.W - right.W);
         }
 
-        public static float Distance(Vector4 v1, Vector4 v2) { return (v1 - v2).Length(); }
-        public static float DistanceSquared(Vector4 v1, Vector4 v2) { return (v1 - v2).LengthSquared(); }
+        public static float Distance(in Vector4 v1, in Vector4 v2) => (v1 - v2).Length();
+        public static float DistanceSquared(in Vector4 v1, in Vector4 v2) => (v1 - v2).LengthSquared();
 
-        public static Vector4 operator *(float scale, Vector4 v) { return v.ScaleBy(scale); }
-        public static Vector4 operator *(Vector4 v, float scale) { return v.ScaleBy(scale); }
-        public static Vector4 operator /(Vector4 v, float scale) { return v.ScaleBy(1f / scale); }
-        public Vector4 ScaleBy(float scale) { return new Vector4(X * scale, Y * scale, Z * scale, W * scale); }
+        public static Vector4 operator *(float scale, in Vector4 v) => v.ScaleBy(scale);
+        public static Vector4 operator *(in Vector4 v, float scale) => v.ScaleBy(scale);
+        public static Vector4 operator /(in Vector4 v, float scale) => v.ScaleBy(1f / scale);
+        public Vector4 ScaleBy(float scale) => new Vector4(X * scale, Y * scale, Z * scale, W * scale);
 
-        public static float Dot(Vector4 v1, Vector4 v2)
+        public static float Dot(in Vector4 v1, in Vector4 v2)
         {
             return 
                 v1.X * v2.X + 
@@ -145,7 +145,7 @@ namespace Clarity.Common.Numericals.Algebra
                 v1.W * v2.W;
         }
 
-        public static Vector4 Lerp(Vector4 left, Vector4 right, float amount)
+        public static Vector4 Lerp(in Vector4 left, in Vector4 right, float amount)
         {
             return new Vector4(
                 MathHelper.Lerp(left.X, right.X, amount),
@@ -154,12 +154,12 @@ namespace Clarity.Common.Numericals.Algebra
                 MathHelper.Lerp(left.W, right.W, amount));
         }
 
-        public static Vector4 NLerp(Vector4 left, Vector4 right, float amount)
+        public static Vector4 NLerp(in Vector4 left, in Vector4 right, float amount)
         {
             return Lerp(left, right, amount).Normalize();
         }
 
-        public static Vector4 Min(Vector4 v1, Vector4 v2)
+        public static Vector4 Min(in Vector4 v1, in Vector4 v2)
         {
             return new Vector4(
                 Math.Min(v1.X, v2.X),
@@ -168,7 +168,7 @@ namespace Clarity.Common.Numericals.Algebra
                 Math.Min(v1.W, v2.W));
         }
 
-        public static Vector4 Max(Vector4 v1, Vector4 v2)
+        public static Vector4 Max(in Vector4 v1, in Vector4 v2)
         {
             return new Vector4(
                 Math.Max(v1.X, v2.X),
@@ -179,11 +179,11 @@ namespace Clarity.Common.Numericals.Algebra
         #endregion
 
         #region Constant Vectors
-        public static Vector4 Zero { get { return new Vector4(); } }
-        public static Vector4 UnitX { get { return new Vector4(1f, 0f, 0f, 0f); } }
-        public static Vector4 UnitY { get { return new Vector4(0f, 1f, 0f, 0f); } }
-        public static Vector4 UnitZ { get { return new Vector4(0f, 0f, 1f, 0f); } }
-        public static Vector4 UnitW { get { return new Vector4(0f, 0f, 0f, 1f); } }
+        public static Vector4 Zero => new Vector4();
+        public static Vector4 UnitX => new Vector4(1f, 0f, 0f, 0f);
+        public static Vector4 UnitY => new Vector4(0f, 1f, 0f, 0f);
+        public static Vector4 UnitZ => new Vector4(0f, 0f, 1f, 0f);
+        public static Vector4 UnitW => new Vector4(0f, 0f, 0f, 1f);
         #endregion
     }
 }

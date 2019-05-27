@@ -1,4 +1,4 @@
-﻿using Clarity.App.Transport.Prototype.TransportLogs;
+﻿using Clarity.App.Transport.Prototype.SimLogs;
 using Clarity.Engine.Visualization.Elements.Materials;
 
 namespace Clarity.App.Transport.Prototype.Visualization
@@ -6,6 +6,6 @@ namespace Clarity.App.Transport.Prototype.Visualization
     public interface ICommonMaterials
     {
         IMaterial GetSiteMaterial();
-        IMaterial GetPackageMaterial(LogEntryCode code);
+        IMaterial GetPackageMaterial(SimLogEntryCode code);
     }
 }

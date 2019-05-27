@@ -148,5 +148,24 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Collections
                 }
             }
         }
+
+        public static IEnumerable<T> WhereChanged<T>(this IEnumerable<T> source, Func<T, T, bool> equal)
+        {
+            using (var enumerator = source.GetEnumerator())
+            {
+                if (!enumerator.MoveNext())
+                    yield break;
+                var lastItem = enumerator.Current;
+                yield return lastItem;
+
+                while (enumerator.MoveNext())
+                {
+                    if (equal(enumerator.Current, lastItem))
+                        continue;
+                    lastItem = enumerator.Current;
+                    yield return lastItem;
+                }
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@
     {
         public const float Eps5 = 0.00001f;
         public const float Eps8 = 0.00000001f;
+        public const double DEps8 = 0.00000001;
         public const float Pi = 3.1415926535897932384626433832795f;
         public const float TwoPi = 6.283185307179586476925286766559f;
         public const float PiOver2 = 1.5707963267948966192313216916398f;

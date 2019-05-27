@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Clarity.App.Transport.Prototype.Visualization;
+using Clarity.App.Transport.Prototype.Runtime;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
@@ -19,13 +19,12 @@ namespace Clarity.App.Transport.Prototype
     {
         public IReadOnlyList<IViewLayer> Layers { get; }
         private readonly IControlledCamera camera;
-        private readonly ViewLayer layer;
 
-        protected TransportView(IStateVisualizer stateVisualizer)
+        protected TransportView(IVisualQueriesRuntime visualQueriesRuntime)
         {
-            var scene = Scene.Create(stateVisualizer.RootNode);
-            scene.BackgroundColor = Color4.CornflowerBlue;
-            camera = new TargetedControlledCameraY(stateVisualizer.RootNode, new TargetedControlledCameraY.Props
+            var scene = Scene.Create(visualQueriesRuntime.RootNode);
+            scene.BackgroundColor = Color4.Black;
+            camera = new TargetedControlledCameraY(scene.Root, new TargetedControlledCameraY.Props
             {
                 Target = Vector3.Zero,
                 Distance = 50f,
@@ -35,7 +34,7 @@ namespace Clarity.App.Transport.Prototype
                 ZNear = 0.1f,
                 ZFar = 1000f
             });
-            layer = new ViewLayer
+            var layer = new ViewLayer
             {
                 VisibleScene = scene,
                 Camera = camera

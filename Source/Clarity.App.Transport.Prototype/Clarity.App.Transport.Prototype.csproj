@@ -8,7 +8,7 @@
     <OutputType>WinExe</OutputType>
     <RootNamespace>Clarity.App.Transport.Prototype</RootNamespace>
     <AssemblyName>Clarity.App.Transport.Prototype</AssemblyName>
-    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.7.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -22,6 +22,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Prefer32Bit>false</Prefer32Bit>
+    <LangVersion>latest</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -40,6 +41,10 @@
     <Reference Include="Eto.WinForms">
       <HintPath>..\..\Dependencies\Eto\Platforms\Windows\Eto.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dependencies\JetBrainsAnnotations\JetBrains.Annotations.Dotnet.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -53,42 +58,145 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Databases\AcceptAllDataLogFilter.cs" />
+    <Compile Include="Databases\DataBase.cs" />
+    <Compile Include="Databases\DataLogBuilder.cs" />
+    <Compile Include="Databases\DataLogEntryEnumerationMerger.cs" />
+    <Compile Include="Databases\DataLogEnumerable.cs" />
+    <Compile Include="Databases\DataLogReadingState.cs" />
+    <Compile Include="Databases\MutableDataBaseState.cs" />
+    <Compile Include="Databases\DataField.cs" />
+    <Compile Include="Databases\DataFieldDescription.cs" />
+    <Compile Include="Databases\MutableDataLog.cs" />
+    <Compile Include="Databases\DataLogEntryExtensions.cs" />
+    <Compile Include="Databases\DataLogReadingFlexibility.cs" />
+    <Compile Include="Databases\DataTable.cs" />
+    <Compile Include="Databases\IDataBaseState.cs" />
+    <Compile Include="Databases\IDataLog.cs" />
+    <Compile Include="Databases\IDataLogEntry.cs" />
+    <Compile Include="Databases\IDataLogFilter.cs" />
+    <Compile Include="Databases\IMutableDataBaseState.cs" />
+    <Compile Include="Databases\IMutableDataTableState.cs" />
+    <Compile Include="Databases\DataFieldType.cs" />
+    <Compile Include="Databases\DataTableDataLayoutElement.cs" />
+    <Compile Include="Databases\MutableDataTableState.cs" />
+    <Compile Include="Databases\DataTableDataLayout.cs" />
+    <Compile Include="Databases\IDataBase.cs" />
+    <Compile Include="Databases\IDataField.cs" />
+    <Compile Include="Databases\IDataTable.cs" />
+    <Compile Include="Databases\IDataTableDataLayout.cs" />
+    <Compile Include="Databases\IDataTableState.cs" />
+    <Compile Include="Databases\IMutableDataLog.cs" />
+    <Compile Include="Databases\DataLogEnumerator.cs" />
+    <Compile Include="Databases\LogEntries\InsertRowLogEntry.cs" />
+    <Compile Include="Databases\LogEntries\DeleteRowLogEntry.cs" />
+    <Compile Include="Databases\LogEntries\SetValueLogEntry.cs" />
+    <Compile Include="DataSources\EmptyDataSource.cs" />
+    <Compile Include="DataSources\IDataSource.cs" />
+    <Compile Include="DataSources\IDataSourceReceiver.cs" />
     <Compile Include="Dummy\DummyImageLoader.cs" />
-    <Compile Include="IPlayback.cs" />
-    <Compile Include="PlaybackGui.cs" />
-    <Compile Include="PlaybackState.cs" />
+    <Compile Include="FirstProto\IOldPlayback.cs" />
+    <Compile Include="Gui\PlaybackGui.cs" />
+    <Compile Include="Gui\Queries\QueryEditForm.cs" />
+    <Compile Include="Gui\SidePanelGui.cs" />
+    <Compile Include="Gui\Tables\TablesGui.cs" />
+    <Compile Include="Gui\Tables\TableViewForm.cs" />
+    <Compile Include="Gui\UserDataQueriesGui.cs" />
+    <Compile Include="Queries\Infra\Concrete\ConstantQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\EnumerateRowsQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\FloatToP64Query.cs" />
+    <Compile Include="Queries\Infra\Concrete\ForFromLogQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\FuncQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\Functions\AvgOverQueryP64.cs" />
+    <Compile Include="Queries\Infra\Concrete\Functions\CountQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\Functions\MultQuery.cs" />
+    <Compile Include="Queries\Infra\Concrete\Functions\SumQueryF32.cs" />
+    <Compile Include="Queries\Infra\Concrete\Functions\SumQueryP64.cs" />
+    <Compile Include="Queries\Infra\Concrete\Types\QueryReturnTypeFactory.cs" />
+    <Compile Include="Queries\Infra\Concrete\Types\TableReadingState.cs" />
+    <Compile Include="Queries\Infra\Concrete\Types\TableRow.cs" />
+    <Compile Include="Queries\Infra\Concrete\Types\TableRowEnumeration.cs" />
+    <Compile Include="Queries\Infra\Concrete\Types\ValueReturnType.cs" />
+    <Compile Include="Queries\Infra\Concrete\WhereQuery.cs" />
+    <Compile Include="Queries\Infra\IInfraQuery.cs" />
+    <Compile Include="Queries\Infra\IInfraQueryExecutionContext.cs" />
+    <Compile Include="Queries\Infra\IInfraQueryFunction.cs" />
+    <Compile Include="Queries\Infra\IInfraQueryReturnType.cs" />
+    <Compile Include="Queries\Infra\InfraQueryBase.cs" />
+    <Compile Include="Queries\Infra\InfraQueryExecutionContext.cs" />
+    <Compile Include="Queries\Infra\ITableInfraQuery.cs" />
+    <Compile Include="Queries\Infra\TableInfraQueryBase.cs" />
+    <Compile Include="Runtime\AppProcedures.cs" />
+    <Compile Include="Runtime\AppRuntime.cs" />
+    <Compile Include="Runtime\DataLogNewEntryEvent.cs" />
+    <Compile Include="Runtime\DataLogTablesEvent.cs" />
+    <Compile Include="Runtime\DataLogUpdatedEvent.cs" />
+    <Compile Include="Runtime\DataQueriesService.cs" />
+    <Compile Include="Runtime\DataRetrievalService.cs" />
+    <Compile Include="Runtime\DataSourceChangedEvent.cs" />
+    <Compile Include="Runtime\DataSourceRuntime.cs" />
+    <Compile Include="Runtime\IAppProcedures.cs" />
+    <Compile Include="Runtime\IDataLogTablesEvent.cs" />
+    <Compile Include="Runtime\IDataLogUpdatedEvent.cs" />
+    <Compile Include="Runtime\IDataQueriesService.cs" />
+    <Compile Include="Runtime\IDataRetrievalService.cs" />
+    <Compile Include="Runtime\IDataSourceChangedEvent.cs" />
+    <Compile Include="Runtime\IDataSourceRuntime.cs" />
+    <Compile Include="Runtime\IDataLogNewEntryEvent.cs" />
+    <Compile Include="Runtime\ITableService.cs" />
+    <Compile Include="Runtime\OriginDataLogService.cs" />
+    <Compile Include="Runtime\PlaybackService.cs" />
+    <Compile Include="Runtime\PlaybackState.cs" />
     <Compile Include="PropertiesGui.cs" />
-    <Compile Include="Simulation\ISimFrameGenerator.cs" />
-    <Compile Include="Simulation\PackageBeginFrame.cs" />
-    <Compile Include="Simulation\PackageEndFrame.cs" />
-    <Compile Include="Simulation\ISimState.cs" />
-    <Compile Include="Simulation\ISimFrame.cs" />
-    <Compile Include="Simulation\SimFrameGenerator.cs" />
-    <Compile Include="Simulation\SimPackage.cs" />
-    <Compile Include="Simulation\SimState.cs" />
-    <Compile Include="Simulation\SimSite.cs" />
+    <Compile Include="Queries\Data\IDataQuery.cs" />
+    <Compile Include="Queries\IQuery.cs" />
+    <Compile Include="Queries\Visual\IVisualQuery.cs" />
+    <Compile Include="Runtime\IAppRuntime.cs" />
+    <Compile Include="Runtime\IPlaybackService.cs" />
+    <Compile Include="Runtime\IVisualQueriesRuntime.cs" />
+    <Compile Include="Runtime\IOriginDataLogService.cs" />
+    <Compile Include="FirstProto\Simulation\ISimFrameGenerator.cs" />
+    <Compile Include="FirstProto\Simulation\PackageBeginFrame.cs" />
+    <Compile Include="FirstProto\Simulation\PackageEndFrame.cs" />
+    <Compile Include="FirstProto\Simulation\ISimState.cs" />
+    <Compile Include="FirstProto\Simulation\ISimFrame.cs" />
+    <Compile Include="FirstProto\Simulation\SimFrameGenerator.cs" />
+    <Compile Include="FirstProto\Simulation\SimPackage.cs" />
+    <Compile Include="FirstProto\Simulation\SimState.cs" />
+    <Compile Include="FirstProto\Simulation\SimSite.cs" />
     <Compile Include="AppLifecycle.cs" />
-    <Compile Include="Playback.cs" />
+    <Compile Include="FirstProto\OldPlayback.cs" />
     <Compile Include="DesktopEnvironment.cs" />
-    <Compile Include="Gui.cs" />
+    <Compile Include="Runtime\TableService.cs" />
+    <Compile Include="Runtime\VisualQueriesRuntime.cs" />
+    <Compile Include="SimLogs\DataLog\MessagesTable.cs" />
+    <Compile Include="SimLogs\DataLog\SimLogDataBase.cs" />
+    <Compile Include="SimLogs\DataLog\SitesTable.cs" />
+    <Compile Include="Temp\SiteTrafficDataQuery.cs" />
+    <Compile Include="Temp\SiteTrafficVisualQuery.cs" />
+    <Compile Include="Temp\SiteVisualComponent.cs" />
+    <Compile Include="Temp\SitePositionsDataQuery.cs" />
+    <Compile Include="TransportGui.cs" />
     <Compile Include="InputHandler.cs" />
     <Compile Include="PrimitiveExceptionHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PrototypeMainForm.cs" />
-    <Compile Include="TransportLogs\CrudLogEntryBody.cs" />
-    <Compile Include="TransportLogs\LogEntry.cs" />
-    <Compile Include="TransportLogs\LogEntryCode.cs" />
-    <Compile Include="TransportLogs\LogEntryHeader.cs" />
-    <Compile Include="TransportLogs\LogReader.cs" />
-    <Compile Include="TransportLogs\MigrationLogEntryBody.cs" />
+    <Compile Include="SimLogs\CrudSimLogEntryBody.cs" />
+    <Compile Include="SimLogs\SimLogEntry.cs" />
+    <Compile Include="SimLogs\SimLogEntryCode.cs" />
+    <Compile Include="SimLogs\SimLogEntryHeader.cs" />
+    <Compile Include="SimLogs\SimLogReader.cs" />
+    <Compile Include="SimLogs\MigrationSimLogEntryBody.cs" />
+    <Compile Include="SimLogs\DataLog\SimLogFileDataSource.cs" />
     <Compile Include="TransportView.cs" />
     <Compile Include="Visualization\CommonMaterials.cs" />
     <Compile Include="Visualization\ICommonMaterials.cs" />
-    <Compile Include="Visualization\IStateVisualizer.cs" />
-    <Compile Include="Visualization\PackageComponent.cs" />
-    <Compile Include="Visualization\SiteComponent.cs" />
-    <Compile Include="Visualization\StateVisualizer.cs" />
+    <Compile Include="FirstProto\Visualization\IStateVisualizer.cs" />
+    <Compile Include="FirstProto\Visualization\PackageComponent.cs" />
+    <Compile Include="FirstProto\Visualization\SiteComponent.cs" />
+    <Compile Include="FirstProto\Visualization\StateVisualizer.cs" />
+    <Compile Include="Temp\SiteVisualQuery.cs" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -99,6 +207,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

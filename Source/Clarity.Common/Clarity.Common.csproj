@@ -21,6 +21,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -30,6 +31,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="JetBrains.Annotations.Dotnet, Version=10.1.4.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
@@ -95,6 +97,7 @@
     <Compile Include="CodingUtilities\Sugar\Extensions\Reflection\ReflectionExtensions.cs" />
     <Compile Include="CodingUtilities\Sugar\Wrappers\Emit\CilEmitterSugar.cs" />
     <Compile Include="CodingUtilities\Sugar\Wrappers\Exceptions\ExcepResult.cs" />
+    <Compile Include="CodingUtilities\Sugar\Wrappers\Threading\ReaderWriterLockSlimSugar.cs" />
     <Compile Include="CodingUtilities\Tuples\Pair.cs" />
     <Compile Include="CodingUtilities\Tuples\Tuple3.cs" />
     <Compile Include="CodingUtilities\Tuples\Tuples.cs" />
@@ -278,10 +281,15 @@
     <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwFormatXml.cs" />
     <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwReaderXml.cs" />
     <Compile Include="Infra\TreeReadWrite\Formats\Xml\TrwWriterXml.cs" />
+    <Compile Include="Numericals\Algebra\DPolyLinear.cs" />
+    <Compile Include="Numericals\Algebra\DPolyQuadratic.cs" />
+    <Compile Include="Numericals\Algebra\DVector2.cs" />
     <Compile Include="Numericals\Algebra\DVector3.cs" />
+    <Compile Include="Numericals\Algebra\DVector4.cs" />
     <Compile Include="Numericals\Algebra\Matrix3x3.cs" />
     <Compile Include="Numericals\Algebra\Matrix4x3.cs" />
     <Compile Include="Numericals\Algebra\Matrix4x4.cs" />
+    <Compile Include="Numericals\Algebra\DPolyCubic.cs" />
     <Compile Include="Numericals\Algebra\Quaternion.cs" />
     <Compile Include="Numericals\Algebra\Rational.cs" />
     <Compile Include="Numericals\Algebra\Transform.cs" />

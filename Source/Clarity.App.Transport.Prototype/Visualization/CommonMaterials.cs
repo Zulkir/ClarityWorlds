@@ -1,5 +1,5 @@
 ﻿using System;
-using Clarity.App.Transport.Prototype.TransportLogs;
+using Clarity.App.Transport.Prototype.SimLogs;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Visualization.Elements.Materials;
 
@@ -29,17 +29,17 @@ namespace Clarity.App.Transport.Prototype.Visualization
             return siteMaterial;
         }
 
-        public IMaterial GetPackageMaterial(LogEntryCode code)
+        public IMaterial GetPackageMaterial(SimLogEntryCode code)
         {
             switch (code)
             {
-                case LogEntryCode.Read: return readPackageMaterial;
-                case LogEntryCode.Update: return updatePackageMaterial;
-                case LogEntryCode.Create: return createPackageMaterial;
-                case LogEntryCode.MigrationStart:
-                case LogEntryCode.NewCopy:
-                case LogEntryCode.RemoveCopy:
-                case LogEntryCode.MigrationEnd:  return migratePackageMaterial;
+                case SimLogEntryCode.Read: return readPackageMaterial;
+                case SimLogEntryCode.Update: return updatePackageMaterial;
+                case SimLogEntryCode.Create: return createPackageMaterial;
+                case SimLogEntryCode.MigrationStart:
+                case SimLogEntryCode.NewCopy:
+                case SimLogEntryCode.RemoveCopy:
+                case SimLogEntryCode.MigrationEnd:  return migratePackageMaterial;
                 default: throw new ArgumentOutOfRangeException(nameof(code), code, null);
             }
         }

@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using Clarity.App.Transport.Prototype.FirstProto;
 using Clarity.Engine.Platforms;
 using Eto.Drawing;
 using Eto.Forms;
@@ -7,7 +8,7 @@ namespace Clarity.App.Transport.Prototype
 {
     public class PropertiesGui
     {
-        private readonly IPlayback playback;
+        private readonly IOldPlayback playback;
 
         private readonly Label cTimestamp;
         private readonly Label cLastEntryInex;
@@ -24,7 +25,7 @@ namespace Clarity.App.Transport.Prototype
         private const float UpdateCooldown = 0.05f;
         private float remainingUpdateCooldown;
 
-        public PropertiesGui(IPlayback playback)
+        public PropertiesGui(IOldPlayback playback)
         {
             this.playback = playback;
             cTimestamp = new Label();
