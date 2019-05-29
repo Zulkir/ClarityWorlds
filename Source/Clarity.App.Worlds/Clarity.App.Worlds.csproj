@@ -76,6 +76,7 @@
     <Compile Include="CopyPaste\ICopyPasteComponent.cs" />
     <Compile Include="Coroutines\CoroutineService.cs" />
     <Compile Include="Coroutines\ICoroutineService.cs" />
+    <Compile Include="External\Movies\IMovieUrlLoader.cs" />
     <Compile Include="Gui\FullscreenMode.cs" />
     <Compile Include="Gui\IGui.cs" />
     <Compile Include="Gui\IGuiObservable.cs" />

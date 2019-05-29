@@ -93,7 +93,7 @@ namespace Clarity.Ext.Gui.EtoForms
                         return null;
                     var loadInfo = new AssetLoadInfo
                     {
-                        FileSystem = new ActualFileSystem(),
+                        FileSystem = ActualFileSystem.Singleton,
                         LoadPath = loadPath,
                         ReferencePath = loadPath,
                         StorageType = AssetStorageType.CopyLocal

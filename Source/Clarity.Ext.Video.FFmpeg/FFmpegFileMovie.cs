@@ -5,7 +5,7 @@ using Clarity.Engine.Resources;
 
 namespace Clarity.Ext.Video.FFmpeg
 {
-    public class FFmpegMovie : ResourceBase, IMovie
+    public class FFmpegFileMovie : ResourceBase, IMovie
     {
         public int Width { get; }
         public int Height { get; }
@@ -14,7 +14,7 @@ namespace Clarity.Ext.Video.FFmpeg
 
         public bool HasTransparency => false;
 
-        public FFmpegMovie(int width, int height, double durationInSeconds, Func<Stream> openFile) 
+        public FFmpegFileMovie(int width, int height, double durationInSeconds, Func<Stream> openFile) 
             : base(ResourceVolatility.Stable)
         {
             Width = width;
