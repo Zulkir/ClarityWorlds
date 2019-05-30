@@ -10,7 +10,7 @@ namespace Clarity.Ext.Video.FFmpeg
 {
     public unsafe class FFmpegMovieReader : IMovieReader
     {
-        private const AVPixelFormat DestinationPixFmt = AVPixelFormat.AV_PIX_FMT_RGBA;
+        private const AVPixelFormat DestinationPixFmt = AVPixelFormat.AV_PIX_FMT_BGRA;
         private const int ConvertedBufferAlign = 4;
 
         private volatile bool disposing;
