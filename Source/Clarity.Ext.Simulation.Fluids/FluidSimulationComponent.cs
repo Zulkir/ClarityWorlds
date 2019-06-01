@@ -26,11 +26,12 @@ using Clarity.Engine.Resources.RawData;
 using Clarity.Engine.Visualization.Elements;
 using Clarity.Engine.Visualization.Elements.Effects;
 using Clarity.Engine.Visualization.Elements.Materials;
+using Clarity.Engine.Visualization.Elements.RenderStates;
 
 namespace Clarity.Ext.Simulation.Fluids
 {
     public abstract class FluidSimulationComponent : SceneNodeComponentBase<FluidSimulationComponent>, IFluidSimulationComponent, 
-        ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittable
+        ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittableComponent
     {
         private readonly IEmbeddedResources embeddedResources;
         public abstract int Width { get; set; }
@@ -118,7 +119,7 @@ namespace Clarity.Ext.Simulation.Fluids
             fluidSimulation.Reset(CreateConfig());
             model = CreateModel(size, cellSize, fluidSimulation.Particles.Length);
             levelSetImageData = new byte[fluidSimulation.LevelSet.Size.Width * fluidSimulation.LevelSet.Size.Height * 4];
-            levelSetImage = new RawImage(ResourceVolatility.Volatile, new IntSize2(fluidSimulation.LevelSet.Size.Width, fluidSimulation.LevelSet.Size.Height), false, levelSetImageData);
+            levelSetImage = new RawImage(ResourceVolatility.Volatile, new IntSize2(fluidSimulation.LevelSet.Size.Width, fluidSimulation.LevelSet.Size.Height), true, levelSetImageData);
             squareModel = embeddedResources.SimplePlaneXyModel();
             visualElements.Clear();
             visualElements.Add(ModelVisualElement.New()
@@ -129,10 +130,13 @@ namespace Clarity.Ext.Simulation.Fluids
                     .FromGlobalCache()));
             visualElements.Add(ModelVisualElement.New()
                 .SetModel(model)
-                .SetModelPartIndex(0)
+                .SetModelPartIndex(1)
                 .SetMaterial(StandardMaterial.New()
                     .SetDiffuseColor(Color4.White)
                     .SetIgnoreLighting(true)
+                    .FromGlobalCache())
+                .SetRenderState(StandardRenderState.New()
+                    .SetPointSize(3)
                     .FromGlobalCache()));
             visualElements.Add(ModelVisualElement.New()
                 .SetModel(squareModel)
@@ -279,7 +283,7 @@ namespace Clarity.Ext.Simulation.Fluids
         {
             var cellSize = fluidSimulation.CurrentNavierStokesGrid.CellSize;
             var size = fluidSimulation.CurrentNavierStokesGrid.Size;
-            visualElements.RemoveRange(3, visualElements.Count - 3);
+            //visualElements.RemoveRange(3, visualElements.Count - 3);
 
             const int blue = 0;
             const int green = 1;
@@ -295,17 +299,21 @@ namespace Clarity.Ext.Simulation.Fluids
                 {
                     var index = j * prevFrame.LeveSetSizeStokesSize.Width + i;
                     var phi = nextFrame.Phi[index];
+                    var point = fluidSimulation.LevelSet.PointForCoords(i, j);
+                    var nextNsc = nextFrame.NavierStokesGrid.StateAtPoint(point);
+                    var isLiquid = nextNsc == NavierStokesCellState.Liquid;
                     var particleMask = MathHelper.Lerp(prevFrame.ParticleMask[index] ? 1 : 0, nextFrame.ParticleMask[index] ? 1 : 0, lerpAmount);
-                    var isLiquid = particleMask > 0;
+                    var isNearParticle = particleMask > 0;
+                    var isInsideLevelSet = phi < 0;
                     if (ii * 4 >= levelSetImageData.Length)
                         throw new Exception();
                     var channels = (byte*)&pixels[ii];
 
-                    channels[blue] = (byte)((isLiquid || phi < 0) ? 127 : 0);
-                    channels[green] = (byte)(false && phi < 0 ? 127 : 0);
+                    channels[blue] = (byte)((isLiquid ? 0 : 0) + (isNearParticle || isInsideLevelSet ? 200 : 0));
+                    channels[green] = (byte)((isLiquid ? 0 : 0) + (isNearParticle || isInsideLevelSet ? 200 : 0));
                     channels[red] = (byte)(0);
                     //channels[red] = (byte)(particleMask * 127);
-                    channels[alpha] = 0;
+                    channels[alpha] = (byte)(isNearParticle || isInsideLevelSet ? 255 : 127);
                     ii++;
                 }
             }

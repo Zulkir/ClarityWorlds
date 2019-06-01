@@ -252,7 +252,7 @@ namespace Clarity.Ext.Simulation.Fluids
                 if (currentTimestamp - lastFrameTimestamp > 1f/20)
                 {
                     lastFrameTimestamp = currentTimestamp;
-                    var newFrame = new FluidSimulationFrame(levelSet.Size, particles.Length)
+                    var newFrame = new FluidSimulationFrame(levelSet.Size, particles.Length, nextNavierStokesGrid.Size, nextNavierStokesGrid.CellSize)
                     {
                         Timestamp = currentTimestamp
                     };
@@ -265,6 +265,8 @@ namespace Clarity.Ext.Simulation.Fluids
                         newFrame.Phi[i] = levelSet.AllPhi[i];
                         newFrame.ParticleMask[i] = levelSet.AllParticleMasks[i];
                     }
+                    for (int i = 0; i < numCells; i++)
+                        newFrame.NavierStokesGrid.Cells[i] = nextNavierStokesGrid.Cells[i];
                     frameQueue.Enqueue(newFrame);
                 }
             }
