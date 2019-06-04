@@ -250,10 +250,11 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
             
             var visuals = new []
             {
-                ModelVisualElement.New()
+                ModelVisualElement.New(sg.Aspects[sg.Root])
                     .SetModel(frustumModel)
                     .SetMaterial(frustumMaterial)
                     .SetTransform(new Transform(0.5f, Quaternion.Identity, new Vector3(0, 0, 0.5f * MathHelper.FrustumDistance)))
+                    .SetHide(x => !x.ShowAux1)
             };
 
             var viewpointProps = new TargetedControlledCameraY.Props
