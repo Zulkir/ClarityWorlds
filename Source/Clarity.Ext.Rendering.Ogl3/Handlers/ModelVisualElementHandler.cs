@@ -134,7 +134,7 @@ namespace Clarity.Ext.Rendering.Ogl3.Handlers
             glContext.Bindings.Samplers[0].Set(sampler);
             glContext.Bindings.Samplers[1].Set(sampler);
 
-            var cWarpScroll = node.SearchComponent<WarpScrollComponent>();
+            var cWarpScroll = node.SearchComponent<IWarpScrollComponent>();
 
             commonObjects.MaterialUb.SetData(new MaterialUniform
             {

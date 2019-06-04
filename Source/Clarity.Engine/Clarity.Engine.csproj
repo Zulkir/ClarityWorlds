@@ -155,6 +155,7 @@
     <Compile Include="Serialization\ISerializationNecessitiesProvider.cs" />
     <Compile Include="Serialization\ISerializationNecessities.cs" />
     <Compile Include="Serialization\SerializationNecessities.cs" />
+    <Compile Include="Special\IWarpScrollComponent.cs" />
     <Compile Include="Visualization\Elements\Effects\FocusVisualEffect.cs" />
     <Compile Include="Visualization\Elements\Effects\HighlightVisualEffect.cs" />
     <Compile Include="Visualization\Elements\Effects\IVisualEffect.cs" />
@@ -273,7 +274,6 @@
     <Compile Include="Objects\WorldTree\ISceneNodeComponent.cs" />
     <Compile Include="Objects\WorldTree\ISceneNodeParent.cs" />
     <Compile Include="Objects\WorldTree\Scene.cs" />
-    <Compile Include="Special\WarpScrollComponent.cs" />
     <Compile Include="Objects\WorldTree\SceneNode.cs" />
     <Compile Include="Objects\WorldTree\SceneNodeComponentBase.cs" />
     <Compile Include="Objects\WorldTree\SceneNodeExtensions.cs" />
