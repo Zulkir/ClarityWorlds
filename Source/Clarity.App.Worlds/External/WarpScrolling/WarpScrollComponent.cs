@@ -13,7 +13,12 @@ namespace Clarity.App.Worlds.External.WarpScrolling
     {
         public float RealScrollAmount { get; set; }
         public float VisibleScrollAmount { get; set; }
-        
+
+        protected WarpScrollComponent()
+        {
+            RealScrollAmount = VisibleScrollAmount = 0.2f;
+        }
+
         public override void Update(FrameTime frameTime)
         {
             var amount = Math.Min(20f * frameTime.DeltaSeconds, 1f);
@@ -27,10 +32,10 @@ namespace Clarity.App.Worlds.External.WarpScrolling
             if (margs.ComplexEventType != MouseEventType.Wheel || margs.KeyModifyers != KeyModifyers.Control)
                 return false;
             RealScrollAmount += margs.WheelDelta * 0.01f;
-            if (RealScrollAmount < 0)
-                RealScrollAmount = 0;
-            if (RealScrollAmount > 1)
-                RealScrollAmount = 1;
+            if (RealScrollAmount < 0.2f)
+                RealScrollAmount = 0.2f;
+            if (RealScrollAmount > 0.8f)
+                RealScrollAmount = 0.8f;
             return true;
         }
     }
