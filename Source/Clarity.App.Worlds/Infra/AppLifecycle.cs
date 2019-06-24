@@ -11,6 +11,7 @@ using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.Interaction.Queries;
 using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.App.Worlds.Logging;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.Models;
 using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.SaveLoad;
@@ -93,6 +94,7 @@ namespace Clarity.App.Worlds.Infra
             di.Bind<ISceneNodeContextMenuBuilder>().To<SceneNodeContextMenuBuilder>();
             di.Bind<IReadOnlyWorldBuilder>().To<ReadOnlyWorldBuilder>();
             di.Bind<IRtEmbeddingHandlerContainer>().To<RtEmbeddingHandlerContainer>();
+            di.Bind<IHighlightOnMouseService>().To<HighlightOnMouseService>();
             di.Bind<IDirtyHackService>().To<DirtyHackService>();
         }
 

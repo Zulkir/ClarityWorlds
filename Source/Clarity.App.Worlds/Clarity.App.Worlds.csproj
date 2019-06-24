@@ -111,6 +111,8 @@
     <Compile Include="Assets\FromAssetResourceSource.cs" />
     <Compile Include="Assets\IAssetFileCache.cs" />
     <Compile Include="Assets\SysDrawImageLoader.cs" />
+    <Compile Include="Misc\HighlightOnMouse\HighlightOnMouseService.cs" />
+    <Compile Include="Misc\HighlightOnMouse\IHighlightOnMouseService.cs" />
     <Compile Include="SaveLoad\Import\IPresentationImporter.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandlerFamily.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandler.cs" />
@@ -209,6 +211,7 @@
     <Compile Include="Media\Media2D\MovieRectangleComponent.cs" />
     <Compile Include="Views\Cameras\OrthoDefaultViewpointMechanism.cs" />
     <Compile Include="Interaction\Placement\PlanarPlacementSurface.cs" />
+    <Compile Include="Misc\HighlightOnMouse\HighlightOnMouseComponent.cs" />
     <Compile Include="WorldTree\MiscComponents\ManipulateInPresentationComponent.cs" />
     <Compile Include="WorldTree\PresentationComponent.cs" />
     <Compile Include="Gui\PresentationGuiCommands.cs" />

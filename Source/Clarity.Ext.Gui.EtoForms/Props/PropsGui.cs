@@ -44,6 +44,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 new PropsGuiGroupFluidSimulation(undoRedo), 
                 new PropsGuiGroupStoryComponent(undoRedo, storyLayouts, worldTreeService, storyService), 
                 new PropsGuiGroupMovieRectangle(undoRedo, assetService, windowQueryService, movieUrlLoader),
+                new PropsGuiGroupHighlightOnMouse(undoRedo),
                 new PropsGuiGroupComponents(undoRedo),
             };
 

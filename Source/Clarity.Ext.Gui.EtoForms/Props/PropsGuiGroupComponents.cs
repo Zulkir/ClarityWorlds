@@ -1,5 +1,6 @@
 ﻿using System;
 using Clarity.App.Worlds.External.WarpScrolling;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Engine.Objects.WorldTree;
@@ -24,7 +25,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             aspectTypesControl = new DropDown
             {
                 Width = 120,
-                DataStore = new[] { "RotateOnDC", "ManipOnPresent", "WarpScroll" },
+                DataStore = new[] { "RotateOnDC", "ManipOnPresent", "WarpScroll", "HighlightOnMouseOver" },
                 SelectedIndex = 0
             };
 
@@ -122,6 +123,13 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 case "WarpScroll":
                 {
                     var component = AmFactory.Create<WarpScrollComponent>();
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
+                    break;
+                }
+                case "HighlightOnMouseOver":
+                {
+                    var component = AmFactory.Create<HighlightOnMouseComponent>();
                     boundNode.Components.Add(component);
                     undoRedo.OnChange();
                     break;
