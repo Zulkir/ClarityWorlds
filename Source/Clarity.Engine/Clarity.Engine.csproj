@@ -94,7 +94,6 @@
     <Compile Include="Interaction\Input\VRController\IVRControllerInputProvider.cs" />
     <Compile Include="Interaction\Input\VRController\IVRControllerState.cs" />
     <Compile Include="Interaction\Input\VRController\VRControllerButtons.cs" />
-    <Compile Include="Interaction\Input\VRController\VRControllerEventArgs.cs" />
     <Compile Include="Interaction\Input\VRController\VRControllerEventArgsExtentions.cs" />
     <Compile Include="Interaction\Input\VRController\VRControllerEventType.cs" />
     <Compile Include="Interaction\Input\VRController\VRControllerState.cs" />

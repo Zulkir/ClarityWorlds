@@ -9,6 +9,7 @@ using Clarity.Engine.Visualization.Views;
 
 namespace Clarity.Engine.Interaction.RayHittables
 {
+    // todo: rename to RayCastInfo
     public class RayHitInfo
     {
         public IScene Scene { get; private set; }

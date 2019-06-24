@@ -5,6 +5,7 @@ using Clarity.App.Worlds.DirtyHacks;
 using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.Views;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Interaction;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
@@ -27,7 +28,7 @@ namespace Clarity.App.Worlds.Interaction
 
         private readonly Lazy<IDirtyHackService> dirtyHackServiceLazy;
 
-        public InputHandler(IInputService inputService, IToolService toolService,
+        public InputHandler(IEventRoutingService eventRoutingService, IToolService toolService,
             INavigationService navigationService, Lazy<IDirtyHackService> dirtyHackServiceLazy, IRayHitIndex rayHitIndex, IViewService viewService)
         {
             this.toolService = toolService;
@@ -37,15 +38,17 @@ namespace Clarity.App.Worlds.Interaction
             this.viewService = viewService;
             inputLocks = new HashSet<IInputLock>();
             locksToRelease = new List<IInputLock>();
-            inputService.Input += OnEvent;
+            eventRoutingService.Subscribe<IInteractionEventArgs>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
         }
 
-        private void OnEvent(IInputEventArgs abstractArgs)
+        private void OnEvent(IInteractionEventArgs interactionEvent)
         {
+            if (!(interactionEvent is IInputEventArgs inputEvent))
+                return;
             locksToRelease.Clear();
             foreach (var inputLock in inputLocks)
             {
-                var result = inputLock.ProcessEvent(abstractArgs);
+                var result = inputLock.ProcessEvent(inputEvent);
                 if ((result & InputEventProcessResult.StopPropagating) != 0)
                     return;
                 if ((result & InputEventProcessResult.ReleaseLock) != 0)
@@ -57,11 +60,11 @@ namespace Clarity.App.Worlds.Interaction
             if (toolService.CurrentTool != null)
             {
                 var tool = toolService.CurrentTool;
-                if (tool.TryHandleInputEvent(abstractArgs))
+                if (tool.TryHandleInputEvent(inputEvent))
                     return;
             }
 
-            if (dirtyHackServiceLazy.Value.TryHandleInput(abstractArgs))
+            if (dirtyHackServiceLazy.Value.TryHandleInput(inputEvent))
                 return;
 
             //if (abstractArgs is IMouseEventArgs mouseArgs)
@@ -70,13 +73,13 @@ namespace Clarity.App.Worlds.Interaction
             //    OnKeyEvent(keyboardArgs);
             // todo: return if handled
 
-            if (abstractArgs.Viewport?.View.TryHandleInput(abstractArgs) ?? false)
+            if (inputEvent.Viewport?.View.TryHandleInput(inputEvent) ?? false)
                 return;
 
-            if (abstractArgs.Viewport != null && abstractArgs is IMouseEventArgs margs)
+            if (inputEvent.Viewport != null && inputEvent is IMouseEventArgs margs)
             {
                 var hitSomething = false;
-                foreach (var layer in abstractArgs.Viewport.View.Layers)
+                foreach (var layer in inputEvent.Viewport.View.Layers)
                 {
                     var clickInfo = new RayHitInfo(margs.Viewport, layer, margs.State.Position);
                     var hitResults = rayHitIndex.CastRay(clickInfo);
@@ -88,19 +91,19 @@ namespace Clarity.App.Worlds.Interaction
                             if (interactionElement.TryHandleInteractionEvent(margs))
                                 return;
                     }
-                    if (layer.Camera is IControlledCamera controlledCamera && controlledCamera.TryHandleInput(abstractArgs))
+                    if (layer.Camera is IControlledCamera controlledCamera && controlledCamera.TryHandleInput(inputEvent))
                         return;
                 }
                 if (margs.IsLeftClickEvent() && margs.KeyModifyers == KeyModifyers.None && !hitSomething)
                     viewService.SelectedNode = null;
             }
 
-            if (abstractArgs is IKeyEventArgs kargs && viewService.SelectedNode != null)
+            if (inputEvent is IKeyEventArgs kargs && viewService.SelectedNode != null)
                 foreach (var interactionElement in viewService.SelectedNode.Node.SearchComponents<IInteractionComponent>())
                     if (interactionElement.TryHandleInteractionEvent(kargs))
                         return;
 
-            navigationService.TryHandleInput(abstractArgs);
+            navigationService.TryHandleInput(inputEvent);
         }
 
         public void AddLock(IInputLock inputLock)

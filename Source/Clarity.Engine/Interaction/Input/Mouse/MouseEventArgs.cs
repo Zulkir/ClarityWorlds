@@ -1,10 +1,11 @@
 ﻿using Clarity.Common.Numericals.OtherTuples;
+using Clarity.Engine.EventRouting;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.Engine.Interaction.Input.Mouse
 {
-    public class MouseEventArgs : IMouseEventArgs
+    public class MouseEventArgs : RoutedEventBase, IMouseEventArgs
     {
         public MouseEventType ComplexEventType { get; set; }
         public MouseButtons EventButtons { get; set; }

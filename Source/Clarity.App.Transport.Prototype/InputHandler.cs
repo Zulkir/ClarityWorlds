@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Clarity.Engine.EventRouting;
+using Clarity.Engine.Interaction;
 using Clarity.Engine.Interaction.Input;
 
 namespace Clarity.App.Transport.Prototype
@@ -8,19 +10,21 @@ namespace Clarity.App.Transport.Prototype
         private readonly HashSet<IInputLock> inputLocks;
         private readonly List<IInputLock> locksToRelease;
 
-        public InputHandler(IInputService inputService)
+        public InputHandler(IEventRoutingService eventRoutingService)
         {
             inputLocks = new HashSet<IInputLock>();
             locksToRelease = new List<IInputLock>();
-            inputService.Input += OnEvent;
+            eventRoutingService.Subscribe<IInteractionEventArgs>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
         }
 
-        private void OnEvent(IInputEventArgs abstractArgs)
+        private void OnEvent(IInteractionEventArgs interactionEvent)
         {
+            if (!(interactionEvent is IInputEventArgs abstractInputEvent))
+                return;
             locksToRelease.Clear();
             foreach (var inputLock in inputLocks)
             {
-                var result = inputLock.ProcessEvent(abstractArgs);
+                var result = inputLock.ProcessEvent(abstractInputEvent);
                 if ((result & InputEventProcessResult.StopPropagating) != 0)
                     return;
                 if ((result & InputEventProcessResult.ReleaseLock) != 0)
@@ -29,7 +33,7 @@ namespace Clarity.App.Transport.Prototype
             foreach (var inputLock in locksToRelease)
                 inputLocks.Remove(inputLock);
 
-            if (abstractArgs.Viewport?.View.TryHandleInput(abstractArgs) ?? false)
+            if (abstractInputEvent.Viewport?.View.TryHandleInput(abstractInputEvent) ?? false)
                 return;
         }
 

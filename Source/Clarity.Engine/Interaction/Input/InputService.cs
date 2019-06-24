@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Clarity.Engine.EventRouting;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Visualization.Viewports;
@@ -7,14 +7,16 @@ namespace Clarity.Engine.Interaction.Input
 {
     public class InputService : IInputService
     {
-        public event Action<IInputEventArgs> Input;
+        private readonly IEventRoutingService eventRoutingService;
+
         // todo: refactor to actual querying or clear on defocus
         public IViewport FocusedViewport { get; private set; }
         public IKeyboardState CurrentKeyboardState { get; private set; }
         public KeyModifyers CurrentKeyModifiers { get; private set; }
 
-        public InputService()
+        public InputService(IEventRoutingService eventRoutingService)
         {
+            this.eventRoutingService = eventRoutingService;
             CurrentKeyboardState = new KeyboardState(new bool[100]);
         }
 
@@ -29,7 +31,7 @@ namespace Clarity.Engine.Interaction.Input
             {
                 FocusedViewport = args.Viewport;
             }
-            Input?.Invoke(args);
+            eventRoutingService.FireEvent<IInteractionEventArgs>(args);
         }
 
         public void OnFocusedViewportChanged(IViewport viewport)
