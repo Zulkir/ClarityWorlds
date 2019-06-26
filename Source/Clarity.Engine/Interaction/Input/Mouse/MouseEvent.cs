@@ -5,7 +5,7 @@ using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.Engine.Interaction.Input.Mouse
 {
-    public class MouseEventArgs : RoutedEventBase, IMouseEventArgs
+    public class MouseEvent : RoutedEventBase, IMouseEvent
     {
         public MouseEventType ComplexEventType { get; set; }
         public MouseButtons EventButtons { get; set; }

@@ -9,6 +9,6 @@ namespace Clarity.Engine.Special.Sketching
     {
         IReadOnlyList<IReadOnlyList<Vector2>> GetSketches();
         int GetTotalPointCount();
-        bool TryHandleMouseEvent(IMouseEventArgs args);
+        bool TryHandleMouseEvent(IMouseEvent args);
     }
 }

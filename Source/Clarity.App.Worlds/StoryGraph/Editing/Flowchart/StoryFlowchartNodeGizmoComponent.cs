@@ -85,9 +85,9 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (!(args is IMouseEventArgs margs))
+            if (!(args is IMouseEvent margs))
                 return false;
 
             if (margs.IsLeftDoubleClickEvent() && margs.KeyModifyers == KeyModifyers.None)

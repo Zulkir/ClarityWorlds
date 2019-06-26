@@ -54,7 +54,7 @@ namespace Clarity.Ext.TextImlets.Latex
             }
         }
 
-        public bool TryHandleMouseEvent(IRtEmbeddingSpan embedding, IMouseEventArgs args)
+        public bool TryHandleMouseEvent(IRtEmbeddingSpan embedding, IMouseEvent args)
         {
             if (!args.IsLeftDoubleClickEvent() || args.KeyModifyers != KeyModifyers.None)
                 return false;

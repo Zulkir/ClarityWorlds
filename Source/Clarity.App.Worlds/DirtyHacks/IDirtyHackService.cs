@@ -4,6 +4,6 @@ namespace Clarity.App.Worlds.DirtyHacks
 {
     public interface IDirtyHackService
     {
-        bool TryHandleInput(IInteractionEventArgs args);
+        bool TryHandleInput(IInteractionEvent args);
     }
 }

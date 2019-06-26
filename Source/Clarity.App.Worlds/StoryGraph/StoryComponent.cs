@@ -194,7 +194,7 @@ namespace Clarity.App.Worlds.StoryGraph
         public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable?.HitWithClick(clickInfo) ?? RayHitResult.Failure();
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             return appModeServiceLazy.Value.Mode == AppMode.Editing && selectInteractionElement.TryHandleInteractionEvent(args) || 
                    focusInteractionElement.TryHandleInteractionEvent(args) || 

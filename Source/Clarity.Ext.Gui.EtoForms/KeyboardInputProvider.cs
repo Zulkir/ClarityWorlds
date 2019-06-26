@@ -3,7 +3,6 @@ using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Eto.Forms;
-using CKeyEventArgs = Clarity.Engine.Interaction.Input.Keyboard.KeyEventArgs;
 using EKeyEventArgs = Eto.Forms.KeyEventArgs;
 using KeyEventType = Clarity.Engine.Interaction.Input.Keyboard.KeyEventType;
 
@@ -30,7 +29,7 @@ namespace Clarity.Ext.Gui.EtoForms
         {
             var key = keyEventArgs.Key.ToClarity();
             keys[(int)key] = true;
-            var cEventArgs = new CKeyEventArgs
+            var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.Down,
                 KeyModifyers = GetModifyers(keyEventArgs),
@@ -48,7 +47,7 @@ namespace Clarity.Ext.Gui.EtoForms
         {
             var key = keyEventArgs.Key.ToClarity();
             keys[(int)key] = false;
-            var cEventArgs = new CKeyEventArgs
+            var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.Up,
                 KeyModifyers = GetModifyers(keyEventArgs),
@@ -62,7 +61,7 @@ namespace Clarity.Ext.Gui.EtoForms
 
         private void OnTextInput(object sender, TextInputEventArgs textInputEventArgs)
         {
-            var cEventArgs = new CKeyEventArgs
+            var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.TextInput,
                 HasFocus = renderControl.HasFocus,
@@ -75,7 +74,7 @@ namespace Clarity.Ext.Gui.EtoForms
 
         private void OnFocusChanged(object sender, EventArgs eventArgs)
         {
-            var cEventArgs = new CKeyEventArgs
+            var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.FocusChanged,
                 HasFocus = renderControl.HasFocus,

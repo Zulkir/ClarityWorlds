@@ -25,9 +25,9 @@ namespace Clarity.App.Worlds.External.WarpScrolling
             VisibleScrollAmount = MathHelper.Lerp(VisibleScrollAmount, RealScrollAmount, amount);
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (!(args is IMouseEventArgs margs))
+            if (!(args is IMouseEvent margs))
                 return false;
             if (margs.ComplexEventType != MouseEventType.Wheel || margs.KeyModifyers != KeyModifyers.Control)
                 return false;

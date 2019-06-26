@@ -2,7 +2,7 @@
 
 namespace Clarity.App.Worlds.Interaction
 {
-    public interface ICoreInterationEventArgs : IInteractionEventArgs
+    public interface ICoreInterationEvent : IInteractionEvent
     {
         CoreInteractionEventCategory Category { get; }
         CoreInteractionEventType Type { get; }

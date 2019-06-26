@@ -65,7 +65,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         }
 
         public void Update(FrameTime frameTime) { }
-        public bool TryHandleInput(IInputEventArgs eventArgs) => false;
+        public bool TryHandleInput(IInputEvent eventArgs) => false;
 
         public static FixedCamera Default(ISceneNode node)
         {

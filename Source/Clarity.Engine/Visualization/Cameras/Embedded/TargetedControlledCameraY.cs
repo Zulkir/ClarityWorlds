@@ -135,14 +135,14 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
             return new Ray3(worldPoint, worldPoint - frame.Eye) * Node.GlobalTransform;
         }
 
-        public bool TryHandleInput(IInputEventArgs eventArgs)
+        public bool TryHandleInput(IInputEvent eventArgs)
         {
-            if (eventArgs is IMouseEventArgs mouseArgs)
+            if (eventArgs is IMouseEvent mouseArgs)
                 return TryHandleMouse(mouseArgs);
             return false;
         }
 
-        private bool TryHandleMouse(IMouseEventArgs eventArgs)
+        private bool TryHandleMouse(IMouseEvent eventArgs)
         {
             if (eventArgs.ComplexEventType == MouseEventType.Move)
             {

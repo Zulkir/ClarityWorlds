@@ -238,9 +238,9 @@
     <Compile Include="CopyPaste\SceneNodeDuplicateUndoable.cs" />
     <Compile Include="Interaction\CoreInteractionEventCategory.cs" />
     <Compile Include="Interaction\CoreInteractionEventType.cs" />
-    <Compile Include="Interaction\CoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\CoreInterationEvent.cs" />
     <Compile Include="Interaction\FocusOnDoubleClickInteractionElement.cs" />
-    <Compile Include="Interaction\ICoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\ICoreInterationEvent.cs" />
     <Compile Include="Interaction\MoviePlaybackInteractionElement.cs" />
     <Compile Include="Interaction\RectangleManipulation\DragRectangleInputLock.cs" />
     <Compile Include="Interaction\RectangleManipulation\DragRectangleInteractionElement.cs" />

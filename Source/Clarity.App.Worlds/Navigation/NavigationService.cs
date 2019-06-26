@@ -175,9 +175,9 @@ namespace Clarity.App.Worlds.Navigation
             previousStack.Clear();
             FireEvent(NavigationEventType.Reset, current, false);        }
 
-        public bool TryHandleInput(IInputEventArgs args)
+        public bool TryHandleInput(IInputEvent args)
         {
-            if (!(args is IKeyEventArgs e) || e.ComplexEventType != KeyEventType.Down)
+            if (!(args is IKeyEvent e) || e.ComplexEventType != KeyEventType.Down)
                 return false;
 
             if (e.EventKey == Key.Right)

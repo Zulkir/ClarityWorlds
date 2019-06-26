@@ -4,6 +4,6 @@ namespace Clarity.Engine.Interaction
 {
     public interface IInteractionComponent : ISceneNodeComponent
     {
-        bool TryHandleInteractionEvent(IInteractionEventArgs args);
+        bool TryHandleInteractionEvent(IInteractionEvent args);
     }
 }

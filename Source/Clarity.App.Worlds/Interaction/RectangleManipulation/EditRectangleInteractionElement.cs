@@ -17,14 +17,14 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
             this.commonNodeFactory = commonNodeFactory;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is ICoreInterationEventArgs coreArgs)
+            if (args is ICoreInterationEvent coreArgs)
                 OnCoreInteractionEvent(coreArgs);
             return false;
         }
 
-        private void OnCoreInteractionEvent(ICoreInterationEventArgs args)
+        private void OnCoreInteractionEvent(ICoreInterationEvent args)
         {
             if (args.Category != CoreInteractionEventCategory.PrimarySelection)
                 return;

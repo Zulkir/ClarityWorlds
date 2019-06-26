@@ -3,7 +3,7 @@ using Clarity.Engine.Interaction.Input.Keyboard;
 
 namespace Clarity.Engine.Interaction.Input.Mouse
 {
-    public interface IMouseEventArgs : IInputEventArgs
+    public interface IMouseEvent : IInputEvent
     {
         MouseEventType ComplexEventType { get; }
         MouseButtons EventButtons { get; }

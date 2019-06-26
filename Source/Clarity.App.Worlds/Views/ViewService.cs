@@ -45,10 +45,10 @@ namespace Clarity.App.Worlds.Views
             set
             {
                 foreach (var interactionComponent in model.SelectedNode?.SearchComponents<IInteractionComponent>() ?? Enumerable.Empty<IInteractionComponent>())
-                    interactionComponent.TryHandleInteractionEvent(CoreInterationEventArgs.Deselected());
+                    interactionComponent.TryHandleInteractionEvent(CoreInterationEvent.Deselected());
                 model.SelectedNode = value;
                 foreach (var interactionComponent in model.SelectedNode?.SearchComponents<IInteractionComponent>() ?? Enumerable.Empty<IInteractionComponent>())
-                    interactionComponent.TryHandleInteractionEvent(CoreInterationEventArgs.Selected());
+                    interactionComponent.TryHandleInteractionEvent(CoreInterationEvent.Selected());
                 Update?.Invoke(this, new ViewEventArgs(ViewEventType.SelectedNodeChanged));
             }
         }

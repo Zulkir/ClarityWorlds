@@ -9,7 +9,7 @@ namespace Clarity.Engine.Visualization.Views
     {
         IReadOnlyList<IViewLayer> Layers { get; }
         void Update(FrameTime frameTime);
-        bool TryHandleInput(IInputEventArgs args);
+        bool TryHandleInput(IInputEvent args);
         void OnEveryEvent(IRoutedEvent evnt);
     }
 }

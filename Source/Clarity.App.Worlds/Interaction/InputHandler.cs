@@ -38,12 +38,12 @@ namespace Clarity.App.Worlds.Interaction
             this.viewService = viewService;
             inputLocks = new HashSet<IInputLock>();
             locksToRelease = new List<IInputLock>();
-            eventRoutingService.Subscribe<IInteractionEventArgs>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
+            eventRoutingService.Subscribe<IInteractionEvent>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
         }
 
-        private void OnEvent(IInteractionEventArgs interactionEvent)
+        private void OnEvent(IInteractionEvent interactionEvent)
         {
-            if (!(interactionEvent is IInputEventArgs inputEvent))
+            if (!(interactionEvent is IInputEvent inputEvent))
                 return;
             locksToRelease.Clear();
             foreach (var inputLock in inputLocks)
@@ -76,7 +76,7 @@ namespace Clarity.App.Worlds.Interaction
             if (inputEvent.Viewport?.View.TryHandleInput(inputEvent) ?? false)
                 return;
 
-            if (inputEvent.Viewport != null && inputEvent is IMouseEventArgs margs)
+            if (inputEvent.Viewport != null && inputEvent is IMouseEvent margs)
             {
                 var hitSomething = false;
                 foreach (var layer in inputEvent.Viewport.View.Layers)
@@ -98,7 +98,7 @@ namespace Clarity.App.Worlds.Interaction
                     viewService.SelectedNode = null;
             }
 
-            if (inputEvent is IKeyEventArgs kargs && viewService.SelectedNode != null)
+            if (inputEvent is IKeyEvent kargs && viewService.SelectedNode != null)
                 foreach (var interactionElement in viewService.SelectedNode.Node.SearchComponents<IInteractionComponent>())
                     if (interactionElement.TryHandleInteractionEvent(kargs))
                         return;

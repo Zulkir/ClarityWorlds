@@ -7,11 +7,11 @@ namespace Clarity.App.Worlds.Interaction.Tools
     {
         private readonly IToolService toolService;
         private readonly TMaster master;
-        private readonly Func<IToolService, TMaster, IInputEventArgs, bool> tryHandleInputEvent;
+        private readonly Func<IToolService, TMaster, IInputEvent, bool> tryHandleInputEvent;
         private readonly Action<TMaster> dispose;
 
         public ProxyTool(IToolService toolService, TMaster master, 
-            Func<IToolService, TMaster, IInputEventArgs, bool> tryHandleInputEvent, 
+            Func<IToolService, TMaster, IInputEvent, bool> tryHandleInputEvent, 
             Action<TMaster> dispose)
         {
             this.toolService = toolService;
@@ -20,7 +20,7 @@ namespace Clarity.App.Worlds.Interaction.Tools
             this.dispose = dispose;
         }
 
-        public bool TryHandleInputEvent(IInputEventArgs eventArgs) => tryHandleInputEvent(toolService, master, eventArgs);
+        public bool TryHandleInputEvent(IInputEvent eventArgs) => tryHandleInputEvent(toolService, master, eventArgs);
         public void Dispose() => dispose(master);
     }
 }

@@ -66,9 +66,9 @@ namespace Clarity.App.Worlds.Views
             mainLayer.Camera.Update(frameTime);
         }
 
-        public bool TryHandleInput(IInputEventArgs args)
+        public bool TryHandleInput(IInputEvent args)
         {
-            if (!(args is IKeyEventArgs kargs)) 
+            if (!(args is IKeyEvent kargs)) 
                 return false;
             if (kargs.ComplexEventType == KeyEventType.Down && kargs.EventKey == Key.Escape)
             {

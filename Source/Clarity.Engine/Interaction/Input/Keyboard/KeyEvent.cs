@@ -3,7 +3,7 @@ using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.Engine.Interaction.Input.Keyboard
 {
-    public class KeyEventArgs : RoutedEventBase, IKeyEventArgs
+    public class KeyEvent : RoutedEventBase, IKeyEvent
     {
         public KeyEventType ComplexEventType { get; set; }
         public Key EventKey { get; set; }

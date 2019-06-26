@@ -23,14 +23,14 @@ namespace Clarity.App.Worlds.Interaction
             this.getPlayback = getPlayback;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEventArgs mouseArgs)
+            if (args is IMouseEvent mouseArgs)
                 return TryHandleMouseEvent(mouseArgs);
             return false;
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs args)
+        private bool TryHandleMouseEvent(IMouseEvent args)
         {
             if (!args.IsLeftClickEvent() && !args.IsRightClickEvent())
                 return false;
@@ -85,11 +85,11 @@ namespace Clarity.App.Worlds.Interaction
             }
         }
 
-        private bool TryGetPoint(IMouseEventArgs mouseEventArgs, out Vector2 point)
+        private bool TryGetPoint(IMouseEvent mouseEvent, out Vector2 point)
         {
             // todo: calculate this in rayHitService
             point = default(Vector2);
-            var globalRay = mouseEventArgs.Viewport.GetGlobalRayForPixelPos(mouseEventArgs.State.Position);
+            var globalRay = mouseEvent.Viewport.GetGlobalRayForPixelPos(mouseEvent.State.Position);
             var node = master.Node;
             var placementSurface = node.PresentationInfra().Placement;
             if (!placementSurface.PlacementSurface2D.TryFindPoint2D(globalRay, out var plainPoint))

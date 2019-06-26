@@ -42,12 +42,12 @@ namespace Clarity.App.Worlds.Interaction.Tools
             state = State.Ready;
         }
 
-        public bool TryHandleInputEvent(IInputEventArgs eventArgs)
+        public bool TryHandleInputEvent(IInputEvent eventArgs)
         {
-            return eventArgs is IMouseEventArgs mouseArgs && TryHandleMouseEvent(mouseArgs);
+            return eventArgs is IMouseEvent mouseArgs && TryHandleMouseEvent(mouseArgs);
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs eventArgs)
+        private bool TryHandleMouseEvent(IMouseEvent eventArgs)
         {
             if (state == State.Ready && eventArgs.IsLeftDownEvent())
             {

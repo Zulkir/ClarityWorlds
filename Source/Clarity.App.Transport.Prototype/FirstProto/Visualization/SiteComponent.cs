@@ -56,9 +56,9 @@ namespace Clarity.App.Transport.Prototype.FirstProto.Visualization
             return hittable.HitWithClick(clickInfo);
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEventArgs margs && margs.IsLeftClickEvent())
+            if (args is IMouseEvent margs && margs.IsLeftClickEvent())
             {
                 playback.SelectedSite = Site;
                 return true;

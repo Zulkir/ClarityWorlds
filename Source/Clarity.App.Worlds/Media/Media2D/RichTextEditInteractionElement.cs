@@ -32,16 +32,16 @@ namespace Clarity.App.Worlds.Media.Media2D
             this.inputHandler = inputHandler;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEventArgs mouseArgs)
+            if (args is IMouseEvent mouseArgs)
                 return TryHandleMouseEvent(mouseArgs);
-            if (args is IKeyEventArgs keyboardArgs)
+            if (args is IKeyEvent keyboardArgs)
                 return TryHandleKeyEvent(keyboardArgs);
             return false;
         }
 
-        private bool TryHandleKeyEvent(IKeyEventArgs args)
+        private bool TryHandleKeyEvent(IKeyEvent args)
         {
             if (!args.HasFocus)
                 return false;
@@ -141,7 +141,7 @@ namespace Clarity.App.Worlds.Media.Media2D
             return false;
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs args)
+        private bool TryHandleMouseEvent(IMouseEvent args)
         {
             // todo: refactor for better Rectangle modification code
             var placementSurface = cText.Node.PresentationInfra().Placement;
@@ -178,9 +178,9 @@ namespace Clarity.App.Worlds.Media.Media2D
             return false;
         }
 
-        private InputEventProcessResult MouseDownLockProc(object o, IInputEventArgs inputEventArgs)
+        private InputEventProcessResult MouseDownLockProc(object o, IInputEvent inputEvent)
         {
-            if (!(inputEventArgs is IMouseEventArgs args))
+            if (!(inputEvent is IMouseEvent args))
                 return InputEventProcessResult.DontCare;
             if (args.IsOfType(MouseEventType.Move) && args.State.Buttons == MouseButtons.Left)
             {

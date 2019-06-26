@@ -24,7 +24,7 @@ namespace Clarity.App.Worlds.WorldTree.MiscComponents
             this.commands = commands;
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs eventArgs)
+        private bool TryHandleMouseEvent(IMouseEvent eventArgs)
         {
             if (eventArgs.ComplexEventType == MouseEventType.Click && eventArgs.EventButtons == MouseButtons.Left)
             {
@@ -33,9 +33,9 @@ namespace Clarity.App.Worlds.WorldTree.MiscComponents
             return false;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (appModeService.Mode == AppMode.Presentation && args is IMouseEventArgs margs && margs.IsClickEvent())
+            if (appModeService.Mode == AppMode.Presentation && args is IMouseEvent margs && margs.IsClickEvent())
             {
                 TryHandleMouseEvent(margs);
                 return true;

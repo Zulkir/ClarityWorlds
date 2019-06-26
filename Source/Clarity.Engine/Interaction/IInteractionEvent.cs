@@ -3,7 +3,7 @@ using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.Engine.Interaction
 {
-    public interface IInteractionEventArgs : IRoutedEvent
+    public interface IInteractionEvent : IRoutedEvent
     {
         IViewport Viewport { get; }
     }

@@ -5,6 +5,6 @@ namespace Clarity.App.Worlds.Interaction.Tools
 {
     public interface ITool : IDisposable
     {
-        bool TryHandleInputEvent(IInputEventArgs eventArgs);
+        bool TryHandleInputEvent(IInputEvent eventArgs);
     }
 }

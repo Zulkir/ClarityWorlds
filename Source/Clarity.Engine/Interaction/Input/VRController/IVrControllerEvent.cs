@@ -2,7 +2,7 @@
 
 namespace Clarity.Engine.Interaction.Input.VRController
 {
-    public interface IVRControllerEventArgs : IInputEventArgs
+    public interface IVrControllerEvent : IInputEvent
     {
         VRControllerEventType EventType { get; }
         VRControllerButtons EventButtons { get; }

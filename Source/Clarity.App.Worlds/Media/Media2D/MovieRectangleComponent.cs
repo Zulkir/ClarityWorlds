@@ -159,7 +159,7 @@ namespace Clarity.App.Worlds.Media.Media2D
                 new MoviePlaybackInteractionElement<MovieRectangleComponent>(this, x => x.moviePlayback),
                 new LambdaInteractionElement(args =>
                 {
-                    if (!(args is MouseEventArgs mouseArgs))
+                    if (!(args is MouseEvent mouseArgs))
                         return true;
                     lastMouseEventTime = lastUpdateTime;
 
@@ -316,10 +316,10 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // todo: remove from here
-        private bool TryGetButton(IMouseEventArgs mouseEventArgs, out MovieButton button)
+        private bool TryGetButton(IMouseEvent mouseEvent, out MovieButton button)
         {
             button = MovieButton.Start; // Default
-            var globalRay = mouseEventArgs.Viewport.GetGlobalRayForPixelPos(mouseEventArgs.State.Position);
+            var globalRay = mouseEvent.Viewport.GetGlobalRayForPixelPos(mouseEvent.State.Position);
             var cPlacement = Node.PresentationInfra().Placement;
             if (!cPlacement.PlacementSurface2D.TryFindPoint2D(globalRay, out var plainPoint))
                 return false;
@@ -340,7 +340,7 @@ namespace Clarity.App.Worlds.Media.Media2D
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             if (appModeServiceLazy.Value.Mode == AppMode.Presentation)
                 foreach (var element in presentationInteractionElems)

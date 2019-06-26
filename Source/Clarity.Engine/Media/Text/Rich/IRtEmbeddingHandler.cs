@@ -8,6 +8,6 @@ namespace Clarity.Engine.Media.Text.Rich
     {
         IReadOnlyList<string> HandledTypes { get; }
         IImage BuildImage(IRtEmbeddingSpan embedding); 
-        bool TryHandleMouseEvent(IRtEmbeddingSpan embedding, IMouseEventArgs args);
+        bool TryHandleMouseEvent(IRtEmbeddingSpan embedding, IMouseEvent args);
     }
 }

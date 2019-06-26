@@ -32,7 +32,7 @@ namespace Clarity.App.Worlds.Misc.HighlightOnMouse
         // todo: implement mouse-in / mouse-out interaction events instead
         public override void OnRoutedEvent(IRoutedEvent evnt)
         {
-            if (!(evnt is IMouseEventArgs mevent))
+            if (!(evnt is IMouseEvent mevent))
                 return;
             var layer = mevent.Viewport.View.Layers.FirstOrDefault(x => x.VisibleScene == Node.Scene);
             if (layer == null)

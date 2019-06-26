@@ -20,18 +20,18 @@ namespace Clarity.Engine.Interaction.Input
             CurrentKeyboardState = new KeyboardState(new bool[100]);
         }
 
-        public void OnInputEvent(IInputEventArgs args)
+        public void OnInputEvent(IInputEvent args)
         {
-            if (args is IKeyEventArgs keyArgs)
+            if (args is IKeyEvent keyArgs)
             {
                 CurrentKeyboardState = keyArgs.State;
                 CurrentKeyModifiers = keyArgs.KeyModifyers;
             }
-            else if (args is IMouseEventArgs margs && margs.IsOfType(MouseEventType.Down))
+            else if (args is IMouseEvent margs && margs.IsOfType(MouseEventType.Down))
             {
                 FocusedViewport = args.Viewport;
             }
-            eventRoutingService.FireEvent<IInteractionEventArgs>(args);
+            eventRoutingService.FireEvent<IInteractionEvent>(args);
         }
 
         public void OnFocusedViewportChanged(IViewport viewport)

@@ -71,7 +71,7 @@ namespace Clarity.Ext.Simulation.Fluids
             {
                 //new SelectOnClickInteractionElement(this, viewService),
                 new ActionOnEventInteractionElement(
-                    args => args is IMouseEventArgs m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.None,
+                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.None,
                     () =>
                     {
                         if (simulationRunning)
@@ -92,7 +92,7 @@ namespace Clarity.Ext.Simulation.Fluids
                         simulationRunning = !simulationRunning;
                     }),
                 new ActionOnEventInteractionElement(
-                    args => args is IMouseEventArgs m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.Shift,
+                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.Shift,
                     () =>
                     {
                         Reset();
@@ -341,7 +341,7 @@ namespace Clarity.Ext.Simulation.Fluids
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             return interactionElems.Any(elem => elem.TryHandleInteractionEvent(args));
         }

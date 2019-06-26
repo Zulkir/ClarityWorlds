@@ -12,7 +12,7 @@ namespace Clarity.Engine.Interaction.Input
         IKeyboardState CurrentKeyboardState { get; }
         KeyModifyers CurrentKeyModifiers { get; }
         
-        void OnInputEvent(IInputEventArgs args);
+        void OnInputEvent(IInputEvent args);
         void OnFocusedViewportChanged(IViewport viewport);
     }
 }

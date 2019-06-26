@@ -14,12 +14,12 @@ namespace Clarity.App.Transport.Prototype
         {
             inputLocks = new HashSet<IInputLock>();
             locksToRelease = new List<IInputLock>();
-            eventRoutingService.Subscribe<IInteractionEventArgs>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
+            eventRoutingService.Subscribe<IInteractionEvent>(typeof(IInputHandler), nameof(OnEvent), OnEvent);
         }
 
-        private void OnEvent(IInteractionEventArgs interactionEvent)
+        private void OnEvent(IInteractionEvent interactionEvent)
         {
-            if (!(interactionEvent is IInputEventArgs abstractInputEvent))
+            if (!(interactionEvent is IInputEvent abstractInputEvent))
                 return;
             locksToRelease.Clear();
             foreach (var inputLock in inputLocks)

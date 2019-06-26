@@ -44,7 +44,7 @@ namespace Clarity.App.Worlds.Views
             mainLayer.Camera.Update(frameTime);
         }
 
-        public bool TryHandleInput(IInputEventArgs args)
+        public bool TryHandleInput(IInputEvent args)
         {
             return false;
         }

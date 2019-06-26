@@ -166,9 +166,9 @@ namespace Clarity.Ext.StoryLayout.Building
             props.Eye = newPos;
         }
 
-        public bool TryHandleInput(IInputEventArgs eventArgs)
+        public bool TryHandleInput(IInputEvent eventArgs)
         {
-            if (eventArgs is IMouseEventArgs margs)
+            if (eventArgs is IMouseEvent margs)
             {
                 if (margs.IsOfType(MouseEventType.Move))
                 {

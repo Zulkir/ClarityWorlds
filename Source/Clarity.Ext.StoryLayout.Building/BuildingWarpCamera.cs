@@ -183,9 +183,9 @@ namespace Clarity.Ext.StoryLayout.Building
         }
 
 
-        public bool TryHandleInput(IInputEventArgs eventArgs)
+        public bool TryHandleInput(IInputEvent eventArgs)
         {
-            if (eventArgs is IMouseEventArgs margs)
+            if (eventArgs is IMouseEvent margs)
             {
                 if (margs.IsOfType(MouseEventType.Move))
                 {
@@ -198,7 +198,7 @@ namespace Clarity.Ext.StoryLayout.Building
                     return true;
                 }
             }
-            else if (eventArgs is IVRControllerEventArgs vrcargs)
+            else if (eventArgs is IVrControllerEvent vrcargs)
             {
                 if (vrcargs.IsLeftTriggerPress())
                 {
@@ -206,7 +206,7 @@ namespace Clarity.Ext.StoryLayout.Building
                     TryWarpAlong(globalRay);
                 }
             }
-            else if (eventArgs is IKeyEventArgs kargs)
+            else if (eventArgs is IKeyEvent kargs)
             {
                 if (kargs.EventKey == Key.W && kargs.ComplexEventType == KeyEventType.Down)
                 {

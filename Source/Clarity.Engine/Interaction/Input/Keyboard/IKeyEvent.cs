@@ -1,6 +1,6 @@
 ﻿namespace Clarity.Engine.Interaction.Input.Keyboard
 {
-    public interface IKeyEventArgs : IInputEventArgs
+    public interface IKeyEvent : IInputEvent
     {
         KeyEventType ComplexEventType { get; }
         Key EventKey { get; }
