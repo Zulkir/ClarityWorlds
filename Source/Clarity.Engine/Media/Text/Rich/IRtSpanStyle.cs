@@ -12,5 +12,7 @@ namespace Clarity.Engine.Media.Text.Rich
         FontDecoration FontDecoration { get; set; }
         float Size { get; set; }
         Color4 TextColor { get; set; }
+        [CanBeNull]
+        string HighlightGroup { get; set; }
     }
 }
