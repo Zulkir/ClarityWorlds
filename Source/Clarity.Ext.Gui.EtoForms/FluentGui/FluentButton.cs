@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentButton<T> : IFluentControl
+    public class FluentButton<T> : IFluentControl<T>
     {
         private readonly Button etoControl;
         private readonly Func<T> getObject;
@@ -11,6 +11,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
+        public T GetObject() => getObject();
 
         public FluentButton(string text, Func<T> getObject, Action<T> onClick)
         {

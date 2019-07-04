@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-
-namespace Clarity.Ext.Gui.EtoForms.FluentGui
+﻿namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public interface IFluentContainerControl<T> : IFluentControl
+    public interface IFluentContainerControl : IFluentBuildableControl
     {
-        IList<IFluentControl> Children { get; }
+        IFluentControl Content { get; set; }
         int Width { get; set; }
+    }
 
-        T GetObject();
-        IFluentGuiBuilder<T> Build();
+    public interface IFluentContainerControl<T> : IFluentContainerControl, IFluentBuildableControl<T>
+    {
     }
 }

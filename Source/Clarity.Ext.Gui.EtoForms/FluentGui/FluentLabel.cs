@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentLabel<T> : IFluentControl
+    public class FluentLabel<T> : IFluentControl<T>
     {
         private readonly Func<T> getObject;
         private readonly Func<T, string> getValue;
@@ -11,6 +11,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
+        public T GetObject() => getObject();
 
         public FluentLabel(Func<T> getObject, Func<T, string> getValue)
         {

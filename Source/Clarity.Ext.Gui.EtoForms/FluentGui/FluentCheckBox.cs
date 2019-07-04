@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    class FluentCheckBox<T> : IFluentControl
+    class FluentCheckBox<T> : IFluentControl<T>
     {
         private readonly CheckBox etoControl;
         private readonly Func<T> getObject;
@@ -13,6 +13,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
+        public T GetObject() => getObject();
 
         public FluentCheckBox(string text, Func<T> getObject, Func<T, bool?> getValue,Action<T, bool?> setValue)
         {

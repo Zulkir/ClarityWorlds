@@ -53,56 +53,59 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             this.assetService = assetService;
             this.undoRedo = undoRedo;
 
-            var mainGroupBox = new FluentGroupBox<ISceneNode>("common", () => selectedSceneNode, x => x != null)
+            var mainPanel = new FluentPanel<ISceneNode>(() => selectedSceneNode, x => x != null)
             {
                 Width = 250
             };
-            var builder = mainGroupBox.Build();
-            builder.Label(x => x.Id.ToString());
-            builder.TextBox(x => x.Name);
+            var builder = mainPanel.Build().Table();
+            var mainGroupBox = builder.Row().GroupBox("common", x => x, x => true).Table();
+            mainGroupBox.Row().Label(x => x.Id.ToString());
+            mainGroupBox.Row().TextBox(x => x.Name);
             {
-                var modelComponentBuilder = builder.GroupBox("1", x => x.SearchComponent<IModelComponent>(), x => x != null);
-                modelComponentBuilder.ColorPicker(x => x.Color);
-                modelComponentBuilder.CheckBox("Ignore Lighting", x => x.IgnoreLighting);
-                modelComponentBuilder.CheckBox("Dont cull", x => x.DontCull);
-                modelComponentBuilder.CheckBox("No Specular", x => x.NoSpecular);
-                modelComponentBuilder.CheckBox("Ortho", x => x.Ortho);
-                modelComponentBuilder.Button("Load", OnLoadTextureClicked);
-                modelComponentBuilder.Button("Export", OnExportClick);
+                var modelComponentBuilder = builder.Row().GroupBox("Model", x => x.SearchComponent<IModelComponent>(), x => x != null).Table();
+                modelComponentBuilder.Row().ColorPicker("Color", x => x.Color);
+                modelComponentBuilder.Row().CheckBox("Ignore Lighting", x => x.IgnoreLighting);
+                modelComponentBuilder.Row().CheckBox("Dont cull", x => x.DontCull);
+                modelComponentBuilder.Row().CheckBox("No Specular", x => x.NoSpecular);
+                modelComponentBuilder.Row().CheckBox("Ortho", x => x.Ortho);
+                modelComponentBuilder.Row().Button("Load", OnLoadTextureClicked);
+                modelComponentBuilder.Row().Button("Export", OnExportClick);
             }
             {
-                var sceneGroupBox = builder.GroupBox("2", x => x.AmParent as IScene, x => x != null);
-                sceneGroupBox.ColorPicker(x => x.BackgroundColor); //doesn't work any way
+                var sceneGroupBox = builder.Row().GroupBox("Scene", x => x.AmParent as IScene, x => x != null).Table();
+                sceneGroupBox.Row().ColorPicker("Bgnd Color", x => x.BackgroundColor);
                 var dict = new Dictionary<string, ISkybox>
                 {
-                    {"None", null}, {"Storm", embeddedResources.Skybox("Skyboxes/storm.skybox")},
+                    {"None", null},
+                    {"Storm", embeddedResources.Skybox("Skyboxes/storm.skybox")},
                     {"Stars", embeddedResources.Skybox("Skyboxes/stars.skybox")}
                 };
-                sceneGroupBox.DropDown(x => x.Skybox, dict);
+                sceneGroupBox.Row().DropDown(x => x.Skybox, dict);
             }
             {
-                var storyNode = builder.GroupBox("Story Node", x => x.SearchComponent<IStoryComponent>(), x => x != null);
-                storyNode.CheckBox("Instant transition", x => x.InstantTransition);
-                storyNode.CheckBox("Skip", x => x.SkipOrder);
+                var storyNode = builder.Row().GroupBox("Story Node", x => x.SearchComponent<IStoryComponent>(), x => x != null).Table();
+                storyNode.Row().CheckBox("Instant transition", x => x.InstantTransition);
+                storyNode.Row().CheckBox("Skip", x => x.SkipOrder);
             }
             {
-                var rectGroupBox = builder.GroupBox("Rectangle", x => x, x => x.HasComponent<IRectangleComponent>());
-                var colorRectPanel = rectGroupBox.Panel(x => x.SearchComponent<ColorRectangleComponent>(), x => x != null);
-                colorRectPanel.ColorPicker(x => x.Color);
-                var rectangleComponent = rectGroupBox.Panel(x => x.SearchComponent<IRectangleComponent>(), x => x != null);
+                var rectGroupBox = builder.Row().GroupBox("Rectangle", x => x, x => x.HasComponent<IRectangleComponent>()).Table();
+                var colorRectPanel = rectGroupBox.Row().Panel(x => x.SearchComponent<ColorRectangleComponent>(), x => x != null);
+                colorRectPanel.ColorPicker("Color", x => x.Color);
+                var rectangleComponent = rectGroupBox.Row().Panel(x => x.SearchComponent<IRectangleComponent>(), x => x != null);
                 rectangleComponent.CheckBox("DragBorders", x => x.DragByBorders);
             }
             {
-                var componenets = builder.GroupBox("Components", x => x, x => x != null);
+                var components = builder.Row().GroupBox("Components", x => x, x => x != null);
+                var componentsTable = components.Table();
                 // todo: list
-                var newComponentViewModel = new NewComponentViewModel(() => componenets.GetObject());
-                var newComponentPanelBuilder = componenets.Panel(x => newComponentViewModel, x => true);
-                newComponentPanelBuilder.DropDown(x => x.ComponentType, new Dictionary<string, Type>
+                var newComponentViewModel = new NewComponentViewModel(() => components.GetObject());
+                var newComponentPanelBuilder = componentsTable.Row().Panel(x => newComponentViewModel, x => true).Table();
+                newComponentPanelBuilder.Row().DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
                     ["RotateOnce"] = typeof(RotateOnceComponent),
                     ["Something"] = typeof(PresentationComponent),
                 });
-                newComponentPanelBuilder.Button("Add", x =>
+                newComponentPanelBuilder.Row().Button("Add", x =>
                 {
                     if (x.ComponentType == typeof(RotateOnceComponent))
                     {
@@ -116,8 +119,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                     }
                 });
             }
+            builder.Row().Panel(x => x, x => true);
 
-            rootControl = mainGroupBox;
+            rootControl = mainPanel;
             renderLoopDispatcher.AfterUpdate += Update;
         }
         

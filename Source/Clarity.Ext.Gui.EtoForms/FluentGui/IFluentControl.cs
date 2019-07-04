@@ -8,4 +8,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         bool IsVisible { get; }
         void Update();
     }
+
+    public interface IFluentControl<out T> : IFluentControl
+    {
+        T GetObject();
+    }
 }

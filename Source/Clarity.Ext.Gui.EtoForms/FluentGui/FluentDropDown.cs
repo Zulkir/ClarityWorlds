@@ -6,7 +6,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    class FluentDropDown<TObject, TValue> : IFluentControl
+    class FluentDropDown<TObject, TValue> : IFluentControl<TObject>
     {
         private readonly DropDown etoControl;
         private readonly Func<TObject> getObject;
@@ -19,6 +19,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public bool IsVisible => true;
         public Control EtoControl => etoControl;
+        public TObject GetObject() => getObject();
 
         public FluentDropDown(Func<TObject> getObject, Func<TObject, TValue> getValue, 
             Action<TObject, TValue> setValue, IReadOnlyDictionary<string, TValue> values)
