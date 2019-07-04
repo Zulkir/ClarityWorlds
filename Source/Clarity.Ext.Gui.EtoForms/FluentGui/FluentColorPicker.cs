@@ -11,6 +11,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly Func<T> getObject;
         private readonly Func<T, Color4> getValue;
         private readonly Action<T, Color4> setValue;
+        private bool suppressEvents;
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
@@ -24,19 +25,20 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             etoControl.ValueChanged += OnValueChanged;
         }
 
-
-        //hapens every moment and update the value of our new label
-
         public void Update()
         {
             var eValue = Color.FromArgb(getValue(getObject()).ToArgb());
-            if (etoControl.Value != eValue)
-                etoControl.Value = eValue;
+            if (etoControl.Value == eValue)
+                return;
+            suppressEvents = true;
+            etoControl.Value = eValue;
+            suppressEvents = false;
         }
 
-       //when this color picker change his value apdate the component on the screen
         private void OnValueChanged(object sender, EventArgs e)
         {
+            if (suppressEvents)
+                return;
             var eColor = etoControl.Value;
             var cColor = new Color4(eColor.R, eColor.G, eColor.B, eColor.A);
             setValue(getObject(), cColor);

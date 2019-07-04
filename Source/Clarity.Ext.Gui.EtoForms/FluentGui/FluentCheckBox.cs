@@ -9,6 +9,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly Func<T> getObject;
         private readonly Func<T,bool? > getValue;
         private readonly Action<T, bool?> setValue;
+        private bool suppressEvents;
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
@@ -19,19 +20,23 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             this.getObject = getObject;
             this.setValue = setValue;
             etoControl = new CheckBox{Text = text};
-            etoControl.CheckedChanged += OnCheck; //onIgnoreLighningChanged
+            etoControl.CheckedChanged += OnCheck;
         }
 
         private void OnCheck(object sender, EventArgs e)
         {
-            setValue(getObject(), etoControl.Checked);
+            if (!suppressEvents)
+                setValue(getObject(), etoControl.Checked);
         }
 
         public void Update()
         {
             var eValue = getValue(getObject());
-            if (etoControl.Checked != eValue)
-                etoControl.Checked = eValue;
+            if (etoControl.Checked == eValue)
+                return;
+            suppressEvents = true;
+            etoControl.Checked = eValue;
+            suppressEvents = false;
         }
     }
 }

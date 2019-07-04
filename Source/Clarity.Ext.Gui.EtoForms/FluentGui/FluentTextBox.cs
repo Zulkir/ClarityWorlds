@@ -9,6 +9,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly Func<T, string> getValue;
         private readonly Action<T, string> setValue;
         private readonly TextBox etoControl;
+        private bool suppressEvents;
 
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
@@ -24,14 +25,18 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         private void OnTextChanged(object sender, EventArgs e)
         {
-            setValue(getObject(), etoControl.Text);
+            if (!suppressEvents)
+                setValue(getObject(), etoControl.Text);
         }
 
         public void Update()
         {
             var value = getValue(getObject());
-            if (etoControl.Text != value)
-                etoControl.Text = value;
+            if (etoControl.Text == value)
+                return;
+            suppressEvents = true;
+            etoControl.Text = value;
+            suppressEvents = false;
         }
     }
 }

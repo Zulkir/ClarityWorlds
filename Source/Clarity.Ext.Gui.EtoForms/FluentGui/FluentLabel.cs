@@ -12,7 +12,6 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public Control EtoControl => etoControl;
         public bool IsVisible => true;
 
-
         public FluentLabel(Func<T> getObject, Func<T, string> getValue)
         {
             this.getObject = getObject;
@@ -20,7 +19,6 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             etoControl = new Label();
         }
 
-        //happens every moment and update the value of our new label-check if it changed in the component and changed in the new place
         public void Update()
         {
             var value = getValue(getObject());

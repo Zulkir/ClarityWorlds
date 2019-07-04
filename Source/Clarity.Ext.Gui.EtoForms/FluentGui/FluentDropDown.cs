@@ -13,13 +13,15 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly Func<TObject, TValue> getValue;
         private readonly Action<TObject, TValue> setValue;
         private readonly IReadOnlyDictionary<string, TValue> values;
+        private bool suppressEvents;
 
         private TValue chosenValue;
 
         public bool IsVisible => true;
         public Control EtoControl => etoControl;
 
-        public FluentDropDown(Func<TObject> getObject, Func<TObject, TValue> getValue, Action<TObject, TValue> setValue, IReadOnlyDictionary<string, TValue> values)
+        public FluentDropDown(Func<TObject> getObject, Func<TObject, TValue> getValue, 
+            Action<TObject, TValue> setValue, IReadOnlyDictionary<string, TValue> values)
         {
             this.getObject = getObject;
             this.getValue = getValue;
@@ -36,6 +38,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         private void OnValueChanged(object sender, EventArgs e)  
         {
+            if (suppressEvents)
+                return;
             var key = (string)etoControl.SelectedValue;
             var newValue = key != null ? values[key] : default(TValue);
             chosenValue = newValue;
@@ -45,14 +49,15 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public void Update()
         {
             var value = getValue(getObject());
-            if (!EqualityComparer<TValue>.Default.Equals(chosenValue, value))
-            {
-                var valueStr = values
-                    .Where(x => EqualityComparer<TValue>.Default.Equals(x.Value, value))
-                    .FirstOrNull()?.Key;
-                chosenValue = value;
-                etoControl.SelectedValue = valueStr;
-            }
+            if (EqualityComparer<TValue>.Default.Equals(chosenValue, value))
+                return;
+            var valueStr = values
+                .Where(x => EqualityComparer<TValue>.Default.Equals(x.Value, value))
+                .FirstOrNull()?.Key;
+            chosenValue = value;
+            suppressEvents = true;
+            etoControl.SelectedValue = valueStr;
+            suppressEvents = false;
         }
     }
 }

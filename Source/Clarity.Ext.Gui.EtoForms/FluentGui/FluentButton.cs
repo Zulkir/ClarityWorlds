@@ -6,10 +6,10 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
     public class FluentButton<T> : IFluentControl
     {
         private readonly Button etoControl;
-        public Control EtoControl => etoControl;
         private readonly Func<T> getObject;
         private readonly Action<T> onClick;
 
+        public Control EtoControl => etoControl;
         public bool IsVisible => true;
 
         public FluentButton(string text, Func<T> getObject, Action<T> onClick)
