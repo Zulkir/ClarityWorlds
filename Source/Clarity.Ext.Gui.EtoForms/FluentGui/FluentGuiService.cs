@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Common.Infra.Files;
 using Clarity.Engine.Media.Images;
@@ -109,17 +109,30 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 // todo: change image
             }
             {
-                var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null);
-                // todo: list
-                var newComponentViewModel = new NewComponentViewModel(() => componentsBuilder.GetObject());
-                var newComponentPanelBuilder = componentsBuilder.Table().Row().Panel(x => newComponentViewModel, x => true).Table();
-                newComponentPanelBuilder.Row().DropDown(x => x.ComponentType, new Dictionary<string, Type>
+                var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
+                // todo: to ArrayTable
+                var componentsCache = (IEnumerable<ISceneNodeComponent>)null;
+                var componentsStringCache = "";
+                componentsBuilder.Row().Label(n =>
+                {
+                    if (n.Components != componentsCache)
+                    {
+                        componentsCache = n.Components;
+                        componentsStringCache = string.Join("\n", n.Components.Select(c => c.AmInterface.Name));
+                    }
+                    return componentsStringCache;
+                });
+
+                var newComponentViewModel = new NewComponentViewModel(() => selectedSceneNode);
+                var newComponentPanelBuilder = componentsBuilder.Row().Panel(x => newComponentViewModel, x => true).Table();
+                var newComponentRow = newComponentPanelBuilder.Row();
+                newComponentRow.DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
                     ["RotateOnce"] = typeof(RotateOnceComponent),
-                    ["Something"] = typeof(PresentationComponent),
                 });
-                newComponentPanelBuilder.Row().Button("Add", x =>
+                newComponentRow.Button("Add", x =>
                 {
+                    componentsCache = null;
                     if (x.ComponentType == typeof(RotateOnceComponent))
                     {
                         var component = AmFactory.Create<RotateOnceComponent>();
