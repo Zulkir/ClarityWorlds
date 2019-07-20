@@ -58,48 +58,61 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 Width = 250
             };
             var builder = mainPanel.Build().Table();
-            var mainGroupBox = builder.Row().GroupBox("common", x => x, x => true).Table();
-            mainGroupBox.Row().Label(x => x.Id.ToString());
-            mainGroupBox.Row().TextBox(x => x.Name);
             {
-                var modelComponentBuilder = builder.Row().GroupBox("Model", x => x.SearchComponent<IModelComponent>(), x => x != null).Table();
-                modelComponentBuilder.Row().ColorPicker("Color", x => x.Color);
-                modelComponentBuilder.Row().CheckBox("Ignore Lighting", x => x.IgnoreLighting);
-                modelComponentBuilder.Row().CheckBox("Dont cull", x => x.DontCull);
-                modelComponentBuilder.Row().CheckBox("No Specular", x => x.NoSpecular);
-                modelComponentBuilder.Row().CheckBox("Ortho", x => x.Ortho);
-                modelComponentBuilder.Row().Button("Load", OnLoadTextureClicked);
-                modelComponentBuilder.Row().Button("Export", OnExportClick);
+                var mainGroupBox = builder.Row().GroupBox("common", x => x, x => true).Table();
+                mainGroupBox.Row().Label(x => x.Id.ToString());
+                mainGroupBox.Row().TextBox(x => x.Name);
             }
             {
                 var sceneGroupBox = builder.Row().GroupBox("Scene", x => x.AmParent as IScene, x => x != null).Table();
-                sceneGroupBox.Row().ColorPicker("Bgnd Color", x => x.BackgroundColor);
-                var dict = new Dictionary<string, ISkybox>
+                var colorRow = sceneGroupBox.Row();
+                colorRow.Label("Bgnd Color");
+                colorRow.ColorPicker(x => x.BackgroundColor);
+                var skyboxRow = sceneGroupBox.Row();
+                skyboxRow.Label("Skybox");
+                skyboxRow.DropDown(x => x.Skybox, new Dictionary<string, ISkybox>
                 {
                     {"None", null},
                     {"Storm", embeddedResources.Skybox("Skyboxes/storm.skybox")},
                     {"Stars", embeddedResources.Skybox("Skyboxes/stars.skybox")}
-                };
-                sceneGroupBox.Row().DropDown(x => x.Skybox, dict);
+                });
             }
             {
                 var storyNode = builder.Row().GroupBox("Story Node", x => x.SearchComponent<IStoryComponent>(), x => x != null).Table();
-                storyNode.Row().CheckBox("Instant transition", x => x.InstantTransition);
-                storyNode.Row().CheckBox("Skip", x => x.SkipOrder);
+                var row = storyNode.Row();
+                row.CheckBox("Instant transition", x => x.InstantTransition);
+                row.CheckBox("Skip", x => x.SkipOrder);
+            }
+            {
+                var modelComponentBuilder = builder.Row().GroupBox("Model", x => x.SearchComponent<IModelComponent>(), x => x != null).Table();
+                var colorRow = modelComponentBuilder.Row();
+                colorRow.CheckBox("SingleColor", x => x.SingleColor);
+                colorRow.ColorPicker(x => x.Color);
+                var textureRow = modelComponentBuilder.Row();
+                textureRow.Label("Image");
+                textureRow.Button("Load", OnLoadTextureClicked);
+                var checkBoxRow1 = modelComponentBuilder.Row();
+                checkBoxRow1.CheckBox("Ignore Lighting", x => x.IgnoreLighting);
+                checkBoxRow1.CheckBox("No Specular", x => x.NoSpecular);
+                var checkBoxRow2 = modelComponentBuilder.Row();
+                checkBoxRow2.CheckBox("Don't cull", x => x.DontCull);
+                checkBoxRow2.CheckBox("Ortho", x => x.Ortho);
+                modelComponentBuilder.Row().Button("Export", OnExportClick);
             }
             {
                 var rectGroupBox = builder.Row().GroupBox("Rectangle", x => x, x => x.HasComponent<IRectangleComponent>()).Table();
-                var colorRectPanel = rectGroupBox.Row().Panel(x => x.SearchComponent<ColorRectangleComponent>(), x => x != null);
-                colorRectPanel.ColorPicker("Color", x => x.Color);
-                var rectangleComponent = rectGroupBox.Row().Panel(x => x.SearchComponent<IRectangleComponent>(), x => x != null);
-                rectangleComponent.CheckBox("DragBorders", x => x.DragByBorders);
+                var commonRectRow = rectGroupBox.Row().Panel(x => x.SearchComponent<IRectangleComponent>(), x => x != null).Table().Row();
+                commonRectRow.CheckBox("DragBorders", x => x.DragByBorders);
+                var colorRow = rectGroupBox.Row().Panel(x => x.SearchComponent<ColorRectangleComponent>(), x => x != null).Table().Row();
+                colorRow.Label("Color");
+                colorRow.ColorPicker(x => x.Color);
+                // todo: change image
             }
             {
-                var components = builder.Row().GroupBox("Components", x => x, x => x != null);
-                var componentsTable = components.Table();
+                var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null);
                 // todo: list
-                var newComponentViewModel = new NewComponentViewModel(() => components.GetObject());
-                var newComponentPanelBuilder = componentsTable.Row().Panel(x => newComponentViewModel, x => true).Table();
+                var newComponentViewModel = new NewComponentViewModel(() => componentsBuilder.GetObject());
+                var newComponentPanelBuilder = componentsBuilder.Table().Row().Panel(x => newComponentViewModel, x => true).Table();
                 newComponentPanelBuilder.Row().DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
                     ["RotateOnce"] = typeof(RotateOnceComponent),

@@ -7,28 +7,23 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
     public class FluentColorPicker<T> : IFluentControl<T>
     {
-        private readonly string text;
-        private readonly TableLayout etoControl;
         private readonly ColorPicker etoColorPicker;
         private readonly Func<T> getObject;
         private readonly Func<T, Color4> getValue;
         private readonly Action<T, Color4> setValue;
         private bool suppressEvents;
 
-        public Control EtoControl => etoControl;
+        public Control EtoControl => etoColorPicker;
         public bool IsVisible => true;
         public T GetObject() => getObject();
 
-        public FluentColorPicker(string text, Func<T> getObject, Func<T, Color4> getValue, Action<T, Color4> setValue)
+        public FluentColorPicker(Func<T> getObject, Func<T, Color4> getValue, Action<T, Color4> setValue)
         {
-            this.text = text;
             this.getObject = getObject;
             this.getValue = getValue;
             this.setValue = setValue;
             etoColorPicker = new ColorPicker();
             etoColorPicker.ValueChanged += OnValueChanged;
-            etoControl = new TableLayout(
-                new TableRow(new Label {Text = text}, etoColorPicker));
         }
 
         public void Update()

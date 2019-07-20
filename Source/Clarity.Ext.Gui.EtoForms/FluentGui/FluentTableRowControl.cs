@@ -14,7 +14,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly List<IFluentControl> cells;
         private IntSet32 rowVisibility;
 
-        public Control EtoControl => etoTableRow;
+        public TableRow EtoTableRow => etoTableRow;
+        public Control EtoControl => null;
         public bool IsVisible => cells.Any(x => x.IsVisible);
         public T GetObject() => getObject();
 

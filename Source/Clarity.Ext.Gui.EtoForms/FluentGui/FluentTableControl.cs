@@ -75,7 +75,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 Spacing = new Size(5, 5),
             };
             foreach (var row in rows.Where(x => x.IsVisible))
-                etoTableLayout.Rows.Add(new TableRow(row.EtoControl));
+                etoTableLayout.Rows.Add(row.EtoTableRow);
             onLayoutChanged();
         }
     }

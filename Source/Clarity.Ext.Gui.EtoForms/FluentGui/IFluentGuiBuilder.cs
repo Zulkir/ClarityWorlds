@@ -12,8 +12,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         IFluentGuiTableBuilder<TChild> Table<TChild>(Func<T, TChild> getChild);
         IFluentGuiBuilder<TChild> Panel<TChild>(Func<T, TChild> getChild, Func<TChild, bool> visible);
         IFluentGuiBuilder<TChild> GroupBox<TChild>(string name, Func<T, TChild> getChild, Func<TChild, bool> visible);
+        void Label(string text);
         void Label(Func<T, string> getValue);
-        void ColorPicker(string text, Expression<Func<T, Color4>> path);
+        void ColorPicker(Expression<Func<T, Color4>> path);
         void CheckBox(string text, Expression<Func<T, bool?>> path);
         void CheckBox(string text, Expression<Func<T, bool>> path);
         void Button(string text, Action<T> onClick);

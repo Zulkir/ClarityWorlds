@@ -39,15 +39,20 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             return groupBox.Build();
         }
 
+        public void Label(string text)
+        {
+            control.AddChild(new FluentLabel<T>(GetObject, x => text));
+        }
+
         public void Label(Func<T, string> getValue)
         {
             control.AddChild(new FluentLabel<T>(GetObject, getValue));
         }
 
-        public void ColorPicker(string text, Expression<Func<T, Color4>> path)
+        public void ColorPicker(Expression<Func<T, Color4>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentColorPicker<T>(text, GetObject, 
+            control.AddChild(new FluentColorPicker<T>(GetObject, 
                 x => (Color4)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
         }
