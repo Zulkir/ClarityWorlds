@@ -6,7 +6,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentTableRowControl<T> : IFluentTableRowControl<T>
+    public class FluentTableRowControl<T> : IFluentTableRowControl
     {
         private TableRow etoTableRow;
         private readonly Action onLayoutChanged;
@@ -31,7 +31,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         {
             cells.Clear();
             etoTableRow.Cells.Clear();
-            return new FluentGuiBuilder<T>(this);
+            return new FluentGuiBuilder<T>(GetObject, AddChild, OnChildLayoutChanged);
         }
 
         public void AddChild(IFluentControl control)

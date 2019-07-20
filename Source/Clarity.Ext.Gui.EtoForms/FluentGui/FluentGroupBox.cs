@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentGroupBox<T> : IFluentContainerControl<T>
+    public class FluentGroupBox<T> : IFluentContainerControl
     {
         private readonly GroupBox etoGroupBox;
         private readonly Func<T> getObject;
@@ -33,7 +33,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public IFluentGuiBuilder<T> Build()
         {
             Content = null;
-            return new FluentGuiBuilder<T>(this);
+            return new FluentGuiBuilder<T>(GetObject, AddChild, OnChildLayoutChanged);
         }
 
         public void AddChild(IFluentControl control)
@@ -43,7 +43,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             Content = control;
         }
 
-        void IFluentBuildableControl.OnChildLayoutChanged()
+        public void OnChildLayoutChanged()
         {
             layoutDirty = true;
         }

@@ -5,9 +5,4 @@
         void AddChild(IFluentControl control);
         void OnChildLayoutChanged();
     }
-
-    public interface IFluentBuildableControl<T> : IFluentBuildableControl, IFluentControl<T>
-    {
-        IFluentGuiBuilder<T> Build();
-    }
 }

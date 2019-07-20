@@ -3,7 +3,7 @@ using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentPanel<T> : IFluentContainerControl<T>
+    public class FluentPanel<T> : IFluentContainerControl
     {
         private readonly Panel etoPanel;
         private readonly Func<T> getObject;
@@ -33,7 +33,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public IFluentGuiBuilder<T> Build()
         {
             Content = null;
-            return new FluentGuiBuilder<T>(this);
+            return new FluentGuiBuilder<T>(GetObject, AddChild, OnChildLayoutChanged);
         }
 
         public void AddChild(IFluentControl control)

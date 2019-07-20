@@ -31,11 +31,11 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             };
         }
 
-        public IFluentGuiTableBuilder<T> Build()
+        public IFluentTableBuilder<T> Build()
         {
             rows.Clear();
             etoTableLayout.Rows.Clear();
-            return new FluentGuiTableBuilder<T>(this);
+            return new FluentTableBuilder<T>(this);
         }
 
         public void OnChildLayoutChanged()

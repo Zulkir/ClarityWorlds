@@ -85,7 +85,7 @@
     <Compile Include="Converters.cs" />
     <Compile Include="EtoMenuBuilder.cs" />
     <Compile Include="FluentGui\FluentDropDown.cs" />
-    <Compile Include="FluentGui\FluentGuiTableBuilder.cs" />
+    <Compile Include="FluentGui\FluentTableBuilder.cs" />
     <Compile Include="FluentGui\FluentPanel.cs" />
     <Compile Include="FluentGui\FluentGuiBuilder.cs" />
     <Compile Include="FluentGui\FluentGuiService.cs" />
@@ -101,7 +101,7 @@
     <Compile Include="FluentGui\IFluentControl.cs" />
     <Compile Include="FluentGui\IFluentGuiBuilder.cs" />
     <Compile Include="FluentGui\IFluentGuiService.cs" />
-    <Compile Include="FluentGui\IFluentGuiTableBuilder.cs" />
+    <Compile Include="FluentGui\IFluentTableBuilder.cs" />
     <Compile Include="FluentGui\IFluentTableControl.cs" />
     <Compile Include="FluentGui\IFluentTableRowControl.cs" />
     <Compile Include="FrameTimeMeasurer.cs" />

@@ -8,8 +8,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
     public interface IFluentGuiBuilder<T>
     {
         T GetObject();
-        IFluentGuiTableBuilder<T> Table();
-        IFluentGuiTableBuilder<TChild> Table<TChild>(Func<T, TChild> getChild);
+        IFluentTableBuilder<T> Table();
+        IFluentTableBuilder<TChild> Table<TChild>(Func<T, TChild> getChild);
         IFluentGuiBuilder<TChild> Panel<TChild>(Func<T, TChild> getChild, Func<TChild, bool> visible);
         IFluentGuiBuilder<TChild> GroupBox<TChild>(string name, Func<T, TChild> getChild, Func<TChild, bool> visible);
         void Label(string text);

@@ -2,11 +2,11 @@
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentGuiTableBuilder<T> : IFluentGuiTableBuilder<T>
+    public class FluentTableBuilder<T> : IFluentTableBuilder<T>
     {
         private readonly IFluentTableControl<T> control;
 
-        public FluentGuiTableBuilder(IFluentTableControl<T> control)
+        public FluentTableBuilder(IFluentTableControl<T> control)
         {
             this.control = control;
         }

@@ -8,51 +8,55 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
     public class FluentGuiBuilder<T> : IFluentGuiBuilder<T>
     {
-        private readonly IFluentBuildableControl<T> control;
+        private readonly Func<T> getObject;
+        private readonly Action<IFluentControl> addControl;
+        private readonly Action onChildLayoutChanged;
 
-        public FluentGuiBuilder(IFluentBuildableControl<T> control)
+        public FluentGuiBuilder(Func<T> getObject, Action<IFluentControl> addControl, Action onChildLayoutChanged)
         {
-            this.control = control;
+            this.getObject = getObject;
+            this.addControl = addControl;
+            this.onChildLayoutChanged = onChildLayoutChanged;
         }
 
-        public T GetObject() => control.GetObject();
+        public T GetObject() => getObject();
 
-        public IFluentGuiTableBuilder<T> Table() => Table(x => x);
-        public IFluentGuiTableBuilder<TChild> Table<TChild>(Func<T, TChild> getChild)
+        public IFluentTableBuilder<T> Table() => Table(x => x);
+        public IFluentTableBuilder<TChild> Table<TChild>(Func<T, TChild> getChild)
         {
-            var table = new FluentTableControl<TChild>(control.OnChildLayoutChanged, () => getChild(GetObject()));
-            control.AddChild(table);
+            var table = new FluentTableControl<TChild>(onChildLayoutChanged, () => getChild(GetObject()));
+            addControl(table);
             return table.Build();
         }
 
         public IFluentGuiBuilder<TChild> Panel<TChild>(Func<T, TChild> getChild, Func<TChild, bool> visible)
         {
             var panel = new FluentPanel<TChild>(() => getChild(GetObject()), visible);
-            control.AddChild(panel);
+            addControl(panel);
             return panel.Build();
         }
      
         public IFluentGuiBuilder<TChild> GroupBox<TChild>(string name, Func<T, TChild> getChild, Func<TChild, bool> visible)
         {
             var groupBox = new FluentGroupBox<TChild>(name, () => getChild(GetObject()), visible);
-            control.AddChild(groupBox);
+            addControl(groupBox);
             return groupBox.Build();
         }
 
         public void Label(string text)
         {
-            control.AddChild(new FluentLabel<T>(GetObject, x => text));
+            addControl(new FluentLabel<T>(GetObject, x => text));
         }
 
         public void Label(Func<T, string> getValue)
         {
-            control.AddChild(new FluentLabel<T>(GetObject, getValue));
+            addControl(new FluentLabel<T>(GetObject, getValue));
         }
 
         public void ColorPicker(Expression<Func<T, Color4>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentColorPicker<T>(GetObject, 
+            addControl(new FluentColorPicker<T>(GetObject, 
                 x => (Color4)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
         }
@@ -60,7 +64,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public void CheckBox(string text, Expression<Func<T, bool?>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentCheckBox<T>(text, GetObject, 
+            addControl(new FluentCheckBox<T>(text, GetObject, 
                 x => (bool?)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
         }
@@ -68,7 +72,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public void CheckBox(string text, Expression<Func<T, bool>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentCheckBox<T>(text, GetObject, 
+            addControl(new FluentCheckBox<T>(text, GetObject, 
                 x => (bool?) prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
         }
@@ -76,13 +80,13 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public void Button(string text, Action<T> onClick)
         {
             var button = new FluentButton<T>(text, GetObject, onClick);
-            control.AddChild(button);
+            addControl(button);
         }
 
         public void TextBox(Expression<Func<T, string>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentTextBox<T>(GetObject, 
+            addControl(new FluentTextBox<T>(GetObject, 
                 x => (string)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
         }
@@ -90,7 +94,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         public void DropDown<TValue>(Expression<Func<T, TValue>> path, IReadOnlyDictionary<string, TValue> values)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            control.AddChild(new FluentDropDown<T, TValue>(GetObject, 
+            addControl(new FluentDropDown<T, TValue>(GetObject, 
                 x => (TValue)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v), values));
         }

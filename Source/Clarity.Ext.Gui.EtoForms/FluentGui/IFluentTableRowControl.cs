@@ -6,8 +6,4 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
     {
         TableRow EtoTableRow { get; }
     }
-
-    public interface IFluentTableRowControl<T> : IFluentTableRowControl, IFluentBuildableControl<T>
-    {
-    }
 }
