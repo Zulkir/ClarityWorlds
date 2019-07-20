@@ -1,29 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Clarity.Common.Numericals;
 using Eto.Drawing;
 using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
-    public class FluentTableControl<T> : IFluentControl<T>
+    // todo: enable by refactoring controls to templates
+    public class FluentArrayTableControl<T> : IFluentControl<IEnumerable<T>>
     {
         private TableLayout etoTableLayout;
         private readonly Action onLayoutChanged;
-        private readonly Func<T> getObject;
+        private readonly Func<IEnumerable<T>> getObject;
         private readonly List<IFluentTableRowControl> rows;
-        private IntSet32 rowVisibility;
+        private readonly List<T> itemObjects;
 
         public Control EtoControl => etoTableLayout;
         public bool IsVisible => rows.Any(x => x.IsVisible);
-        public T GetObject() => getObject();
+        public IEnumerable<T> GetObject() => getObject();
 
-        public FluentTableControl(Action onLayoutChanged, Func<T> getObject)
+        public FluentArrayTableControl(Action onLayoutChanged, Func<IEnumerable<T>> getObject)
         {
             this.onLayoutChanged = onLayoutChanged;
             this.getObject = getObject;
             rows = new List<IFluentTableRowControl>();
+            itemObjects = new List<T>();
             etoTableLayout = new TableLayout
             {
                 Padding = new Padding(5),
@@ -35,7 +36,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         {
             rows.Clear();
             etoTableLayout.Rows.Clear();
-            return new FluentTableBuilder<T>(GetObject, AddRow, OnChildLayoutChanged);
+            //return new FluentGuiBuilder<T>(() => throw new NotSupportedException(), AddRow, OnChildLayoutChanged);
+            throw new NotImplementedException();
         }
 
         public void OnChildLayoutChanged()
@@ -50,21 +52,24 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public void Update()
         {
-            foreach (var row in rows.Where(x => x.IsVisible))
-                row.Update();
-            var newRowVisibility = BuildChildVisibility();
-            if (newRowVisibility != rowVisibility)
-                RebuildEto();
-            rowVisibility = newRowVisibility;
-        }
+            var oldCount = itemObjects.Count;
+            itemObjects.Clear();
+            itemObjects.AddRange(getObject());
 
-        private IntSet32 BuildChildVisibility()
-        {
-            var visibility = new IntSet32();
-            for (var i = 0; i < rows.Count; i++)
-                if (rows[i].IsVisible)
-                    visibility = visibility.With(i);
-            return visibility;
+            if (rows.Count < itemObjects.Count)
+                for (var i = rows.Count; i < itemObjects.Count; i++)
+                {
+                    var iLoc = i;
+                    var row = new FluentTableRowControl<T>(OnChildLayoutChanged, () => itemObjects[iLoc]);
+                    // TODO fill the row with controls
+                    rows.Add(row);
+                }
+
+            foreach (var row in rows.Take(itemObjects.Count))
+                row.Update();
+
+            if (itemObjects.Count != oldCount)
+                RebuildEto();
         }
 
         private void RebuildEto()
@@ -74,7 +79,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 Padding = new Padding(5),
                 Spacing = new Size(5, 5),
             };
-            foreach (var row in rows.Where(x => x.IsVisible))
+            foreach (var row in rows.Take(itemObjects.Count))
                 etoTableLayout.Rows.Add(row.EtoTableRow);
             onLayoutChanged();
         }

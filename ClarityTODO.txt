@@ -1,0 +1,77 @@
+** Immediate **
+
+- Better GUI framework
+
+** Bugs **
+
+- EMPTY
+
+** Small coding improvements **
+
+- Rename WorldNodeChild to WorldNodeSlave
+- Renaming within treeview
+- Remove <TThis> from AmObjectBase // Disables AmObject.GetBinding(x => x.Prop) ?
+- In StorySubgraph rename Nodes -> AllIndices, NodeObjects -> Nodes
+- Get rid of backslashes in all paths
+- Fix ObjectGL for linewidth/srgb/etc.
+- Fix skybox
+
+** Medium coding improvements **
+
+- Solve infinite recursion for Di and IResourceObtainer
+- Event-only and SaveLoad-only AmBindings
+- Create AmBindingBase
+- Dictionary AmBindings
+- Blending modes
+- Reduce memory allocations by using LazyVals (for cache containers, child lists, etc.)
+- Place rect node's transform to the center of the rectangle
+- Immutable RichText
+- Enforce Gui -> ViewService <-?-> AppMode -> WorldService hierarchy
+- Move generating complex input events (double clicks etc.) to a separate stage
+- Replace IEnumerable<T>.Any() with IReadOnlyList<T>.HasItems()/IsEmpty() wherever possible
+- InputEventArgs containing hit coords
+- Rename RayHitInfo/ClockInfo to RayCastInfo and refactor MouseArgs to support all ray-like events
+- Fix walkable areas to actually represent walkable areas
+- Make sure AmObject.Clone() does not reference mutable objects (IClonableRobustly interface with GetProps(), GetValue(prop), and SetValue(prop))
+- Move WorldRoot components outside of first scene root
+- Allow FluentArrayTable by refactoring Builders to templates
+
+** Large coding improvements **
+
+- Separate Input events (handlable) and Interaction events (non-handlable)
+- Separate 'stop propagation to other nodes' and 'stop propagation to other components'
+- Viewport Components
+
+
+** Ideas to consider **
+
+- EMPTY
+
+** Features **
+
+- Multiscreen
+- Workspaces (views) with layers, Pain.NET-style
+
+------ DONE ------
+
+- Allow complex paths in UndoRedo
+- Get rid of those InstanceWorldNodeAspectProvider<>
+- InputService and event routing to the tools
+- Remove the concepts of Model and ModelRoot from the Am. Add an event filed for each AmObject.
+- Implement weak references
+- Merge AmObjectBase and AmCore
+- Disposing of GL resources in the main thread
+- Culling (3D surface)
+- Get rid of the "SetPreviousProvider" stuff and refactor to aspect requests
+- Rename Texture2DSource to PixelSource
+- Rename Numericals.Geometry for Xxx2 and Xxx3 for consintency and merge TwoD and ThreeD folders
+- Better .skybox format
+- Move SaveLoad handlers to TRW in Common
+- Become sRGB-correct
+- HitResult returning object coords of the hit point (for text editing with a mouse, etc.)
+- World as a set of multiple Scenes
+- RichTextPixelSource, MoviePixelSource to just using Image
+- (Not) Copying transform gizmos
+
+------ DEPRECATED ------
+- Move world serialization to a common place (away from SaveLoad and UndoRedo) // SaveLoad is now the common place
