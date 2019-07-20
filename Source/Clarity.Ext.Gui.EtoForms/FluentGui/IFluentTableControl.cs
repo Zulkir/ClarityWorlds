@@ -9,7 +9,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         void OnChildLayoutChanged();
     }
 
-    public interface IFluentArrayTableControl<T> : IFluentControl<IEnumerable<T>>, IFluentBuildableControl
+    public interface IFluentArrayTableControl<T> : IFluentControl<IEnumerable<T>>
     {
 
     }

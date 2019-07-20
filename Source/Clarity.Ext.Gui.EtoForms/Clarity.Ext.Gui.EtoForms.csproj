@@ -97,7 +97,6 @@
     <Compile Include="FluentGui\FluentTableRowControl.cs" />
     <Compile Include="FluentGui\FluentTextBox.cs" />
     <Compile Include="FluentGui\IFluentContainerControl.cs" />
-    <Compile Include="FluentGui\IFluentBuildableControl.cs" />
     <Compile Include="FluentGui\IFluentControl.cs" />
     <Compile Include="FluentGui\IFluentGuiBuilder.cs" />
     <Compile Include="FluentGui\IFluentGuiService.cs" />
