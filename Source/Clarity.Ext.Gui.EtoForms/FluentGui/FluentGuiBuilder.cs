@@ -53,6 +53,14 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             addControl(new FluentLabel<T>(GetObject, getValue));
         }
 
+        public void ColorPicker(Expression<Func<T, Color3>> path)
+        {
+            var prop = CodingHelper.GetPropertyInfo(path);
+            addControl(new FluentColorPicker<T>(GetObject, 
+                x => new Color4((Color3)prop.GetValue(x), 1f),
+                (x, v) => prop.SetValue(x, v.RGB)));
+        }
+
         public void ColorPicker(Expression<Func<T, Color4>> path)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
@@ -97,6 +105,15 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             addControl(new FluentDropDown<T, TValue>(GetObject, 
                 x => (TValue)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v), values));
+        }
+
+        public void Slider(Expression<Func<T, float>> path, float minValue, float maxValue, int numSteps)
+        {
+            var prop = CodingHelper.GetPropertyInfo(path);
+            addControl(new FluentSlider<T>(GetObject, 
+                x => (float)prop.GetValue(x),
+                (x, v) => prop.SetValue(x, v),
+                minValue, maxValue, numSteps));
         }
     }
 }

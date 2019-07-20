@@ -86,6 +86,7 @@
     <Compile Include="EtoMenuBuilder.cs" />
     <Compile Include="FluentGui\FluentArrayTableControl.cs" />
     <Compile Include="FluentGui\FluentDropDown.cs" />
+    <Compile Include="FluentGui\FluentSlider.cs" />
     <Compile Include="FluentGui\FluentTableBuilder.cs" />
     <Compile Include="FluentGui\FluentPanel.cs" />
     <Compile Include="FluentGui\FluentGuiBuilder.cs" />

@@ -33,9 +33,14 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             {
                 DataStore = values.Keys.ToList(),
             };
+            chosenValue = (TValue)(etoControl.SelectedValue ?? default(TValue));
+            etoControl.SelectedValue = KeyForVal(chosenValue);
             etoControl.SelectedValueChanged += OnValueChanged;
-            chosenValue = (TValue)etoControl.SelectedValue;
         }
+
+        private string KeyForVal(TValue val) => values
+            .Where(x => EqualityComparer<TValue>.Default.Equals(x.Value, val))
+            .FirstOrNull()?.Key;
 
         private void OnValueChanged(object sender, EventArgs e)  
         {
@@ -52,9 +57,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             var value = getValue(getObject());
             if (EqualityComparer<TValue>.Default.Equals(chosenValue, value))
                 return;
-            var valueStr = values
-                .Where(x => EqualityComparer<TValue>.Default.Equals(x.Value, value))
-                .FirstOrNull()?.Key;
+            var valueStr = KeyForVal(value);
             chosenValue = value;
             suppressEvents = true;
             etoControl.SelectedValue = valueStr;

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
@@ -10,9 +11,11 @@ using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Common.Infra.Files;
+using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Media.Images;
 using Clarity.Engine.Media.Models.Flexible;
 using Clarity.Engine.Media.Skyboxes;
+using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources;
@@ -31,21 +34,6 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         private readonly IFluentControl rootControl;
 
         public Control RootEtoControl => rootControl.EtoControl;
-
-        private class NewComponentViewModel
-        {
-            private readonly Func<ISceneNode> getNode;
-
-            // ReSharper disable once UnusedAutoPropertyAccessor.Local
-            public Type ComponentType { get; set; }
-
-            public NewComponentViewModel(Func<ISceneNode> getNode)
-            {
-                this.getNode = getNode;
-            }
-
-            public ISceneNode GetNode() => getNode();
-        }
 
         public FluentGuiService(IViewService viewService, IRenderLoopDispatcher renderLoopDispatcher, IAssetService assetService, IUndoRedoService undoRedo, IEmbeddedResources embeddedResources)
         {
@@ -109,6 +97,25 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 // todo: change image
             }
             {
+                var viewModel = new RichTextViewModel(() => selectedSceneNode.SearchComponent<IRichTextComponent>());
+                var textGroupBox = builder.Row().GroupBox("Rich Text", x => viewModel, x => x.Valid).Table();
+                var bgndModeRow = textGroupBox.Row();
+                bgndModeRow.Label("Bgnd Mode");
+                bgndModeRow.DropDown(x => x.BackgroundMode, new Dictionary<string, RtTransparencyMode>
+                {
+                    ["Opaque"] = RtTransparencyMode.Opaque,
+                    ["Native"] = RtTransparencyMode.Native,
+                    ["White is transparent"] = RtTransparencyMode.WhiteIsTransparent,
+                    ["Black is transparent"] = RtTransparencyMode.BlackIsTransparent,
+                });
+                var bgndColorRow = textGroupBox.Row();
+                bgndColorRow.Label("Bgnd Color");
+                bgndColorRow.ColorPicker(x => x.BackgroundColor);
+                var bgndOpacityRow = textGroupBox.Row();
+                bgndOpacityRow.Label("Bgnd Opacity");
+                bgndOpacityRow.Slider(x => x.BackgroundOpacity, 0, 1, 256);
+            }
+            {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
                 // todo: to ArrayTable
                 var componentsCache = (IEnumerable<ISceneNodeComponent>)null;
@@ -141,7 +148,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                     }
                     else
                     {
-                        throw new Exception("Wrong Choice");
+                        throw new ArgumentOutOfRangeException();
                     }
                 });
             }
@@ -150,7 +157,67 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             rootControl = mainPanel;
             renderLoopDispatcher.AfterUpdate += Update;
         }
-        
+
+        [SuppressMessage("ReSharper", "UnusedAutoPropertyAccessor.Local")]
+        private class NewComponentViewModel
+        {
+            private readonly Func<ISceneNode> getNode;
+            
+            public Type ComponentType { get; set; }
+
+            public NewComponentViewModel(Func<ISceneNode> getNode)
+            {
+                this.getNode = getNode;
+            }
+
+            public ISceneNode GetNode() => getNode();
+        }
+
+        [SuppressMessage("ReSharper", "UnusedMember.Local")]
+        private class RichTextViewModel
+        {
+            private readonly Func<IRichTextComponent> getComponent;
+
+            public bool Valid => getComponent() != null;
+
+            public RichTextViewModel(Func<IRichTextComponent> getComponent)
+            {
+                this.getComponent = getComponent;
+            }
+
+            private IRichText Text => getComponent()?.TextBox?.Text;
+
+            public RtTransparencyMode BackgroundMode
+            {
+                get => Text?.Style.TransparencyMode ?? RtTransparencyMode.Opaque;
+                set
+                {
+                    if (Valid)
+                        Text.Style.TransparencyMode = value;
+                }
+            }
+
+            public Color3 BackgroundColor
+            {
+                get => Text?.Style.BackgroundColor.RGB ?? Color3.Black;
+                set
+                {
+                    if (Valid)
+                        Text.Style.BackgroundColor = new Color4(value, Text.Style.BackgroundColor.A);
+                }
+            }
+
+            public float BackgroundOpacity
+            {
+                get => Text?.Style.BackgroundColor.A ?? 0;
+                set
+                {
+                    if (Valid && Text.Style.TransparencyMode == RtTransparencyMode.Native)
+                        Text.Style.BackgroundColor = new Color4(Text.Style.BackgroundColor.RGB, value);
+                }
+            }
+        }
+
         private void OnExportClick(IModelComponent component)
         {
             switch (component.Model)
