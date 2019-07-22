@@ -10,6 +10,7 @@ using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Media.Images;
@@ -20,7 +21,9 @@ using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Utilities;
+using Eto.Drawing;
 using Eto.Forms;
+using FontDecoration = Clarity.Engine.Media.Text.Rich.FontDecoration;
 
 namespace Clarity.Ext.Gui.EtoForms.FluentGui
 {
@@ -43,7 +46,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
             var mainPanel = new FluentPanel<ISceneNode>(() => selectedSceneNode, x => x != null)
             {
-                Width = 250
+                Width = 300
             };
             var builder = mainPanel.Build().Table();
             {
@@ -137,6 +140,31 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var marginUpRow = textGroupBox.Row();
                 marginUpRow.Label("MarginUp");
                 marginUpRow.NumericUpDown(x => x.MarginUp, 0, 1000);
+
+                var fontRow = textGroupBox.Row();
+                fontRow.Label("Font");
+                fontRow.DropDown(x => x.FontFamily, Fonts.AvailableFontFamilies
+                    .Select(x => x.Name)
+                    .OrderBy(r => r)
+                    .ToDictionary(x => x));
+                var sizeRow = textGroupBox.Row();
+                sizeRow.Label("Size");
+                sizeRow.NumericUpDown(x => x.Size, 1, 200);
+                var colorRow = textGroupBox.Row();
+                colorRow.Label("Color");
+                colorRow.ColorPicker(x => x.Color);
+                var decorationRow1 = textGroupBox.Row();
+                decorationRow1.CheckBox("Bold", x => x.Bold);
+                decorationRow1.CheckBox("Italic", x => x.Italic);
+                var decorationRow2 = textGroupBox.Row();
+                decorationRow2.CheckBox("Underline", x => x.Underline);
+                decorationRow2.CheckBox("Strikethrough", x => x.Strikethrough);
+                var highlightGroupRow = textGroupBox.Row();
+                highlightGroupRow.Label("Highlight Group");
+                highlightGroupRow.TextBox(x => x.HighlightGroup);
+
+                var formulaRow = textGroupBox.Row();
+                formulaRow.Button("Insert Formula", vm => vm.InsertFormula());
             }
             {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
@@ -244,7 +272,6 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             #endregion
 
             #region Paragraph Properties
-
             private T GetParagraphProperty<T>(Func<IRtParagraph, T> getProp)
                 where T : IEquatable<T>
             {
@@ -301,6 +328,114 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 set => SetParagraphProperty(value, (p, v) => p.Style.MarginUp = (int)Math.Round(v));
             }
             #endregion
+
+            #region Span Properties
+            private T GetSpanStyleProperty<T>(Func<IRtSpanStyle, T> getProp)
+                where T : IEquatable<T>
+            {
+                var component = getComponent();
+                if (component == null)
+                    return default(T);
+                if (component.SelectionRange.HasValue)
+                {
+                    return component.TextBox.Text.TryGetCommonSpanProperty(component.SelectionRange.Value, x => getProp(x.Style), out var prop)
+                        ? prop
+                        : default(T);
+                }
+                else
+                {
+                    return getProp(component.InputTextStyle);
+                }
+            }
+
+            private void SetSpanStyleProperty<T>(T value, Action<IRtSpanStyle, T> setProp)
+            {
+                var component = getComponent();
+                if (component == null)
+                    return;
+                var oldSpanRange = component.SelectionRange;
+                if (oldSpanRange.HasValue)
+                {
+                    var newSpanRange = component.TextBox.Text.SplitRange(oldSpanRange.Value);
+                    foreach (var span in component.TextBox.Text.EnumerateSpans(newSpanRange))
+                        setProp(span.Style, value);
+                }
+                else
+                {
+                    setProp(component.InputTextStyle, value);
+                }
+            }
+
+            private static void SetFontDecoration(FontDecoration flag, IRtSpanStyle spanStyle, bool value)
+            {
+                if (value)
+                    spanStyle.FontDecoration |= flag;
+                else
+                    spanStyle.FontDecoration &= ~flag;
+            }
+
+            public string FontFamily
+            {
+                get => GetSpanStyleProperty(x => x.FontFamily);
+                set => SetSpanStyleProperty(value, (s, v) => s.FontFamily = v);
+            }
+
+            public double Size
+            {
+                get => GetSpanStyleProperty(x => x.Size);
+                set => SetSpanStyleProperty(value, (s, v) => s.Size = (float)v);
+            }
+
+            public Color4 Color
+            {
+                get => GetSpanStyleProperty(x => x.TextColor);
+                set => SetSpanStyleProperty(value, (s, v) => s.TextColor = v);
+            }
+
+            public bool Bold
+            {
+                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Bold));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Bold, s, v));
+            }
+
+            public bool Italic
+            {
+                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Italic));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Italic, s, v));
+            }
+
+            public bool Underline
+            {
+                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Underline));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Underline, s, v));
+            }
+
+            public bool Strikethrough
+            {
+                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Strikethrough));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Strikethrough, s, v));
+            }
+
+            public string HighlightGroup
+            {
+                get => GetSpanStyleProperty(x => x.HighlightGroup ?? "");
+                set => SetSpanStyleProperty(value, (s, v) => s.HighlightGroup = string.IsNullOrEmpty(v) ? null : v);
+            }
+            #endregion
+
+            public void InsertFormula()
+            {
+                var component = getComponent();
+                if (component == null)
+                    return;
+                var newSpan = AmFactory.Create<RtEmbeddingSpan>();
+                newSpan.Style = component.InputTextStyle.CloneTyped();
+                newSpan.SourceCode = @"y=\frac{x^2}{2}+\alpha";
+                newSpan.EmbeddingType = "latex";
+                component.TextBox.Text.SplitSpan(component.CursorPosition, out var insertSpanIndex);
+                component.TextBox.Text.GetPara(component.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
+                component.CursorPosition = component.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
+            }
         }
 
         private void OnExportClick(IModelComponent component)

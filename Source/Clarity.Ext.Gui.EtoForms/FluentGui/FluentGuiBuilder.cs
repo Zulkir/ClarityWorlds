@@ -99,7 +99,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 (x, v) => prop.SetValue(x, v)));
         }
 
-        public void DropDown<TValue>(Expression<Func<T, TValue>> path, IReadOnlyDictionary<string, TValue> values)
+        public void DropDown<TValue>(Expression<Func<T, TValue>> path, Dictionary<string, TValue> values)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
             addControl(new FluentDropDown<T, TValue>(GetObject, 

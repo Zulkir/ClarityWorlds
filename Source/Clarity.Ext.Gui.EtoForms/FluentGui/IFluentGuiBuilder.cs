@@ -20,7 +20,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         void CheckBox(string text, Expression<Func<T, bool>> path);
         void Button(string text, Action<T> onClick);
         void TextBox(Expression<Func<T, string>> path);
-        void DropDown<TValue>(Expression<Func<T, TValue>> path, IReadOnlyDictionary<string, TValue> values);
+        void DropDown<TValue>(Expression<Func<T, TValue>> path, Dictionary<string, TValue> values);
         void Slider(Expression<Func<T, float>> path, float minValue, float maxValue, int numSteps);
         void NumericUpDown(Expression<Func<T, double>> path, double minValue, double maxValue);
     }
