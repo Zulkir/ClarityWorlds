@@ -10,21 +10,20 @@ namespace Clarity.Engine.Media.Text.Rich
         public abstract IList<IRtSpan> Spans { get; }
         public abstract IRtParagraphStyle Style { get; set; }
 
-        public int Length => Spans.Sum(x => x.Text.Length);
-        public bool IsEmpty => Spans.All(x => x.IsEmpty);
-        public string RawText => Spans.Select(x => x.Text).Aggregate((x, y) => x + y);
+        public int LayoutTextLength => Spans.Sum(x => x.LayoutText.Length);
+        public string LayoutText => string.Join("", Spans.Select(x => x.LayoutText));
+        public string RawText => string.Join("", Spans.Select(x => x.RawText));
+        public string DebugText => string.Join("￥", Spans.Select(x => x.DebugText));
 
         protected RtParagraph()
         {
             Style = AmFactory.Create<RtParagraphStyle>();
         }
 
-        public string DebugText => string.Join("￥", Spans.Select(x => x.Text));
-
         public void Normalize()
         {
             if (Spans.Count == 0)
-                Spans.Add(AmFactory.Create<RtSpan>());
+                Spans.Add(AmFactory.Create<RtPureSpan>());
             else
                 for (var i = Spans.Count - 1; i > 0; i--)
                     if (Spans[i].IsEmpty)

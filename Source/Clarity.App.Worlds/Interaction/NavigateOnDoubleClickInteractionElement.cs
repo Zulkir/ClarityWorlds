@@ -17,9 +17,9 @@ namespace Clarity.App.Worlds.Interaction
             this.navigationService = navigationService;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (!(args is IMouseEventArgs cargs))
+            if (!(args is IMouseEvent cargs))
                 return false;
             if (cargs.IsLeftDoubleClickEvent() && cargs.KeyModifyers == KeyModifyers.None)
             {

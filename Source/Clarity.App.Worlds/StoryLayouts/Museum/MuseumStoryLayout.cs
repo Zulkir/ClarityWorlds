@@ -81,7 +81,7 @@ namespace Clarity.App.Worlds.StoryLayouts.Museum
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
             ArrangeAndDecorateRoot(sg);
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
         
         private void ArrangeAndDecorateRoot(IStoryGraph sg)

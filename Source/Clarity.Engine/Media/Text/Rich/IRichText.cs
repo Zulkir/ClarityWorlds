@@ -12,8 +12,11 @@ namespace Clarity.Engine.Media.Text.Rich
         [NotNull]
         IRtOverallStyle Style { get; set; }
 
-        int Length { get; }
-        bool IsEmpty { get; }
+        int LayoutTextLength { get; }
+
+        string LayoutText { get; }
+        string RawText { get; }
+        string DebugText { get; }
 
         void Normalize();
 
@@ -30,7 +33,6 @@ namespace Clarity.Engine.Media.Text.Rich
         RtRange SplitRange(RtRange range);
         //void ApplySimpleDiff(RtSimpleDiff diff);
         IEnumerable<IRtSpan> EnumerateSpans(RtRange range);
-        string ToRawString();
 
         int GetGlobalIndex(RtPosition pos);
         RtPosition GetPositionForCharIndex(int globalCharIndex, RichTextPositionPreference preference);

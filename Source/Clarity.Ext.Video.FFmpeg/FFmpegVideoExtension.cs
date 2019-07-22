@@ -1,4 +1,5 @@
 ﻿using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.External.Movies;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Media.Movies;
 using Clarity.Engine.Platforms;
@@ -13,6 +14,7 @@ namespace Clarity.Ext.Video.FFmpeg
         {
             di.BindMulti<IAssetLoader>().To<FFmpegMovieLoader>();
             di.Bind<IMoviePlayer>().To<FFmpegMoviePlayer>();
+            di.Bind<IMovieUrlLoader>().To<FFmpegMovieUrlLoader>();
             di.Bind<FFmpegInitializer>().AsLastChoice.To<FFmpegInitializer>();
         }
 

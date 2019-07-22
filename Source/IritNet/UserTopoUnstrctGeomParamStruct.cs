@@ -6,22 +6,22 @@ namespace IritNet
     {
         public struct PointSetStruct
         {
-            UserTopoUnstrctGeomPtStruct *PtVec;
-            int PtVecLen;
+            public UserTopoUnstrctGeomPtStruct *PtVec;
+            public int PtVecLen;
         }
 
         public struct IDSetStruct
         {
-            int *IdVec;
-            int IdVecLen;
+            public int *IdVec;
+            public int IdVecLen;
         }
 
         public struct AttrParamStructStruct
         {
-            char *AttrName;
-            void *AttrValVec;
-            int AttrValVecLen;
-            UserTopoUnstrctGridAttrType AttrType;
+            public char *AttrName;
+            public void *AttrValVec;
+            public int AttrValVecLen;
+            public UserTopoUnstrctGridAttrType AttrType;
         }
 
         public int UdId;

@@ -4,6 +4,6 @@ namespace Clarity.App.Worlds.Interaction
 {
     public interface IInteractionElement
     {
-        bool TryHandleInteractionEvent(IInteractionEventArgs args);
+        bool TryHandleInteractionEvent(IInteractionEvent args);
     }
 }

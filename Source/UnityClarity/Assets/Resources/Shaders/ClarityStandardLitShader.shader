@@ -19,11 +19,22 @@ Shader "Clarity/ClarityStandardLitShader"
         _NoSpecular("No Specular", Int) = 0
 
         _Cull ("Cull Mode", Int) = 2
+
+        _ZWrite ("Z Write", Int) = 1
+
+        _BlendSrc ("Blend Source", Int) = 1
+        _BlendDst ("Blend Dest", Int) = 0
+
+        _IsPulsating ("Is Pulsating", Int) = 0
+        _PulsatingColor ("Pulsating COlor", Color) = (1, 0.5, 0, 1)
     }
     SubShader
     {
-        Tags { "RenderType"="Opaque" }
+        Tags { "RenderType" = "Transparent" }
         LOD 100
+
+        ZWrite [_ZWrite]
+        Blend [_BlendSrc] [_BlendDst]
 
         Pass
         {
@@ -76,11 +87,13 @@ Shader "Clarity/ClarityStandardLitShader"
             sampler2D _DiffuseMap;
             sampler2D _NormalMap;
             float4 _Color;
+            float4 _PulsatingColor;
 
             bool _UseTexture;
             bool _UseNormalMap;
             bool _IgnoreLighting;
             bool _NoSpecular;
+            bool _IsPulsating;
 
             fixed4 frag (V2F i) : SV_Target
             {
@@ -95,42 +108,6 @@ Shader "Clarity/ClarityStandardLitShader"
                 if (_UseTexture)
                 {
                     float2 texCoord = i.TexCoord;
-                    /*
-                    if (ScrollingEnabled)
-                    {
-                        float amountToShow = 0.5;
-                        float lowerBorderY = ScrollingAmount - (amountToShow / 2.0);
-                        float upperBorderY = ScrollingAmount + (amountToShow / 2.0);
-                        float scalingScrollingAmount = 2.0 * (ScrollingAmount - 0.25);
-                        float yAtLowerBorder = saturate(scalingScrollingAmount + 0.5 * (lowerBorderY - scalingScrollingAmount));
-                        float yAtUpperBorder = saturate(scalingScrollingAmount + 0.5 * (upperBorderY - scalingScrollingAmount));
-                        float upperBorderLength = 1.0 - upperBorderY;
-                        //float virtualY = -1.0 + 2.0 * v_tex_coord.y;
-                        if (v_tex_coord.y < lowerBorderY)
-                        {
-                            float locAmount = texCoord.y / lowerBorderY;
-                            float curvedAmount = sqrt(locAmount);
-                            texCoord.x = saturate(0.5 + (v_tex_coord.x - 0.5) * pow(1.0 / curvedAmount, 1.0 / 16.0));
-                            texCoord.y = curvedAmount * yAtLowerBorder;
-
-                        }
-                        else if (v_tex_coord.y < upperBorderY)
-                        {
-                            texCoord.y = saturate(scalingScrollingAmount + 0.5 * (v_tex_coord.y - scalingScrollingAmount));
-                        }
-                        else
-                        {
-                            float negY = 1.0 - texCoord.y;
-                            float negBorderY = 1.0 - upperBorderY;
-                            float negYAtBorder = 1.0 - yAtUpperBorder;
-                            //texCoord.y = 1.0 - (negY / negBorderY * negYAtBorder);
-                            float locAmount = negY / negBorderY;
-                            float curvedAmount = sqrt(locAmount);
-                            texCoord.x = saturate(0.5 + (v_tex_coord.x - 0.5) * pow(1.0 / curvedAmount, 1.0 / 16.0));
-                            texCoord.y = 1.0 - curvedAmount * negYAtBorder;
-                        }
-                    }
-                    */
                     materialColor = _Color * tex2D(_DiffuseMap, texCoord);
 
                     if (_UseNormalMap)
@@ -167,53 +144,23 @@ Shader "Clarity/ClarityStandardLitShader"
                         materialColor.a);
                 }
 
-                /*
-                if (BlackIsTransparent)
+                if (_IsPulsating)
                 {
-                    preDecorationColor.a = max(max(preDecorationColor.r, preDecorationColor.g), preDecorationColor.b);
-                }
-                */
-
-                /*
-                if (WhiteIsTransparent)
-                {
-                    preDecorationColor.a = pow(1.0 - min(min(preDecorationColor.r, preDecorationColor.g), preDecorationColor.b), 1 / 4.4);
-                }
-                */
-
-                /*
-                if (IsEdited || IsSelected)
-                {
-                    float t = (Time + v_tex_coord.x * 2 + v_tex_coord.y * 2) * 3.14;
-                    float2 dtdx = float2(dFdx(v_tex_coord));
-                    float2 dtdy = float2(dFdy(v_tex_coord));
-                    float distanceTX = min(v_tex_coord.x, 1.0 - v_tex_coord.x);
-                    float distanceTY = min(v_tex_coord.y, 1.0 - v_tex_coord.y);
+                    float2 dtdx = float2(0.1, 0.1);
+                    float2 dtdy = float2(0.1, 0.1);
+                    float distanceTX = min(i.TexCoord.x, 1.0 - i.TexCoord.x);
+                    float distanceTY = min(i.TexCoord.y, 1.0 - i.TexCoord.y);
                     float2 biDistanceHX = abs(float2(distanceTX / dtdx.x, distanceTX / dtdy.x));
                     float2 biDistanceHY = abs(float2(distanceTY / dtdx.y, distanceTY / dtdy.y));
                     float2 biDistanceH = min(biDistanceHX, biDistanceHY);
                     float distanceH = min(biDistanceH.x, biDistanceH.y);
-                    float amount = mix(0.0, 1.0, clamp(1.0 - pow(distanceH / 6, 4), 0.0, 1.0));
-
-                    if (IsEdited)
-                    {
-                        float decorationMono = sin((v_tex_coord.x + v_tex_coord.y) * 300);
-                        float4 decoration = float4(decorationMono, decorationMono, decorationMono, 1.0);
-                        out_color = mix(preDecorationColor, decoration, amount);
-                    }
-                    else if (IsSelected)
-                    {
-                        float4 decoration = float4(poscos(t - 0.0 * 6.28), poscos(t - 0.33 * 6.28), poscos(t - 0.66 * 6.28), 1.0);
-                        out_color = mix(preDecorationColor, decoration, amount);
-                    }
+                    float amount = saturate((1.0 - distanceH) * (0.8 + 0.4 * cos(_Time.y * 5)));
+                    return lerp(preDecorationColor, _PulsatingColor, amount);
                 }
-                else
+                else 
                 {
-                    out_color = preDecorationColor;
+                    return preDecorationColor;
                 }
-                */
-
-                return preDecorationColor;
             }
             ENDCG
         }

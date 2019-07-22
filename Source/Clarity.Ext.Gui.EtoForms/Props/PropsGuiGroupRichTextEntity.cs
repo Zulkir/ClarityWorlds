@@ -1,9 +1,11 @@
 using System;
 using System.Linq;
 using Clarity.App.Worlds.UndoRedo;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Objects.WorldTree;
+using Clarity.Engine.Utilities;
 using Eto.Drawing;
 using Eto.Forms;
 using FontDecoration = Clarity.Engine.Media.Text.Rich.FontDecoration;
@@ -28,6 +30,9 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         private readonly DropDown cFontFamily;
         private readonly NumericUpDown cFontSize;
         private readonly ColorPicker cTextColor;
+        private readonly CheckBox cUseHighlightGroup;
+        private readonly TextBox cHighlightGroup;
+        private readonly Button cInsertFormula;
         private IRichTextComponent boundComponent;
         private int suppressControlEvents = 0;
 
@@ -127,7 +132,16 @@ namespace Clarity.Ext.Gui.EtoForms.Props
 
             cTextColor = new ColorPicker();
             cTextColor.ValueChanged += OnTextColorChanged;
-            
+
+            cUseHighlightGroup = new CheckBox {Text = "Highlight"};
+            cUseHighlightGroup.CheckedChanged += OnUseHighlightGroupChanged;
+
+            cHighlightGroup = new TextBox();
+            cHighlightGroup.TextChanged += OnHighlightGroupChanged;
+
+            cInsertFormula = new Button { Text = "Insert Formula"};
+            cInsertFormula.Click += OnInsertFormulaClick;
+
             var layout = new TableLayout(
                 new TableRow(new TableCell(new Label { Text = "Bgnd Mode" }), new TableCell(cTransparencyMode)),
                 new TableRow(new TableCell(new Label { Text = "Bgnd Color" }), new TableCell(cBackgroundColor)),
@@ -139,8 +153,10 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 new TableRow(new TableCell(new Label {Text = "Font"}), new TableCell(cFontFamily)),
                 new TableRow(new TableCell(new Label {Text = "Size"}), new TableCell(cFontSize)),
                 new TableRow(new TableCell(new Label {Text = "Color"}), new TableCell(cTextColor)),
+                new TableRow(new TableCell(cUseHighlightGroup), cHighlightGroup),
                 new TableRow(new TableCell(cBold), new TableCell(cItalic)),
-                new TableRow(new TableCell(cUnderline), new TableCell(cStrikeThrough)))
+                new TableRow(new TableCell(cUnderline), new TableCell(cStrikeThrough)),
+                new TableRow(cInsertFormula))
             {
                 Padding = new Padding(5),
                 Spacing = new Size(5, 5),
@@ -209,6 +225,19 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                     ? Color.FromArgb(commonTextColor.ToArgb())
                     : new Color(0, 0, 0, 0);
 
+                if (boundComponent.TextBox.Text.TryGetCommonSpanProperty(range.Value,
+                    x => x.Style.HighlightGroup, out var commonHighlightGroup))
+                {
+                    cUseHighlightGroup.Checked = commonHighlightGroup != null;
+                    cHighlightGroup.Enabled = commonHighlightGroup != null;
+                    cHighlightGroup.Text = commonHighlightGroup;
+                }
+                else
+                {
+                    cUseHighlightGroup.Checked = null;
+                    cHighlightGroup.Enabled = false;
+                }
+
                 cAlignment.SelectedValue = boundComponent.TextBox.Text.TryGetCommonParagraphProperty(range.Value,
                     x => (int)x.Style.Alignment, out var commonAlignment)
                     ? (RtParagraphAlignment)commonAlignment
@@ -238,6 +267,9 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 cFontFamily.SelectedKey = boundComponent.InputTextStyle.FontFamily;
                 cFontSize.Value = boundComponent.InputTextStyle.Size;
                 cTextColor.Value = Color.FromArgb(boundComponent.InputTextStyle.TextColor.ToArgb());
+                cUseHighlightGroup.Checked = cHighlightGroup.Enabled = boundComponent.InputTextStyle.HighlightGroup != null;
+                if (boundComponent.InputTextStyle.HighlightGroup != null)
+                    cHighlightGroup.Text = boundComponent.InputTextStyle.HighlightGroup;
                 var para = boundComponent.TextBox.Text.Paragraphs[boundComponent.CursorPosition.ParaIndex];
                 cAlignment.SelectedValue = para.Style.Alignment;
                 cDirection.SelectedValue = para.Style.Direction;
@@ -362,11 +394,20 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 s.FontDecoration &= ~FontDecoration.Strikethrough;
         });
 
-        private void OnFontFamilyChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged(cFontFamily.SelectedKey, (s, v) => { s.FontFamily = v; });
+        private void OnFontFamilyChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged(cFontFamily.SelectedKey, (s, v) => s.FontFamily = v);
 
-        private void OnFontSizeChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged((float)cFontSize.Value, (s, v) => { s.Size = v; });
+        private void OnFontSizeChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged((float)cFontSize.Value, (s, v) => s.Size = v);
 
-        private void OnTextColorChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged(cTextColor.Value.ToArgb(), (s, v) => { s.TextColor = new Color4(v); });
+        private void OnTextColorChanged(object sender, EventArgs eventArgs) => OnSpanPropertyChanged(cTextColor.Value.ToArgb(), (s, v) => s.TextColor = new Color4(v));
+
+        private void OnHighlightGroupChanged(object sender, EventArgs e) => OnSpanPropertyChanged(cHighlightGroup.Text, (s, v) => s.HighlightGroup = v);
+
+        private void OnUseHighlightGroupChanged(object sender, EventArgs e)
+        {
+            var value = cUseHighlightGroup.Checked ?? false;
+            OnSpanPropertyChanged(value, (s, v) => s.HighlightGroup = v ? cHighlightGroup.Text : null);
+            cHighlightGroup.Enabled = value;
+        }
 
         private void OnParaPropertyChanged<T>(T value, Action<IRtParagraph, T> setAction)
         {
@@ -399,6 +440,21 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 setAction(boundComponent.InputTextStyle, value);
             }
             undoRedo.OnChange();
+        }
+
+        private void OnInsertFormulaClick(object sender, EventArgs e)
+        {
+            if (IgnoreEvents)
+                return;
+
+            var cText = boundComponent;
+            var newSpan = AmFactory.Create<RtEmbeddingSpan>();
+            newSpan.Style = cText.InputTextStyle.CloneTyped();
+            newSpan.SourceCode = @"y=\frac{x^2}{2}+\alpha";
+            newSpan.EmbeddingType = "latex";
+            cText.TextBox.Text.SplitSpan(cText.CursorPosition, out var insertSpanIndex);
+            cText.TextBox.Text.GetPara(cText.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
+            cText.CursorPosition = cText.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
         }
     }
 }

@@ -1,4 +1,6 @@
 ﻿using System;
+using Clarity.App.Worlds.External.WarpScrolling;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Engine.Objects.WorldTree;
@@ -23,7 +25,7 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             aspectTypesControl = new DropDown
             {
                 Width = 120,
-                DataStore = new[] { "AdditionalView", "Limiter0", "LimiterMax", "RotateOnDC" },
+                DataStore = new[] { "RotateOnDC", "ManipOnPresent", "WarpScroll", "HighlightOnMouseOver" },
                 SelectedIndex = 0
             };
 
@@ -96,21 +98,6 @@ namespace Clarity.Ext.Gui.EtoForms.Props
 
         private static string GetAspectName(ISceneNodeComponent component)
         {
-            /*
-            if (component is InteractionEditAspect)
-                return "Editing";
-            if (component is HyperLinkEditAspect)
-                return "HyperLink";
-            if (component is PresentationWrapperAspect)
-            {
-                var caspect = (PresentationWrapperAspect)component;
-                if (caspect.PresentationModeAspect is InteractionEditAspect)
-                    return "Pres Editing";
-            }
-            if (component is InteractiveTransparentAspect)
-                return "Transparency";
-            if (component is ScrollAspect)
-                return "Scrolling";*/
             return component.AmInterface.Name;
         }
 
@@ -119,39 +106,30 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             var aspectAlias = (string)aspectTypesControl.SelectedValue;
             switch (aspectAlias)
             {
-                /*
-                case "HyperLink":
-                {
-                    // todo: undo-redo
-                    var dialog = new HyperLinkAspectCreationDialog(worldTreeService);
-                    var aspect = dialog.ShowModal();
-                    if (aspect == null)
-                        return;
-                    boundNode.Aspects.Add(aspect);
-                    Actualize(boundNode);
-                    break;
-                }
-                case "Pres Editing":
-                {
-                    var wrapperAspect = new PresentationWrapperAspect { PresentationModeAspect = new InteractionEditAspect() };
-                    undoRedo.Common.Add(boundNode.Aspects, wrapperAspect);
-                    break;
-                }
-                case "Transparency":
-                {
-                    var aspect = new InteractiveTransparentAspect();
-                    undoRedo.Common.Add(boundNode.Aspects, aspect);
-                    break;
-                }
-                case "Scrolling":
-                {
-                    var aspect = new ScrollAspect();
-                    undoRedo.Common.Add(boundNode.Aspects, aspect);
-                    break;
-                }*/
                 case "RotateOnDC":
                 {
                     var component = AmFactory.Create<RotateOnceComponent>();
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
+                    break;
+                }
+                case "ManipOnPresent":
+                {
+                    var component = AmFactory.Create<ManipulateInPresentationComponent>();
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
+                    break;
+                }
+                case "WarpScroll":
+                {
+                    var component = AmFactory.Create<WarpScrollComponent>();
+                    boundNode.Components.Add(component);
+                    undoRedo.OnChange();
+                    break;
+                }
+                case "HighlightOnMouseOver":
+                {
+                    var component = AmFactory.Create<HighlightOnMouseComponent>();
                     boundNode.Components.Add(component);
                     undoRedo.OnChange();
                     break;

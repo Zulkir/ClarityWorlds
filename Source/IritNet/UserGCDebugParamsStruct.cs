@@ -1,5 +1,4 @@
 using System;
-
 namespace IritNet
 {
     public unsafe struct UserGCDebugParamsStruct
@@ -8,7 +7,7 @@ namespace IritNet
         public int DisableSetCover;
         /* The geometric object and the obstacles are going through several      */
         /* transformations such as adapting their UV parametrization and         */
-        /* combining all the polygons into one polygon struct. When this flag is */
+        /* combining all the polygons into one polygon . When this flag is */
         /* TRUE, those objects after those transformation are saved to disk as   */
         /* an itd file. The objects doesn't include any scene transformations    */
         /* depended on the observation points and without the projection to the  */
@@ -55,7 +54,7 @@ namespace IritNet
         /* will change the UV parametrization of all the surfaces (or polygonal  */
         /* objects) according to the same UV parametrization changes done to     */
         /* GeoObj.                                                               */
-        public IPObjectStruct *GeoObjOrig;
+        public IPObjectStruct* GeoObjOrig;
         /* The function to load and save images. Must be compatible to each      */
         /* other. If any of the load or save functions are NULL, they are both   */
         /* replaced by default functions for PPM image.                          */

@@ -37,6 +37,14 @@ namespace Clarity.Common.CodingUtilities
                 variable = newValue;
         }
 
+        public static void ForceIntoBounds(ref float variable, float min, float max)
+        {
+            if (variable < min)
+                variable = min;
+            else if (variable > max)
+                variable = max;
+        }
+
         public static void UpdateIfLess(ref int variable, int newValue)
         {
             if (newValue < variable)
@@ -47,6 +55,14 @@ namespace Clarity.Common.CodingUtilities
         {
             if (newValue > variable)
                 variable = newValue;
+        }
+
+        public static void ForceIntoBounds(ref int variable, int min, int max)
+        {
+            if (variable < min)
+                variable = min;
+            else if (variable > max)
+                variable = max;
         }
 
         public static PropertyInfo GetPropertyInfo(LambdaExpression propertyExpression) =>

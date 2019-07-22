@@ -2,7 +2,7 @@ namespace IritNet
 {
     public unsafe struct VMdlAttribBlendObj
     {
-             /* TBD */
+        /* TBD */
         public int Dummy;
     }
 }

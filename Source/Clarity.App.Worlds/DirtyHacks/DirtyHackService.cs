@@ -23,14 +23,14 @@ namespace Clarity.App.Worlds.DirtyHacks
             this.storyLayouts = storyLayouts;
         }
 
-        public bool TryHandleInput(IInteractionEventArgs args)
+        public bool TryHandleInput(IInteractionEvent args)
         {
-            //if (args is IKeyEventArgs kargs)
+            //if (args is IKeyEvent kargs)
             //    return TryHandleKeyboard(kargs);
             return false;
         }
 
-        private bool TryHandleKeyboard(IKeyEventArgs args)
+        private bool TryHandleKeyboard(IKeyEvent args)
         {
             if (args.ComplexEventType == KeyEventType.Up)
             {

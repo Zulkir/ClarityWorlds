@@ -8,6 +8,7 @@ using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.Infra.ActiveModel;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Numericals.Colors;
@@ -93,7 +94,7 @@ namespace Clarity.Ext.Gui.EtoForms
                         return null;
                     var loadInfo = new AssetLoadInfo
                     {
-                        FileSystem = new ActualFileSystem(),
+                        FileSystem = ActualFileSystem.Singleton,
                         LoadPath = loadPath,
                         ReferencePath = loadPath,
                         StorageType = AssetStorageType.CopyLocal
@@ -104,8 +105,28 @@ namespace Clarity.Ext.Gui.EtoForms
                         MessageBox.Show(assetLoadResult.Message);
                         return null;
                     }
-                    var asset = assetLoadResult.Asset;      
-                    var resource = asset.Resource is ResourcePack pack ? pack.MainSubresource : asset.Resource;
+
+                    var asset = assetLoadResult.Asset;
+                    IResource resource;
+                    if (asset.Resource == null)
+                    {
+                        MessageBox.Show($"The asset contains no resource.");
+                        return null;
+                    }
+                    if (asset.Resource is ResourcePack pack)
+                    {
+                        resource = pack.MainSubresource;
+                        if (resource == null)
+                        {
+                            MessageBox.Show($"The asset is a pack with no main subresource.");
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        resource = asset.Resource;
+                    }
+
                     switch (resource)
                     {
                         case IImage image:
@@ -122,6 +143,7 @@ namespace Clarity.Ext.Gui.EtoForms
                             entity.Components.Add(modelComponent);
                             return toolFactory.MoveEntity(entity, true);
                         default:
+                            MessageBox.Show($"Unable to instantiate an asset of type '{resource.GetType().Name}'.");
                             return null;
                     }
                 })
@@ -183,6 +205,14 @@ namespace Clarity.Ext.Gui.EtoForms
             fileMenuItem.Items.Add(saveLoadGuiCommands.New);
             fileMenuItem.Items.Add(saveLoadGuiCommands.Open);
             fileMenuItem.Items.AddSeparator();
+            if (saveLoadGuiCommands.ImportCommands.HasItems())
+            {
+                var importMenu = new ButtonMenuItem {Text = "&Import"};
+                foreach (var importCommand in saveLoadGuiCommands.ImportCommands)
+                    importMenu.Items.Add(importCommand);
+                fileMenuItem.Items.Add(importMenu);
+                fileMenuItem.Items.AddSeparator();
+            }
             fileMenuItem.Items.Add(saveLoadGuiCommands.Save);
             fileMenuItem.Items.Add(saveLoadGuiCommands.SaveAs);
             fileMenuItem.Items.AddSeparator();

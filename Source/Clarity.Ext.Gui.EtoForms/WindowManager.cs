@@ -14,11 +14,13 @@ namespace Clarity.Ext.Gui.EtoForms
         private readonly IMainForm mainForm;
         private readonly IRenderGuiControl[] renderControls;
         private readonly IWorldTreeService worldTreeService;
+        private readonly IViewService viewService;
 
-        public WindowManager(IMainForm mainForm, IEventRoutingService eventRoutingService, IWorldTreeService worldTreeService)
+        public WindowManager(IMainForm mainForm, IEventRoutingService eventRoutingService, IWorldTreeService worldTreeService, IViewService viewService)
         {
             this.mainForm = mainForm;
             this.worldTreeService = worldTreeService;
+            this.viewService = viewService;
             renderControls = new IRenderGuiControl[]{ mainForm.RenderControl };
             eventRoutingService.RegisterServiceDependency(typeof(IWindowManager), typeof(IWorldTreeService));
             eventRoutingService.Subscribe<IAppModeChangedEvent>(typeof(IWindowManager), nameof(OnAppModeChanged), OnAppModeChanged);
@@ -58,6 +60,7 @@ namespace Clarity.Ext.Gui.EtoForms
                             ViewportIndices = new[,] { { 0 }, { 1 } }
                         });
                     mainForm.RenderControl.EndFullscreen();
+                    viewService.ChangeRenderingArea(mainForm.RenderControl, editingView);
                     break;
                 }
                 case AppMode.Presentation:
@@ -79,6 +82,7 @@ namespace Clarity.Ext.Gui.EtoForms
                             ColumnWidths = new[] {new ViewportLength(100, ViewportLengthUnit.Percent)},
                             ViewportIndices = new[,]{{0}}
                         });
+                    viewService.ChangeRenderingArea(mainForm.RenderControl, presentationView);
                     break;
                 }
                 default:

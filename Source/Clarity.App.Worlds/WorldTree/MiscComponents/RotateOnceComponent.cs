@@ -34,12 +34,12 @@ namespace Clarity.App.Worlds.WorldTree.MiscComponents
             Node.Transform = new Transform(originalTransform.Scale, originalTransform.Rotation * roatation, originalTransform.Offset);
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             if (active)
                 return true;
 
-            if (!(args is IMouseEventArgs margs))
+            if (!(args is IMouseEvent margs))
                 return false;
 
             if (!margs.IsLeftDoubleClickEvent() || margs.KeyModifyers != KeyModifyers.None)

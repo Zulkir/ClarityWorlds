@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.SaveLoad;
+using Clarity.App.Worlds.SaveLoad.Import;
 using Eto.Forms;
 
 namespace Clarity.Ext.Gui.EtoForms.SaveLoad
@@ -14,14 +15,16 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
         private readonly SaveFileDialog saveFileDialog;
         private readonly OpenFileDialog openFileDialog;
 
-        public Command New { get; private set; }
-        public Command Save { get; private set; }
-        public Command SaveAs { get; private set; }
-        public Command Open { get; private set; }
+        public Command New { get; }
+        public Command Save { get; }
+        public Command SaveAs { get; }
+        public Command Open { get; }
+        public IReadOnlyList<Command> ImportCommands { get; }
 
         private IMainForm MainForm { get { return mainFormLazy.Value; } }
 
-        public SaveLoadGuiCommands(Lazy<IMainForm> mainFormLazy, ISaveLoadService saveLoadService, IReadOnlyList<ISaveLoadFormat> formats)
+        public SaveLoadGuiCommands(Lazy<IMainForm> mainFormLazy, ISaveLoadService saveLoadService, 
+            IReadOnlyList<ISaveLoadFormat> formats, IReadOnlyList<IPresentationImporter> presentationImporters)
         {
             this.mainFormLazy = mainFormLazy;
             this.saveLoadService = saveLoadService;
@@ -38,6 +41,7 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
             Save = Create("Save", ExecSave, Keys.Control | Keys.S);
             SaveAs = Create("Save As", ExecSaveAs);
             Open = Create("Open", ExecOpen, Keys.Control | Keys.O);
+            ImportCommands = presentationImporters.Select(i => Create(i.Name, (s, a) => ExecImport(i))).ToArray();
         }
 
         private void ExecNew(object sender, EventArgs args)
@@ -100,6 +104,20 @@ namespace Clarity.Ext.Gui.EtoForms.SaveLoad
                     saveLoadService.FileName = openFileDialog.FileName;
                     // todo: check save settings
                     saveLoadService.Load(LoadWorldPreference.EditableOnly);
+                    break;
+            }
+        }
+
+        private void ExecImport(IPresentationImporter importer)
+        {
+            var dialog = new OpenFileDialog();
+            dialog.Filters.Add(new FileDialogFilter(importer.Name, importer.FileExtensions.ToArray()));
+            var result = dialog.ShowDialog(MainForm.Form);
+            switch (result)
+            {
+                case DialogResult.Ok:
+                case DialogResult.Yes:
+                    saveLoadService.Import(importer, dialog.FileName, LoadWorldPreference.EditableOnly);
                     break;
             }
         }

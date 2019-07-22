@@ -219,7 +219,7 @@ namespace Clarity.Ext.StoryLayout.Building
             var up = Vector3.UnitY;
 
             currentCameraProps = new CameraProps(target, new CameraFrame(eye, forward, up),
-                new CameraProjection(0.1f, 100f, MathHelper.PiOver4));
+                new CameraProjection(CameraProjectionType.Perspective, 0.1f, 100f, MathHelper.PiOver4));
         }
 
         private float GetSpeed(int segment, float localDistance)

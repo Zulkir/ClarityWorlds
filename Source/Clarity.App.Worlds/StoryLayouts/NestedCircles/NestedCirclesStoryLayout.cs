@@ -4,12 +4,10 @@ using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
-using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
-using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.RayHittables.Embedded;
 using Clarity.Engine.Media.Models;
 using Clarity.Engine.Objects.WorldTree;
@@ -26,9 +24,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
         public string UserFriendlyName => "Nested Circles";
         public Type Type => typeof(NestedCirclesStoryLayout);
 
-        private readonly IInputService inputService;
         private readonly ICoroutineService coroutineService;
-        private readonly IWorldTreeService worldTreeService;
 
         private readonly IModel3D planeModel;
         private readonly IModel3D circleModel;
@@ -42,11 +38,9 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
         private const float ChildScale = 0.1f;
         private static readonly Vector2 DefaultEndYawPitch = new Vector2(MathHelper.Pi, 0);
 
-        public NestedCirclesStoryLayout(IEmbeddedResources embeddedResources, IInputService inputService, ICoroutineService coroutineService, IWorldTreeService worldTreeService)
+        public NestedCirclesStoryLayout(IEmbeddedResources embeddedResources, ICoroutineService coroutineService)
         {
-            this.inputService = inputService;
             this.coroutineService = coroutineService;
-            this.worldTreeService = worldTreeService;
             planeModel = embeddedResources.SimplePlaneXyModel();
             circleModel = embeddedResources.CircleModel(64);
             lineModel = embeddedResources.LineModel();
@@ -72,7 +66,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
         {
             var springModel = new NestedCirclesStorySpringModel(coroutineService, x => ArrangeAndDecorateInternal(sg.Root, 0, x, sg), sg);
             springModel.Apply();
-            return new BasicStoryLayoutInstance(worldTreeService);
+            return new BasicStoryLayoutInstance(sg);
         }
 
         private void ArrangeAndDecorateInternal(int nodeIndex, int level, NestedCirclesStorySpringModel springModel, IStoryGraph sg)

@@ -1,5 +1,6 @@
 ﻿using System;
 using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.SaveLoad.Import;
 using Clarity.App.Worlds.SaveLoad.ReadOnly;
 using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.EventRouting;
@@ -72,6 +73,13 @@ namespace Clarity.App.Worlds.SaveLoad
         {
             assetService.DeleteAll();
             Format.Load(new DefaultFileLoadInfo(FileName, assetService, worldTreeService, worldPreference));
+            eventRoutingService.FireEvent<ISaveLoadEvent>(new SaveLoadEvent(SaveLoadEventType.Load, worldTreeService.World, assetService.Assets));
+        }
+
+        public void Import(IPresentationImporter importer, string filePath, LoadWorldPreference preference)
+        {
+            assetService.DeleteAll();
+            importer.Load(new DefaultFileLoadInfo(filePath, assetService, worldTreeService, preference));
             eventRoutingService.FireEvent<ISaveLoadEvent>(new SaveLoadEvent(SaveLoadEventType.Load, worldTreeService.World, assetService.Assets));
         }
     }

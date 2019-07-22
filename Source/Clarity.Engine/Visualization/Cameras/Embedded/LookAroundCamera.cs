@@ -89,7 +89,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         {
             var zNear = visibleProps.ZNear;
             var zFar = visibleProps.ZFar;
-            return new CameraProjection(zNear, zFar, visibleProps.FieldOfView);
+            return new CameraProjection(CameraProjectionType.Perspective, zNear, zFar, visibleProps.FieldOfView);
         }
 
         public Color4 VeilColor => new Color4(0, 0, 0, 0);
@@ -133,9 +133,9 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
             return new Ray3(worldPoint, worldPoint - frame.Eye) * Node.GlobalTransform;
         }
 
-        public bool TryHandleInput(IInputEventArgs eventArgs)
+        public bool TryHandleInput(IInputEvent eventArgs)
         {
-            if (!(eventArgs is IMouseEventArgs mouseArgs))
+            if (!(eventArgs is IMouseEvent mouseArgs))
                 return false;
             if (mouseArgs.ComplexEventType == MouseEventType.Move)
             {

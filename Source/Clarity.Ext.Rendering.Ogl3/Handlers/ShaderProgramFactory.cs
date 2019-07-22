@@ -71,6 +71,7 @@ layout(std140) uniform Light
 layout(std140) uniform Material
 {
     vec4 Color;
+    vec4 PulsatingColor;
     bool UseTexture;
     bool UseNormalMap;
     bool IgnoreLighting;
@@ -81,6 +82,7 @@ layout(std140) uniform Material
     bool NoSpecular;
     bool ScrollingEnabled;
     float ScrollingAmount;
+    bool IsPulsating;
 };
 
 layout(std140) uniform Global
@@ -206,7 +208,20 @@ void main()
         preDecorationColor.a = pow(1.0 - min(min(preDecorationColor.r, preDecorationColor.g), preDecorationColor.b), 1/4.4);
     }
 
-    if (IsEdited || IsSelected)
+    if (IsPulsating)
+    {
+        vec2 dtdx = vec2(0.1, 0.1);
+        vec2 dtdy = vec2(0.1, 0.1);
+        float distanceTX = min(v_tex_coord.x, 1.0 - v_tex_coord.x);
+        float distanceTY = min(v_tex_coord.y, 1.0 - v_tex_coord.y);
+        vec2 biDistanceHX = abs(vec2(distanceTX / dtdx.x, distanceTX / dtdy.x));
+        vec2 biDistanceHY = abs(vec2(distanceTY / dtdx.y, distanceTY / dtdy.y));
+        vec2 biDistanceH = min(biDistanceHX, biDistanceHY);
+        float distanceH = min(biDistanceH.x, biDistanceH.y);
+        float amount = saturate((1.0 - distanceH) * (0.8 + 0.4 * cos(Time * 5)));
+        out_color = mix(preDecorationColor, PulsatingColor, amount);
+    }
+    else if (IsEdited || IsSelected)
     {
         float t = (Time + v_tex_coord.x * 2 + v_tex_coord.y * 2) * 3.14 ;
         vec2 dtdx = vec2(dFdx(v_tex_coord));

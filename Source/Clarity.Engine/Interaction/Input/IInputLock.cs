@@ -2,6 +2,6 @@
 {
     public interface IInputLock
     {
-        InputEventProcessResult ProcessEvent(IInputEventArgs args);
+        InputEventProcessResult ProcessEvent(IInputEvent args);
     }
 }

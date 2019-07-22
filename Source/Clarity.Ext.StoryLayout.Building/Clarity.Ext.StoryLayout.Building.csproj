@@ -56,7 +56,10 @@
     <Compile Include="BuildingStoryLayoutLanePartType.cs" />
     <Compile Include="BuildingStoryLayoutPlacementAlgorithm.cs" />
     <Compile Include="BuildingStoryPath.cs" />
+    <Compile Include="BuildingWarpCamera.cs" />
+    <Compile Include="CollisionMesh.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="AaBoxStoryLayoutZoning.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clarity.App.Worlds\Clarity.App.Worlds.csproj">

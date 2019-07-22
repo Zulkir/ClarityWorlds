@@ -11,8 +11,8 @@ namespace IritNet
         public int PtsNum;
         public int BarsNum;
         public int ConstraintsNum;
-        public  UserKnmtcsPtStruct *Pts;                   /* Pointer to point list. */
-        public  UserKnmtcsBarStruct *Bars;                     /* Pointer to bar list. */
-        public  UserKnmtcsConstrStruct *Constraints;             /* List of raints. */
+        public  UserKnmtcsPtStruct* Pts;                   /* Pointer to point list. */
+        public  UserKnmtcsBarStruct* Bars;                     /* Pointer to bar list. */
+        public  UserKnmtcsConstrStruct* Constraints;             /* List of raints. */
     }
 }

@@ -14,7 +14,7 @@ namespace Clarity.Ext.Format.Itd
             var pTexCoords = Irit.AttrGetUVAttrib(pVertex->Attr, IritStrings.uvvals);
             return new VertexPosNormTex(
                 Convert(&pVertex->Coord),
-                Convert(&pVertex->Normal),
+                - Convert(&pVertex->Normal),
                 pTexCoords != (void*)0 ? *(Vector2*)pTexCoords : Vector2.Zero);
         }
 
@@ -24,7 +24,7 @@ namespace Clarity.Ext.Format.Itd
             new VertexPosNormTex
             {
                 Position = mcPolygon.V[index].ToClarity(),
-                Normal = mcPolygon.N[index].ToClarity(),
+                Normal = - mcPolygon.N[index].ToClarity(),
                 TexCoord = texCoord
             };
     }

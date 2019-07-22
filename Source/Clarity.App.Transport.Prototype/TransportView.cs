@@ -50,7 +50,7 @@ namespace Clarity.App.Transport.Prototype
             camera.Update(frameTime);
         }
 
-        public bool TryHandleInput(IInputEventArgs args)
+        public bool TryHandleInput(IInputEvent args)
         {
             return false;
         }

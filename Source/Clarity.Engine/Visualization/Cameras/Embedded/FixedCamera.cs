@@ -31,7 +31,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
 
         public CameraProjection GetProjectionProps()
         {
-            return new CameraProjection(zNear, zFar, fov);
+            return new CameraProjection(CameraProjectionType.Perspective, zNear, zFar, fov);
         }
 
         public Color4 VeilColor => new Color4(0, 0, 0, 0);
@@ -65,7 +65,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         }
 
         public void Update(FrameTime frameTime) { }
-        public bool TryHandleInput(IInputEventArgs eventArgs) => false;
+        public bool TryHandleInput(IInputEvent eventArgs) => false;
 
         public static FixedCamera Default(ISceneNode node)
         {

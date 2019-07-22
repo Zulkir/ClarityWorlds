@@ -28,12 +28,20 @@ namespace Clarity.Ext.Gui.EtoForms.Text
 
             foreach (var lspan in layout.LayoutSpans.Concat(layout.ExternalLayoutSpans))
             {
-                var style = lspan.Style;
-                var rectText = lspan.Text;
-                var etoFontFamily = fontFamilyCache.GetFontFamily(style.FontFamily);
-                var etoFont = new Font(etoFontFamily, style.Size, ConvertFontStyle(style.FontDecoration), ConvertFontDecoration(style.FontDecoration));
-                var etoColor = new Color(style.TextColor.R, style.TextColor.G, style.TextColor.B, style.TextColor.A);
-                graphics.DrawText(etoFont, etoColor, lspan.Bounds.MinX, lspan.Bounds.MinY, rectText);
+                if (lspan.EmbeddingImage != null)
+                {
+                    var etoImage = lspan.EmbeddingImage.ToEto();
+                    graphics.DrawImage(etoImage, lspan.Bounds.MinX, lspan.Bounds.MinY);
+                }
+                else
+                {
+                    var style = lspan.Style;
+                    var rectText = lspan.Text;
+                    var etoFontFamily = fontFamilyCache.GetFontFamily(style.FontFamily);
+                    var etoFont = new Font(etoFontFamily, style.Size, ConvertFontStyle(style.FontDecoration), ConvertFontDecoration(style.FontDecoration));
+                    var etoColor = new Color(style.TextColor.R, style.TextColor.G, style.TextColor.B, style.TextColor.A);
+                    graphics.DrawText(etoFont, etoColor, lspan.Bounds.MinX, lspan.Bounds.MinY, rectText);
+                }
             }
             graphics.Flush();
 

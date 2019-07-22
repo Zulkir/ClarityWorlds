@@ -19,7 +19,7 @@ namespace Clarity.Engine.Special.Sketching
         public IReadOnlyList<IReadOnlyList<Vector2>> GetSketches() => sketches;
         public int GetTotalPointCount() => sketches.Sum(x => x.Count);
 
-        public bool TryHandleMouseEvent(IMouseEventArgs args)
+        public bool TryHandleMouseEvent(IMouseEvent args)
         {
             if (!isDrawing)
             {

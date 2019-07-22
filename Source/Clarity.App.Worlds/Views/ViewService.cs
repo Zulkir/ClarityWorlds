@@ -2,8 +2,7 @@
 using System.Linq;
 using Clarity.App.Worlds.AppModes;
 using Clarity.App.Worlds.Interaction;
-using Clarity.App.Worlds.Interaction.Queries;
-using Clarity.App.Worlds.Navigation;
+using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.EventRouting;
 using Clarity.Engine.Gui;
@@ -20,16 +19,20 @@ namespace Clarity.App.Worlds.Views
     {
         // todo: refactor (make model public and get rid of property passthrough?)
 
+        private IStoryService storyService;
+
         private readonly ViewServiceModel model;
-        
+
+        public ISceneNode ClosestStoryNode { get; private set; }
         public IFocusableView MainView { get; private set; }
 
         public IRenderGuiControl RenderControl => model.RenderControl;
 
         public event EventHandler<ViewEventArgs> Update;
 
-        public ViewService(IEventRoutingService eventRoutingService, IRenderLoopDispatcher renderLoopDispatcher, INavigationService navigationService, IUserQueryService userQueryService)
+        public ViewService(IEventRoutingService eventRoutingService, IRenderLoopDispatcher renderLoopDispatcher, IStoryService storyService)
         {
+            this.storyService = storyService;
             model = AmFactory.Create<ViewServiceModel>();
             eventRoutingService.RegisterServiceDependency(typeof(IViewService), typeof(IWorldTreeService));
             eventRoutingService.Subscribe<IAppModeChangedEvent>(typeof(IViewService), nameof(OnAppModeChange), OnAppModeChange);
@@ -42,10 +45,10 @@ namespace Clarity.App.Worlds.Views
             set
             {
                 foreach (var interactionComponent in model.SelectedNode?.SearchComponents<IInteractionComponent>() ?? Enumerable.Empty<IInteractionComponent>())
-                    interactionComponent.TryHandleInteractionEvent(CoreInterationEventArgs.Deselected());
+                    interactionComponent.TryHandleInteractionEvent(CoreInterationEvent.Deselected());
                 model.SelectedNode = value;
                 foreach (var interactionComponent in model.SelectedNode?.SearchComponents<IInteractionComponent>() ?? Enumerable.Empty<IInteractionComponent>())
-                    interactionComponent.TryHandleInteractionEvent(CoreInterationEventArgs.Selected());
+                    interactionComponent.TryHandleInteractionEvent(CoreInterationEvent.Selected());
                 Update?.Invoke(this, new ViewEventArgs(ViewEventType.SelectedNodeChanged));
             }
         }
@@ -56,6 +59,14 @@ namespace Clarity.App.Worlds.Views
                 return;
             foreach (var viewport in model.RenderControl.Viewports)
                 viewport.View.Update(frameTime);
+
+            var mainLayer = MainView.Layers.FirstOrDefault();
+            if (mainLayer == null)
+                return;
+            var mainCamera = mainLayer.Camera;
+            var mainScene = mainLayer.VisibleScene;
+            var closestStoryNodeId = storyService.RootLayoutInstance.GetClosestNodeId(mainCamera.GetProps());
+            ClosestStoryNode = storyService.GlobalGraph.NodeObjects[closestStoryNodeId];
         }
 
         private void OnAppModeChange(IAppModeChangedEvent evnt)

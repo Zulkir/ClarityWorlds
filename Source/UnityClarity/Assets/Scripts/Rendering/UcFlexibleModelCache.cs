@@ -35,41 +35,45 @@ namespace Assets.Scripts.Rendering
             if (!dirty)
                 return unityMesh;
 
-            unityMesh = new Mesh();
-            
-            // todo: correctly process multi-part models
-            var part = cgModel.Parts[0];
-            var vertexSet = cgModel.VertexSets[part.VertexSetIndex];
-            var indices = ExtractIndices(vertexSet, part);
-            var maxIndex = indices.Max();
-            var positions = ExtractVertexElements(vertexSet, maxIndex, CommonVertexSemantic.Position, CommonFormat.R32G32B32_SFLOAT, x => ConvertPosAndNormal(*(Vector3*)x));
-            var normals = ExtractVertexElements(vertexSet, maxIndex, CommonVertexSemantic.Normal, CommonFormat.R32G32B32_SFLOAT, x => ConvertPosAndNormal(*(Vector3*)x));
-            var texcoords = ExtractVertexElements(vertexSet, maxIndex, CommonVertexSemantic.TexCoord, CommonFormat.R32G32_SFLOAT, x => ConvertTexCoord(*(Vector2*)x));
-            unityMesh.vertices = positions;
-            unityMesh.normals = normals;
-            unityMesh.uv = texcoords;
-            //unityMesh.triangles = indices;
-            unityMesh.SetIndices(indices, TopologyToUnity(part.PrimitiveTopology), 0);
+            unityMesh = new Mesh
+            {
+                subMeshCount = cgModel.PartCount
+            };
+
+            // todo: support more than one vertex set
+            var vertexSet = cgModel.VertexSets[0];
+            var positions = ExtractVertexElements(vertexSet, CommonVertexSemantic.Position, CommonFormat.R32G32B32_SFLOAT, x => ConvertPosAndNormal(*(Vector3*)x));
+            var normals = ExtractVertexElements(vertexSet, CommonVertexSemantic.Normal, CommonFormat.R32G32B32_SFLOAT, x => ConvertPosAndNormal(*(Vector3*)x));
+            var texcoords = ExtractVertexElements(vertexSet, CommonVertexSemantic.TexCoord, CommonFormat.R32G32_SFLOAT, x => ConvertTexCoord(*(Vector2*)x));
+
+            for (var partIndex = 0; partIndex < cgModel.PartCount; partIndex++)
+            {
+                var part = cgModel.Parts[partIndex];
+                
+                var indices = ExtractIndices(vertexSet, part);
+                unityMesh.vertices = positions;
+                unityMesh.normals = normals;
+                unityMesh.uv = texcoords;
+                unityMesh.SetIndices(indices, TopologyToUnity(part.PrimitiveTopology), partIndex);
+            }
 
             dirty = false;
-
             return unityMesh;
         }
 
-        private static T[] ExtractVertexElements<T>(IFlexibleModelVertexSet vertexSet, int maxIndex, CommonVertexSemantic semantic, CommonFormat expectedFormat, Func<IntPtr, T> decode)
+        private static T[] ExtractVertexElements<T>(IFlexibleModelVertexSet vertexSet, CommonVertexSemantic semantic, CommonFormat expectedFormat, Func<IntPtr, T> decode)
         {
             var elementInfo = vertexSet.ElementInfos.FirstOrDefault(x => x.CommonSemantic == semantic);
             if (elementInfo == null)
                 return null;
-            
-            var vertexCount = maxIndex + 1;
-            var elements = new T[vertexCount];
-
-            var arraySubrange = vertexSet.ArraySubranges[elementInfo.ArrayIndex];
-            var pCgVertices = arraySubrange.RawDataResource.Map() + arraySubrange.StartOffset;
-            var pCurrentElem = pCgVertices + elementInfo.Offset;
             if (elementInfo.Format != expectedFormat)
                 throw new NotImplementedException($"Only '{expectedFormat}' format is supported for '{typeof(T).Name}' elems at the moment.");
+
+            var arraySubrange = vertexSet.ArraySubranges[elementInfo.ArrayIndex];
+            var vertexCount = arraySubrange.Length / elementInfo.Stride;
+            var elements = new T[vertexCount];
+            var pCgVertices = arraySubrange.RawDataResource.Map() + arraySubrange.StartOffset;
+            var pCurrentElem = pCgVertices + elementInfo.Offset;
             for (int i = 0; i < vertexCount; i++)
             {
                 elements[i] = decode(pCurrentElem);

@@ -29,7 +29,7 @@ namespace IritNet
         public override string ToString()
         {
             var loc = this;
-            return $"{{{loc.Values[0]}, {loc.Values[1]}, {loc.Values[2]}}}";
+            return string.Format("{{{0}, {1}, {2}}}", loc.Values[0], loc.Values[1], loc.Values[2]);
         }
     }
 }

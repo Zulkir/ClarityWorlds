@@ -69,12 +69,12 @@ namespace Clarity.App.Worlds.Interaction.Tools
             state = State.Ready;
         }
 
-        public bool TryHandleInputEvent(IInputEventArgs eventArgs)
+        public bool TryHandleInputEvent(IInputEvent eventArgs)
         {
-            return eventArgs is IMouseEventArgs mouseArgs && TryHandleMouseEvent(mouseArgs);
+            return eventArgs is IMouseEvent mouseArgs && TryHandleMouseEvent(mouseArgs);
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs eventArgs)
+        private bool TryHandleMouseEvent(IMouseEvent eventArgs)
         {
             void AdjustForAspectRatio(ref Vector2 sp)
             {
@@ -151,18 +151,18 @@ namespace Clarity.App.Worlds.Interaction.Tools
             }
         }
 
-        private bool TryGetPoint(IMouseEventArgs mouseEventArgs, out ISceneNode placementNode, out Vector2 point)
+        private bool TryGetPoint(IMouseEvent mouseEvent, out ISceneNode placementNode, out Vector2 point)
         {
             point = default(Vector2);
 
-            var viewport = mouseEventArgs.Viewport;
+            var viewport = mouseEvent.Viewport;
             placementNode = (viewport.View as IFocusableView)?.FocusNode;
             if (placementNode == null)
                 return false;
             var cPlacement = placementNode.SearchComponent<IPlacementComponent>();
             if (cPlacement == null)
                 return false;
-            var globalRay = viewport.GetGlobalRayForPixelPos(mouseEventArgs.State.Position);
+            var globalRay = viewport.GetGlobalRayForPixelPos(mouseEvent.State.Position);
             return cPlacement.PlacementSurface2D.TryFindPoint2D(globalRay, out point);
         }
 

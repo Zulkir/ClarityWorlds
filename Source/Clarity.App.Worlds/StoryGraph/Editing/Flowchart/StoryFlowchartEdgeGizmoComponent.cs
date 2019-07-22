@@ -76,7 +76,7 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             return false;
         }

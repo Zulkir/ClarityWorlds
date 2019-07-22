@@ -57,6 +57,8 @@ namespace Clarity.Engine.Objects.WorldTree
         {
             if (subtreeRoot.Id == 0)
                 subtreeRoot.Id = NextId++;
+            else if (subtreeRoot.Id > NextId)
+                NextId = subtreeRoot.Id + 1;
             idIndex.Add(subtreeRoot.Id, subtreeRoot);
             foreach (var child in subtreeRoot.ChildNodes)
                 UpdateIdsForSubtree(child);

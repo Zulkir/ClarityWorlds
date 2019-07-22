@@ -23,9 +23,9 @@ namespace Clarity.App.Worlds.StoryGraph.Editing
             this.storyService = storyService;
         }
 
-        public bool TryHandleInputEvent(IInputEventArgs eventArgs)
+        public bool TryHandleInputEvent(IInputEvent eventArgs)
         {
-            if (!(eventArgs is MouseEventArgs args))
+            if (!(eventArgs is MouseEvent args))
                 return false;
             if (!args.IsLeftClickEvent())
                 return false;

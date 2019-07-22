@@ -3,7 +3,7 @@ using Clarity.Common.CodingUtilities.Await;
 
 namespace Clarity.Common.Infra.AwaitableCoroutines
 {
-    public struct AwcAwaiter<T> : IAwaiter
+    public struct AwcAwaiter<T> : IAwaiter, IAwaitable
         where T : IAwcTask
     {
         private readonly T task;
@@ -21,5 +21,7 @@ namespace Clarity.Common.Infra.AwaitableCoroutines
         public void GetResult() { }
         public bool IsCompleted => task.IsCompleted;
         public void OnCompleted(Action continuation) => queue.Activate(index, continuation);
+
+        IAwaiter IAwaitable.GetAwaiter() => this;
     }
 }

@@ -28,12 +28,12 @@ namespace Clarity.App.Worlds.Interaction.Tools
             initialLocalTransform = entity.Transform;
         }
 
-        public bool TryHandleInputEvent(IInputEventArgs eventArgs)
+        public bool TryHandleInputEvent(IInputEvent eventArgs)
         {
-            return eventArgs is IMouseEventArgs mouseArgs && TryHandleMouseEvent(mouseArgs);
+            return eventArgs is IMouseEvent mouseArgs && TryHandleMouseEvent(mouseArgs);
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs eventArgs)
+        private bool TryHandleMouseEvent(IMouseEvent eventArgs)
         {
             var viewport = eventArgs.Viewport;
             var cPlacement = entity.PresentationInfra().Placement;

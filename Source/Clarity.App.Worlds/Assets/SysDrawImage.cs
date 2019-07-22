@@ -11,7 +11,7 @@ namespace Clarity.App.Worlds.Assets
     public class SysDrawImage : ResourceBase, IImage
     {
         // todo: load file dynamically without keeping Image instance in memory
-        private readonly Image image;
+        public Image Image { get; }
 
         public IntSize2 Size { get; }
         public bool HasTransparency { get; }
@@ -19,7 +19,7 @@ namespace Clarity.App.Worlds.Assets
         public SysDrawImage(Image image)
             : base(ResourceVolatility.Immutable)
         {
-            this.image = image;
+            Image = image;
             Size = new IntSize2(image.Width, image.Height);
             using (var bitmap = new Bitmap(image))
                 HasTransparency = GetTransparency(bitmap);
@@ -27,7 +27,7 @@ namespace Clarity.App.Worlds.Assets
 
         public byte[] GetRawData()
         {
-            using (var bitmap = new Bitmap(image))
+            using (var bitmap = new Bitmap(Image))
                 return GetDataFromBitmap(bitmap);
         }
 
@@ -64,7 +64,7 @@ namespace Clarity.App.Worlds.Assets
         public override void Dispose()
         {
             base.Dispose();
-            image.Dispose();
+            Image.Dispose();
         }
     }
 }

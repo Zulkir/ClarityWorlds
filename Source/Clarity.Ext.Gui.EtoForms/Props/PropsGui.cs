@@ -1,9 +1,11 @@
 using System.Collections.Generic;
 using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.External.Movies;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree;
+using Clarity.Engine.Gui.WindowQueries;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Resources;
 using Eto.Drawing;
@@ -19,7 +21,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
         private readonly IPropsGuiGroup[] groups;
 
         public PropsGui(IViewService viewService, IUndoRedoService undoRedo, IAssetService assetService, IWorldTreeService worldTreeService, 
-            IReadOnlyList<IStoryLayout> storyLayouts, IStoryService storyService, IEmbeddedResources embeddedResources)
+            IReadOnlyList<IStoryLayout> storyLayouts, IStoryService storyService, IEmbeddedResources embeddedResources, IWindowQueryService windowQueryService,
+            IMovieUrlLoader movieUrlLoader)
         {
             this.viewService = viewService;
             
@@ -40,6 +43,8 @@ namespace Clarity.Ext.Gui.EtoForms.Props
                 new PropsGuiGroupRichTextEntity(undoRedo),
                 new PropsGuiGroupFluidSimulation(undoRedo), 
                 new PropsGuiGroupStoryComponent(undoRedo, storyLayouts, worldTreeService, storyService), 
+                new PropsGuiGroupMovieRectangle(undoRedo, assetService, windowQueryService, movieUrlLoader),
+                new PropsGuiGroupHighlightOnMouse(undoRedo),
                 new PropsGuiGroupComponents(undoRedo),
             };
 

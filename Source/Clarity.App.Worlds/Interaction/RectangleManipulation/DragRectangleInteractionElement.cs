@@ -28,14 +28,14 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
             this.getSpace = getSpace;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEventArgs mouseArgs)
+            if (args is IMouseEvent mouseArgs)
                 return TryHandleMouseEvent(mouseArgs);
             return true;
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs args)
+        private bool TryHandleMouseEvent(IMouseEvent args)
         {
             if (args.IsLeftDownEvent())
             {

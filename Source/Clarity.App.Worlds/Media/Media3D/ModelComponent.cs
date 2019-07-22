@@ -110,7 +110,7 @@ namespace Clarity.App.Worlds.Media.Media3D
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             return appModeServiceLazy.Value.Mode == AppMode.Editing &&
                    selectInteractionELement.TryHandleInteractionEvent(args);

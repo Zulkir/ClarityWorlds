@@ -8,6 +8,7 @@ namespace Clarity.Ext.Rendering.Ogl3.Uniforms
     public struct MaterialUniform
     {
         public Color4 Color;
+        public Color4 PulsatingColor;
         public Bool32 UseTexture;
         public Bool32 UseNormalMap;
         public Bool32 IgnoreLighting;
@@ -18,5 +19,6 @@ namespace Clarity.Ext.Rendering.Ogl3.Uniforms
         public Bool32 NoSpecular;
         public Bool32 ScrollingEnabled;
         public float ScrollingAmount;
+        public Bool32 IsPulsating;
     }
 }

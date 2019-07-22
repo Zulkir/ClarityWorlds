@@ -11,6 +11,7 @@ using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.Interaction.Queries;
 using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.App.Worlds.Logging;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.Models;
 using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.SaveLoad;
@@ -29,6 +30,7 @@ using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Media.Images;
+using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Platforms;
 using Clarity.Engine.Serialization;
 
@@ -91,6 +93,8 @@ namespace Clarity.App.Worlds.Infra
             di.Bind<IPresentationGuiCommands>().To<PresentationGuiCommands>();
             di.Bind<ISceneNodeContextMenuBuilder>().To<SceneNodeContextMenuBuilder>();
             di.Bind<IReadOnlyWorldBuilder>().To<ReadOnlyWorldBuilder>();
+            di.Bind<IRtEmbeddingHandlerContainer>().To<RtEmbeddingHandlerContainer>();
+            di.Bind<IHighlightOnMouseService>().To<HighlightOnMouseService>();
             di.Bind<IDirtyHackService>().To<DirtyHackService>();
         }
 

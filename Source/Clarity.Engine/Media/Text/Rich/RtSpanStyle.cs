@@ -10,6 +10,7 @@ namespace Clarity.Engine.Media.Text.Rich
         public abstract FontDecoration FontDecoration { get; set; }
         public abstract float Size { get; set; }
         public abstract Color4 TextColor { get; set; }
+        public abstract string HighlightGroup { get; set; }
 
         protected RtSpanStyle()
         {

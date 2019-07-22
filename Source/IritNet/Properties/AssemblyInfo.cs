@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("IritNet")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription(".NET wrapper for Irit solid modeller")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Technion, IIT")]
 [assembly: AssemblyProduct("IritNet")]
-[assembly: AssemblyCopyright("Copyright ©  2018")]
+[assembly: AssemblyCopyright("(C) Copyright 1989-2018 Gershon Elber, Technion, Non commercial use only.")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

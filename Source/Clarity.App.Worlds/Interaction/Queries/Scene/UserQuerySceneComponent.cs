@@ -105,13 +105,13 @@ namespace Clarity.App.Worlds.Interaction.Queries.Scene
             yield break;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             if (currentQuery == null)
                 return false;
             switch (args)
             {
-                case IMouseEventArgs margs:
+                case IMouseEvent margs:
                     // todo: calc point correctly (from the hittable to the click index)
                     if (!margs.IsLeftClickEvent())
                         break;
@@ -122,7 +122,7 @@ namespace Clarity.App.Worlds.Interaction.Queries.Scene
                     var option = hitRect.Value.Key;
                     currentQuery.Choose(option);
                     break;
-                case IKeyEventArgs kargs:
+                case IKeyEvent kargs:
                     break;
             }
             return true;

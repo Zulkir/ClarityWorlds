@@ -14,8 +14,8 @@ namespace Clarity.Ext.Rendering.Ogl3.Caches
             SkyboxFace.Left,
             SkyboxFace.Top,
             SkyboxFace.Bottom,
-            SkyboxFace.Back,
-            SkyboxFace.Front
+            SkyboxFace.Front,
+            SkyboxFace.Back
         };
 
         private readonly IGraphicsInfra infra;

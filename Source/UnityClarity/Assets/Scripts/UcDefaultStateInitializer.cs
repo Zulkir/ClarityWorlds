@@ -1,4 +1,5 @@
 ﻿using System;
+using Assets.Scripts.Gui;
 using Clarity.App.Worlds.AppModes;
 using Clarity.App.Worlds.Gui;
 using Clarity.App.Worlds.Helpers;
@@ -25,9 +26,10 @@ namespace Assets.Scripts
         private readonly ICommonNodeFactory commonNodeFactory;
         private readonly IAmDiBasedObjectFactory objectFactory;
         private readonly IStoryService storyService;
+        private readonly IVrInitializerService vrInitializer;
 
         public UcDefaultStateInitializer(IViewService viewService, IWorldTreeService worldTreeService, Lazy<IAppModeService> appModeServiceLazy,
-            ICommonNodeFactory commonNodeFactory, IAmDiBasedObjectFactory objectFactory, IStoryService storyService, IGui gui)
+            ICommonNodeFactory commonNodeFactory, IAmDiBasedObjectFactory objectFactory, IStoryService storyService, IGui gui, IVrInitializerService vrInitializer)
         {
             this.viewService = viewService;
             this.worldTreeService = worldTreeService;
@@ -36,6 +38,7 @@ namespace Assets.Scripts
             this.objectFactory = objectFactory;
             this.storyService = storyService;
             this.gui = gui;
+            this.vrInitializer = vrInitializer;
         }
 
         public void InitializeAll()
@@ -70,16 +73,12 @@ namespace Assets.Scripts
         {
             var editingView = AmFactory.Create<EditingView>();
             editingView.FocusOn(aMainFocusNode);
-            var storyGraphView = AmFactory.Create<StoryGraphView>();
 
             var editViewport = AmFactory.Create<Viewport>();
             editViewport.View = editingView;
 
-            var storyGraphViewport = AmFactory.Create<Viewport>();
-            storyGraphViewport.View = storyGraphView;
-
             renderControl.SetViewports(
-                new[] { editViewport, storyGraphViewport },
+                new[] { editViewport },
                 new ViewportsLayout
                 {
                     RowHeights = new[]

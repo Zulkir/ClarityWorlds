@@ -56,6 +56,7 @@ void main()
     vec4 worldPosition = vec4(in_position, 1.0f);
 
     gl_Position = worldPosition * ViewProjection;
+    gl_Position.y = -gl_Position.y;
     gl_Position.z = 2.0 * gl_Position.z - gl_Position.w;
 
     v_tex_coord = vec3(-worldPosition.x, worldPosition.y, worldPosition.z);
@@ -130,6 +131,7 @@ void main()
         {
             glContext.States.DepthStencil.DepthTestEnable.Set(false);
             glContext.States.DepthStencil.DepthMask.Set(false);
+            // todo: to ObjectGL
             glContext.GL.Enable((int)All.TextureCubeMapSeamless);
 
             glContext.Bindings.Program.Set(shaderProgram);

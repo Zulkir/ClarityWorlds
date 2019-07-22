@@ -5,6 +5,7 @@ using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.Interaction.Placement;
 using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.StoryGraph.FreeNavigation;
 using Clarity.App.Worlds.Views.Cameras;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
@@ -52,7 +53,7 @@ namespace Clarity.Ext.StoryLayout.Building
 
         private const float FrustumDistance = 2.414213562373095f;
 
-        public BuildingStoryLayout(ICoroutineService coroutineService, IEmbeddedResources embeddedResources, 
+        public BuildingStoryLayout(ICoroutineService coroutineService, IEmbeddedResources embeddedResources,
             IInputService inputService, Lazy<INavigationService> navigationServiceLazy)
         {
             this.embeddedResources = embeddedResources;
@@ -103,7 +104,9 @@ namespace Clarity.Ext.StoryLayout.Building
                 .SetSampler(mirrorSampler)
                 .FromGlobalCache();
             wallMaterial = StandardMaterial.New()
-                .SetDiffuseMap(embeddedResources.Image("Textures/yellow224.png"))
+                .SetDiffuseMap(embeddedResources.Image("Textures/museum_wall.jpg"))
+                .SetDiffuseColor(new Color4(92, 82, 72))
+                //.SetNoSpecular(true)
                 .SetNormalMap(embeddedResources.Image("Textures/museum_wall_2_norm.jpg"))
                 .FromGlobalCache();
             rawWallMaterial = StandardMaterial.New()
@@ -111,14 +114,21 @@ namespace Clarity.Ext.StoryLayout.Building
                 .SetIgnoreLighting(true)
                 .FromGlobalCache();
         }
-
+        //
         public IStoryLayoutInstance ArrangeAndDecorate(IStoryGraph sg)
         {
             var placementAlgorithm = new BuildingStoryLayoutPlacementAlgorithm(coroutineService, x => ArrangeAndDecorateInternal(sg.Root, x, new List<BuildingWallSegment>()), sg);
             placementAlgorithm.Run();
-            var globalWallSegments = new List<BuildingWallSegment>();
-            ArrangeAndDecorateInternal(sg.Root, placementAlgorithm, globalWallSegments);
-            return new BuildingStoryLayoutInstance(inputService, placementAlgorithm, globalWallSegments);
+            var collisionSegments = new List<BuildingWallSegment>();
+            ArrangeAndDecorateInternal(sg.Root, placementAlgorithm, collisionSegments);
+            var floors = sg.Children[sg.Root]
+                .Select(x => new AaBox(placementAlgorithm.RelativeTransforms[x].Offset, placementAlgorithm.HalfSizes[x]))
+                .ToArray();
+            var zonesWithProperties = floors.Select(x => Tuples.Pair(x, new StoryLayoutZoneProperties(-15f))).ToArray();
+            var defaultZoneProperties = new StoryLayoutZoneProperties(0);
+            var zoning = new AaBoxStoryLayoutZoning(zonesWithProperties, defaultZoneProperties);
+            var buildingCollisionMesh = new CollisionMesh(collisionSegments, floors, zoning);
+            return new BuildingStoryLayoutInstance(inputService, placementAlgorithm, buildingCollisionMesh, zoning);
         }
 
         private void ArrangeAndDecorateInternal(int subtreeRoot, BuildingStoryLayoutPlacementAlgorithm placementAlgorithm, List<BuildingWallSegment> globalWallSegments)
@@ -133,13 +143,13 @@ namespace Clarity.Ext.StoryLayout.Building
             {
                 ArrangeAndDecorateInternal(child, placementAlgorithm, globalWallSegments);
             }
-            
+
             var depth = sg.Depths[subtreeRoot];
 
             var hasChildren = children.Any();
 
             var halfSize = placementAlgorithm.HalfSizes[index];
-            node.Transform = hasChildren 
+            node.Transform = hasChildren
                 ? placementAlgorithm.RelativeTransforms[index]
                 : placementAlgorithm.RelativeTransforms[index] * Transform.Translation(0, BuildingConstants.EyeHeight, 0);
 
@@ -167,8 +177,8 @@ namespace Clarity.Ext.StoryLayout.Building
                     globalWallSegments.Add(new BuildingWallSegment
                     {
                         Basement = new LineSegment3(
-                            wallSegment.Basement.Point1 * globalTransform,
-                            wallSegment.Basement.Point2 * globalTransform),
+                        wallSegment.Basement.Point1 * globalTransform,
+                        wallSegment.Basement.Point2 * globalTransform),
                         Height = wallSegment.Height
                     });
                 }
@@ -211,12 +221,13 @@ namespace Clarity.Ext.StoryLayout.Building
                         .SetRenderState(StandardRenderState.New()
                             // todo: remove *5
                             .SetZOffset(GraphicsHelper.MinZOffset * 5)
+                            .SetLineWidth(3)
                             .FromGlobalCache()));
                 }
             }
-            
-            dynamicParts.Hittable = hasChildren 
-                ? new RectangleHittable<ISceneNode>(node, Transform.Rotate(Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -0.01f * depth) 
+
+            dynamicParts.Hittable = hasChildren
+                ? new RectangleHittable<ISceneNode>(node, Transform.Rotate(Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -0.01f * depth)
                 : new RectangleHittable<ISceneNode>(node, new Transform(1, Quaternion.RotationToFrame(Vector3.UnitX, Vector3.UnitZ), new Vector3(0, -BuildingConstants.EyeHeight, 0)), x => new AaRectangle2(Vector2.Zero, halfSize.Width, halfSize.Height), x => -0.01f * depth);
 
             if (depth == 1)
@@ -258,7 +269,7 @@ namespace Clarity.Ext.StoryLayout.Building
                         ZNear = 0.01f,
                         ZFar = 1000f
                     });
-                
+
                 visualElems.Add(new ModelVisualElement<IStoryComponent>(rootStoryComponent)
                     .SetModel(frustumModel)
                     .SetMaterial(frustumMaterial)

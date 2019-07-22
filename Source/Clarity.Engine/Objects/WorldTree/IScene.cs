@@ -9,6 +9,8 @@ namespace Clarity.Engine.Objects.WorldTree
 {
     public interface IScene : IAmObject, ISceneNodeParent
     {
+        IWorld World { get; }
+
         string Name { get; set; }
         Color4 BackgroundColor { get; set; }
         ISkybox Skybox { get; set; }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 using UnityEngine;
 using UnityEngine.XR;
 
@@ -9,6 +8,18 @@ namespace Assets.Scripts.Gui
     {
         private bool vrActive;
         private Action nextFrame;
+
+        public event Action VrInitialized;
+
+        private void Start()
+        {
+            if (XRDevice.isPresent)
+            {
+                vrActive = true;
+                VrInitialized?.Invoke();
+                nextFrame = () => { XRSettings.enabled = vrActive; };
+            }
+        }
 
         private void Update()
         {
@@ -20,12 +31,9 @@ namespace Assets.Scripts.Gui
 
             if (Input.GetKeyDown(KeyCode.F6))
             {
-                var deviceName = !vrActive 
-                    ? XRSettings.supportedDevices.First(x => x.ToLower().Contains("open")) 
-                    : "None";
-                XRSettings.LoadDeviceByName(deviceName);
-                vrActive = !vrActive;
-                nextFrame = () => XRSettings.enabled = vrActive;
+                vrActive = true;
+                VrInitialized?.Invoke();
+                nextFrame = () => { XRSettings.enabled = vrActive; };
             }
         }
     }

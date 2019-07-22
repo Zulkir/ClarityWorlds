@@ -27,14 +27,14 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
             originalRect = nodeRectAspect.Rectangle;
         }
 
-        public InputEventProcessResult ProcessEvent(IInputEventArgs args)
+        public InputEventProcessResult ProcessEvent(IInputEvent args)
         {
-            if (args is IMouseEventArgs mouseArgs)
+            if (args is IMouseEvent mouseArgs)
                 return ProcessMouseEvent(mouseArgs);
             return InputEventProcessResult.DontCare;
         }
 
-        private InputEventProcessResult ProcessMouseEvent(IMouseEventArgs args)
+        private InputEventProcessResult ProcessMouseEvent(IMouseEvent args)
         {
             if ((args.State.Buttons & MouseButtons.Left) == 0)
             {

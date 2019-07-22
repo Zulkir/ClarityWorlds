@@ -42,6 +42,13 @@ namespace Clarity.Common.Numericals.Geometry
         public override bool Equals(object obj) { return obj is Size2 && Equals((Size2)obj); }
         #endregion
 
+        #region Math
+        public static Size2 operator *(float scale, Size2 v) => v.ScaleBy(scale);
+        public static Size2 operator *(Size2 v, float scale) => v.ScaleBy(scale);
+        public static Size2 operator /(Size2 v, float scale) => v.ScaleBy(1f / scale);
+        public Size2 ScaleBy(float scale) => new Size2(Width * scale, Height * scale);
+        #endregion
+
         public Vector2 ToVector() => new Vector2(Width, Height);
     }
 }

@@ -44,6 +44,6 @@ namespace IritNet
         public Union U;
         public byte* ObjName;		                          /* Name of object. */
 
-        public string _cs_Name => Marshal.PtrToStringAnsi((IntPtr)ObjName);
+        public string _cs_Name { get { return Marshal.PtrToStringAnsi((IntPtr)ObjName); } }
     }
 }

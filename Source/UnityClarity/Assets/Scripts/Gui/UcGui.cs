@@ -1,10 +1,14 @@
 ﻿using System.Linq;
+using Assets.Scripts.Infra;
 using Assets.Scripts.Rendering;
 using Clarity.App.Worlds.AppModes;
 using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.Navigation;
 using Clarity.App.Worlds.SaveLoad;
+using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.EventRouting;
 using Clarity.Engine.Gui;
@@ -18,17 +22,17 @@ namespace Assets.Scripts.Gui
     public class UcGui : IGui
     {
         private readonly IDiContainer di;
-        private readonly IEventSender eventSender;
+        private readonly IEventRoutingService eventRoutingService;
+        private readonly UcRenderGuiControl renderControl;
 
-        public IRenderGuiControl RenderControl { get; }
+        public IRenderGuiControl RenderControl => renderControl;
 
-        public UcGui(IDiContainer di, IEventSender eventSender, IEventRoutingService eventRoutingService)
+        public UcGui(IDiContainer di, IEventRoutingService eventRoutingService)
         {
             this.di = di;
-            this.eventSender = eventSender;
-            RenderControl = new UcRenderGuiControl();
+            renderControl = new UcRenderGuiControl();
+            this.eventRoutingService = eventRoutingService;
             eventRoutingService.RegisterServiceDependency(typeof(UcGui), typeof(IWorldTreeService));
-            //eventRoutingService.Subscribe<IAppModeChangedEvent>(typeof(UcGui), nameof(OnAppModeChanged), OnAppModeChanged);
             eventRoutingService.SubscribeToAllAfter(typeof(UcGui).FullName, OnEveryEvent, true);
         }
 
@@ -42,22 +46,23 @@ namespace Assets.Scripts.Gui
 
         public void Run()
         {
-            //var assetService = di.Get<IAssetService>();
-            //var assetLoaders = di.GetMulti<IAssetLoader>();
-            //var imageLoader = assetLoaders.ThatAre<UcImageAssetLoader>().First();
-
-            SetupLoop();
+            var eventSender = di.Get<IGlobalObjectService>().EventObject.GetComponent<EventSender>();
+            SetupLoop(eventSender);
 
             var saveLoadService = di.Get<ISaveLoadService>();
             saveLoadService.Format = di.GetMulti<ISaveLoadFormat>().First(x => x is ZipSaveLoadFormat);
-            saveLoadService.FileName = "C:/clarity/UnityTestWorld.cw";
+            saveLoadService.FileName = SceneParameters.PresentationFilePath;
             saveLoadService.Load(LoadWorldPreference.ReadOnlyOnly);
             var appModeService = di.Get<IAppModeService>();
             appModeService.SetMode(AppMode.Presentation);
             var worldTreeService = di.Get<IWorldTreeService>();
-            
+            var storyGraph = di.Get<IStoryService>().GlobalGraph;
+            var firstNodeId = storyGraph.Leaves.First();
+            while (storyGraph.Previous[firstNodeId].HasItems())
+                firstNodeId = storyGraph.Previous[firstNodeId].First();
+            di.Get<INavigationService>().GoToSpecific(firstNodeId);
             var presentationView = AmFactory.Create<PresentationView>();
-            presentationView.FocusOn(worldTreeService.PresentationWorld.Scenes.First().Root.GetComponent<IFocusNodeComponent>());
+            presentationView.FocusOn(worldTreeService.GetById(firstNodeId).GetComponent<IFocusNodeComponent>());
             var viewport = AmFactory.Create<Viewport>();
             viewport.View = presentationView;
             RenderControl.SetViewports(
@@ -68,9 +73,17 @@ namespace Assets.Scripts.Gui
                     ColumnWidths = new[] {new ViewportLength(100, ViewportLengthUnit.Percent)},
                     ViewportIndices = new[,]{{0}}
                 });
+            var viewService = di.Get<IViewService>();
+            viewService.ChangeRenderingArea(RenderControl, presentationView);
+            if (SceneParameters.IsTutorial)
+            {
+                var tutorialScenario = di.Instantiate<TutorialScenario>();
+                var vrInitializationService = di.Get<IVrInitializerService>();
+                vrInitializationService.Initialized += () => tutorialScenario.RunTutorial();
+            }
         }
 
-        private void SetupLoop()
+        private void SetupLoop(IEventSender eventSender)
         {
             var renderLoopDispatcher = di.Get<IRenderLoopDispatcher>();
             var inputProviders = di.GetMulti<IUcInputProvider>();
@@ -81,9 +94,22 @@ namespace Assets.Scripts.Gui
             };
             eventSender.UpdateEvent += () =>
             {
+                renderControl.OnUpdate();
                 foreach (var inputProvider in inputProviders)
                     inputProvider.OnUpdate();
-                renderLoopDispatcher.OnLoop(new FrameTime(Time.realtimeSinceStartup, Time.deltaTime));
+                var frameTime = new FrameTime(Time.realtimeSinceStartup, Time.deltaTime);
+                eventRoutingService.FireEvent<INewFrameEvent>(new NewFrameEvent(frameTime));
+                // todo: remove this
+                renderLoopDispatcher.OnLoop(frameTime);
+            };
+            eventSender.LateUpdateEvent += () =>
+            {
+                var frameTime = new FrameTime(Time.realtimeSinceStartup, Time.deltaTime);
+                eventRoutingService.FireEvent<ILateUpdateEvent>(new LateUpdateEvent(frameTime));
+            };
+            eventSender.FixedUpdateEvent += () =>
+            {
+                eventRoutingService.FireEvent<IFixedUpdateEvent>(new FixedUpdateEvent());
             };
         }
 

@@ -60,6 +60,7 @@
     <Compile Include="AppModes\AppMode.cs" />
     <Compile Include="AppModes\AppModeChangedEvent.cs" />
     <Compile Include="AppModes\AppModeService.cs" />
+    <Compile Include="AppModes\AppNavigationMode.cs" />
     <Compile Include="AppModes\IAppModeChangedEvent.cs" />
     <Compile Include="AppModes\IAppModeService.cs" />
     <Compile Include="AppModes\IPresentationWorldBuilder.cs" />
@@ -75,6 +76,8 @@
     <Compile Include="CopyPaste\ICopyPasteComponent.cs" />
     <Compile Include="Coroutines\CoroutineService.cs" />
     <Compile Include="Coroutines\ICoroutineService.cs" />
+    <Compile Include="External\Movies\IMovieUrlLoader.cs" />
+    <Compile Include="External\WarpScrolling\WarpScrollComponent.cs" />
     <Compile Include="Gui\FullscreenMode.cs" />
     <Compile Include="Gui\IGui.cs" />
     <Compile Include="Gui\IGuiObservable.cs" />
@@ -108,6 +111,9 @@
     <Compile Include="Assets\FromAssetResourceSource.cs" />
     <Compile Include="Assets\IAssetFileCache.cs" />
     <Compile Include="Assets\SysDrawImageLoader.cs" />
+    <Compile Include="Misc\HighlightOnMouse\HighlightOnMouseService.cs" />
+    <Compile Include="Misc\HighlightOnMouse\IHighlightOnMouseService.cs" />
+    <Compile Include="SaveLoad\Import\IPresentationImporter.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandlerFamily.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetTrwHandler.cs" />
     <Compile Include="SaveLoad\TrwExtensions\AssetForWorldTrwTypeRedirect.cs" />
@@ -165,6 +171,9 @@
     <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartNodeGizmoComponent.cs" />
     <Compile Include="StoryGraph\Editing\Flowchart\StoryFlowchartEdgeGizmoComponent.cs" />
     <Compile Include="StoryGraph\Editing\StoryBranchIntoTool.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\ICollisionMesh.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\IStoryLayoutZoning.cs" />
+    <Compile Include="StoryGraph\FreeNavigation\StoryLayoutZoneProperties.cs" />
     <Compile Include="StoryGraph\IStoryLayoutInstance.cs" />
     <Compile Include="StoryGraph\IStoryPath.cs" />
     <Compile Include="StoryGraph\StoryOperations.cs" />
@@ -202,6 +211,8 @@
     <Compile Include="Media\Media2D\MovieRectangleComponent.cs" />
     <Compile Include="Views\Cameras\OrthoDefaultViewpointMechanism.cs" />
     <Compile Include="Interaction\Placement\PlanarPlacementSurface.cs" />
+    <Compile Include="Misc\HighlightOnMouse\HighlightOnMouseComponent.cs" />
+    <Compile Include="WorldTree\MiscComponents\ManipulateInPresentationComponent.cs" />
     <Compile Include="WorldTree\PresentationComponent.cs" />
     <Compile Include="Gui\PresentationGuiCommands.cs" />
     <Compile Include="WorldTree\MiscComponents\RotateOnceComponent.cs" />
@@ -227,9 +238,9 @@
     <Compile Include="CopyPaste\SceneNodeDuplicateUndoable.cs" />
     <Compile Include="Interaction\CoreInteractionEventCategory.cs" />
     <Compile Include="Interaction\CoreInteractionEventType.cs" />
-    <Compile Include="Interaction\CoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\CoreInterationEvent.cs" />
     <Compile Include="Interaction\FocusOnDoubleClickInteractionElement.cs" />
-    <Compile Include="Interaction\ICoreInterationEventArgs.cs" />
+    <Compile Include="Interaction\ICoreInterationEvent.cs" />
     <Compile Include="Interaction\MoviePlaybackInteractionElement.cs" />
     <Compile Include="Interaction\RectangleManipulation\DragRectangleInputLock.cs" />
     <Compile Include="Interaction\RectangleManipulation\DragRectangleInteractionElement.cs" />

@@ -37,6 +37,6 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
         private IPlacementSurface GetChildSpace() => GetRectNode()?.ParentNode?.PresentationInfra().Placement.PlacementSurface2D;
 
         public RayHitResult HitWithClick(RayHitInfo clickInfo) => GetRectComponent().DragByBorders ? RayHitResult.Failure() : hittable.HitWithClick(clickInfo);
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args) => interactionElement.TryHandleInteractionEvent(args);
+        public bool TryHandleInteractionEvent(IInteractionEvent args) => interactionElement.TryHandleInteractionEvent(args);
     }
 }

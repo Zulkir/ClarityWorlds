@@ -50,7 +50,7 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Interaction
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
             return appModeServiceLazy.Value.Mode == AppMode.Editing && 
                    editInteractionElems.Any(element => element.TryHandleInteractionEvent(args));

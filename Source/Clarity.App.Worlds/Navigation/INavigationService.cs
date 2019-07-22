@@ -17,7 +17,7 @@ namespace Clarity.App.Worlds.Navigation
 
         void Reset(int id);
 
-        bool TryHandleInput(IInputEventArgs args);
+        bool TryHandleInput(IInputEvent args);
 
         void OnFocus(int newFocusId);
     }

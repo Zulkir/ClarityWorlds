@@ -32,16 +32,16 @@ namespace Clarity.App.Worlds.Media.Media2D
             this.inputHandler = inputHandler;
         }
 
-        public bool TryHandleInteractionEvent(IInteractionEventArgs args)
+        public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEventArgs mouseArgs)
+            if (args is IMouseEvent mouseArgs)
                 return TryHandleMouseEvent(mouseArgs);
-            if (args is IKeyEventArgs keyboardArgs)
+            if (args is IKeyEvent keyboardArgs)
                 return TryHandleKeyEvent(keyboardArgs);
             return false;
         }
 
-        private bool TryHandleKeyEvent(IKeyEventArgs args)
+        private bool TryHandleKeyEvent(IKeyEvent args)
         {
             if (!args.HasFocus)
                 return false;
@@ -141,7 +141,7 @@ namespace Clarity.App.Worlds.Media.Media2D
             return false;
         }
 
-        private bool TryHandleMouseEvent(IMouseEventArgs args)
+        private bool TryHandleMouseEvent(IMouseEvent args)
         {
             // todo: refactor for better Rectangle modification code
             var placementSurface = cText.Node.PresentationInfra().Placement;
@@ -157,6 +157,14 @@ namespace Clarity.App.Worlds.Media.Media2D
             var textBoxPoint = new Vector2(textBoxPointYswapped.X, -textBoxPointYswapped.Y);
             var layout = textBox.Layout;
 
+            if (layout.TryGetSpanAt(textBoxPoint, out var lspan) && 
+                lspan.Embedding != null &&
+                lspan.EmbeddingHandler != null &&
+                lspan.EmbeddingHandler.TryHandleMouseEvent(lspan.Embedding, args))
+            {
+                return true;
+            }
+
             if (args.IsLeftDownEvent())
             {
                 cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
@@ -170,9 +178,9 @@ namespace Clarity.App.Worlds.Media.Media2D
             return false;
         }
 
-        private InputEventProcessResult MouseDownLockProc(object o, IInputEventArgs inputEventArgs)
+        private InputEventProcessResult MouseDownLockProc(object o, IInputEvent inputEvent)
         {
-            if (!(inputEventArgs is IMouseEventArgs args))
+            if (!(inputEvent is IMouseEvent args))
                 return InputEventProcessResult.DontCare;
             if (args.IsOfType(MouseEventType.Move) && args.State.Buttons == MouseButtons.Left)
             {
@@ -216,21 +224,21 @@ namespace Clarity.App.Worlds.Media.Media2D
                 cText.SelectionStart = null;
             }
             var span = text.GetSpan(cText.CursorPosition);
-            if (span.Style.Equals(cText.InputTextStyle))
+            if (span is IRtPureSpan pureSpan && span.Style.Equals(cText.InputTextStyle))
             {
-                span.Text = span.Text.Substring(0, cText.CursorPosition.CharIndex) +
-                            str +
-                            span.Text.Substring(cText.CursorPosition.CharIndex);
+                pureSpan.Text = pureSpan.Text.Substring(0, cText.CursorPosition.CharIndex) +
+                                str +
+                                pureSpan.Text.Substring(cText.CursorPosition.CharIndex);
                 cText.CursorPosition = cText.CursorPosition.WithCharPlus(str.Length);
             }
             else
             {
-                var newSpan = AmFactory.Create<RtSpan>();
+                var newSpan = AmFactory.Create<RtPureSpan>();
                 newSpan.Style = cText.InputTextStyle.CloneTyped();
                 newSpan.Text = str;
                 text.SplitSpan(cText.CursorPosition, out var insertSpanIndex);
                 text.GetPara(cText.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
-                cText.CursorPosition = cText.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.Length);
+                cText.CursorPosition = cText.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
             }
         }
 
@@ -253,13 +261,13 @@ namespace Clarity.App.Worlds.Media.Media2D
             }
             if (para.Spans.Count == 0)
             {
-                var newSpan = AmFactory.Create<RtSpan>();
+                var newSpan = AmFactory.Create<RtPureSpan>();
                 newSpan.Style = defaultPrevStyle.CloneTyped();
                 newPara.Spans.Add(newSpan);
             }
             if (newPara.Spans.Count == 0)
             {
-                var newSpan = AmFactory.Create<RtSpan>();
+                var newSpan = AmFactory.Create<RtPureSpan>();
                 newSpan.Style = defaultNextStyle.CloneTyped();
                 newPara.Spans.Add(newSpan);
             }
@@ -282,14 +290,15 @@ namespace Clarity.App.Worlds.Media.Media2D
                 var para = text.Paragraphs[p];
                 var isFirstPara = p == first.ParaIndex;
                 var isLastPara = p == last.ParaIndex;
+                // todo: copy/paste formulas
                 for (var s = (isFirstPara ? first.SpanIndex : 0); s <= (isLastPara ? last.SpanIndex : para.Spans.Count - 1); s++)
                 {
                     var span = para.Spans[s];
                     var isFirstSpan = isFirstPara && s == first.SpanIndex;
                     var isLastSpan = isLastPara && s == last.SpanIndex;
                     var firstChar = isFirstSpan ? first.CharIndex : 0;
-                    var lastChar = isLastSpan ? last.CharIndex : span.Length - 1;
-                    builder.Append(span.Text.SafeSubstring(firstChar, lastChar - firstChar));
+                    var lastChar = isLastSpan ? last.CharIndex : span.LayoutTextLength - 1;
+                    builder.Append(span.LayoutText.SafeSubstring(firstChar, lastChar - firstChar));
                 }
                 if (!isLastPara)
                     builder.AppendLine();
@@ -336,18 +345,32 @@ namespace Clarity.App.Worlds.Media.Media2D
             {
                 cp.CharIndex--;
                 var span = para.Spans[cp.SpanIndex];
-                span.Text = span.Text.SafeSubstring(0, cp.CharIndex) + span.Text.SafeSubstring(cp.CharIndex + 1);
-                para.Normalize();
+                if (span is IRtPureSpan pureSpan)
+                {
+                    pureSpan.Text = pureSpan.Text.SafeSubstring(0, cp.CharIndex) + pureSpan.Text.SafeSubstring(cp.CharIndex + 1);
+                    para.Normalize();
+                }
+                else
+                {
+                    para.Spans.RemoveAt(cp.SpanIndex);
+                }
             }
-            else if (para.Spans.Take(cp.SpanIndex).Sum(x => x.Length) > 0)
+            else if (para.Spans.Take(cp.SpanIndex).Sum(x => x.LayoutTextLength) > 0)
             {
                 cp.SpanIndex--;
-                while (para.Spans[cp.SpanIndex].Length == 0)
+                while (para.Spans[cp.SpanIndex].LayoutTextLength == 0)
                     cp.SpanIndex--;
                 var span = para.Spans[cp.SpanIndex];
-                cp.CharIndex = span.Text.Length - 1;
-                span.Text = span.Text.Substring(0, span.Text.Length - 1);
-                para.Normalize();
+                cp.CharIndex = span.LayoutTextLength - 1;
+                if (span is IRtPureSpan pureSpan)
+                {
+                    pureSpan.Text = pureSpan.Text.Substring(0, pureSpan.Text.Length - 1);
+                    para.Normalize();
+                }
+                else
+                {
+                    para.Spans.RemoveAt(cp.SpanIndex);
+                }
             }
             else if (cp.ParaIndex > 0)
             {
@@ -355,7 +378,7 @@ namespace Clarity.App.Worlds.Media.Media2D
                 var prevPara = text.Paragraphs[cp.ParaIndex];
                 cp.SpanIndex = prevPara.Spans.Count - 1;
                 var lastSpan = prevPara.Spans[cp.SpanIndex];
-                cp.CharIndex = lastSpan.Length;
+                cp.CharIndex = lastSpan.LayoutTextLength;
                 text.Paragraphs.RemoveAt(cp.ParaIndex + 1);
                 while (para.Spans.Count > 0)
                 {

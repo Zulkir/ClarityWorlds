@@ -61,7 +61,7 @@ namespace Clarity.Ext.Video.FFmpeg
 
             var assetName = loadInfo.AssetName;
             var fileName = Path.GetFileName(loadInfo.LoadPath);
-            var movie = new FFmpegMovie(width, height, duration, () => OpenAssetFile(assetName, fileName));
+            var movie = new FFmpegFileMovie(width, height, duration, () => OpenAssetFile(assetName, fileName));
             var hash = AssetHashMd5.FromSingleFile(fileBytes);
             return new Asset(assetName, movie, loadInfo.StorageType, hash, loadInfo.ReferencePath, fileName);
         }

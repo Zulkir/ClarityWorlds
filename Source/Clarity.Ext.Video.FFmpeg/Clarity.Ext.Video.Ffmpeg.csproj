@@ -48,12 +48,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FFmpegMovie.cs" />
+    <Compile Include="FFmpegFileMovie.cs" />
     <Compile Include="FFmpegInitializer.cs" />
     <Compile Include="FFmpegMovieLoader.cs" />
     <Compile Include="FFmpegMovieReader.cs" />
     <Compile Include="FFmpegMoviePlayer.cs" />
+    <Compile Include="FFmpegMovieReaderDefaultIoContextWrapper.cs" />
+    <Compile Include="FFmpegMovieReaderFileStreamIoContextWrapper.cs" />
+    <Compile Include="FFmpegMovieUrlLoader.cs" />
+    <Compile Include="FFmpegUrlMovie.cs" />
     <Compile Include="FFmpegVideoExtension.cs" />
+    <Compile Include="IFFmpegMovieReaderIoContextWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

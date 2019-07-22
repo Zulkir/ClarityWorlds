@@ -5,6 +5,8 @@ using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
+using Clarity.Engine.Media.Images;
+using JetBrains.Annotations;
 
 namespace Clarity.Engine.Media.Text.Rich
 {
@@ -16,6 +18,12 @@ namespace Clarity.Engine.Media.Text.Rich
         public RtPosition TextPosition;
         public string Text;
         public IRtSpanStyle Style;
+        [CanBeNull]
+        public IRtEmbeddingSpan Embedding;
+        [CanBeNull]
+        public IRtEmbeddingHandler EmbeddingHandler;
+        [CanBeNull]
+        public IImage EmbeddingImage;
 
         public float GetCharOffset(int charIndex) => charIndex < CharOffsets.Count ? CharOffsets[charIndex] : Bounds.Width;
 

@@ -26,7 +26,7 @@ namespace Clarity.App.Worlds.Views
         {
         }
 
-        public bool TryHandleInput(IInputEventArgs args)
+        public bool TryHandleInput(IInputEvent args)
         {
             return false;
         }

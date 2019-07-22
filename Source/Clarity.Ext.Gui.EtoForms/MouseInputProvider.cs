@@ -7,7 +7,6 @@ using Clarity.Engine.Interaction.Input.Mouse;
 using Eto.Drawing;
 using Eto.Forms;
 using EMouseEventArgs = Eto.Forms.MouseEventArgs;
-using CMouseEventArgs = Clarity.Engine.Interaction.Input.Mouse.MouseEventArgs;
 using EMouseButtons = Eto.Forms.MouseButtons;
 using CMouseButtons = Clarity.Engine.Interaction.Input.Mouse.MouseButtons;
 
@@ -88,7 +87,7 @@ namespace Clarity.Ext.Gui.EtoForms
                 WheelPosition = wheelPosition
             };
 
-            var cArgs = new CMouseEventArgs
+            var cArgs = new MouseEvent
             {
                 ComplexEventType = eventType,
                 EventButtons = ToClarity(eArgs.Buttons),

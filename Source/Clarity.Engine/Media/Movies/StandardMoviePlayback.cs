@@ -148,11 +148,20 @@ namespace Clarity.Engine.Media.Movies
 
         private void SeekToTimestampInternal(double timestamp, out double newTimestamp)
         {
+            var oldTimestamp = currentTimestamp;
             reader.FrameQueue.Clear();
             reader.AudioQueue.Clear();
             previousFrames.Clear();
             reader.SeekToTimestamp(timestamp);
             synchronization = null;
+            while (reader.ReadNextPacket() && 
+                   (reader.FrameQueue.Count == 0 || 
+                        Math.Abs(reader.FrameQueue.Peek().Timestamp - oldTimestamp) < Math.Abs(reader.FrameQueue.Peek().Timestamp - timestamp)))
+            {
+                reader.FrameQueue.Clear();
+                reader.AudioQueue.Clear();
+            }
+
             if (TryEnsureFrameQueueNotEmpty())
             {
                 currentFrame = reader.FrameQueue.Dequeue();
