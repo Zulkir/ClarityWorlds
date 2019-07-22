@@ -22,5 +22,6 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
         void TextBox(Expression<Func<T, string>> path);
         void DropDown<TValue>(Expression<Func<T, TValue>> path, IReadOnlyDictionary<string, TValue> values);
         void Slider(Expression<Func<T, float>> path, float minValue, float maxValue, int numSteps);
+        void NumericUpDown(Expression<Func<T, double>> path, double minValue, double maxValue);
     }
 }

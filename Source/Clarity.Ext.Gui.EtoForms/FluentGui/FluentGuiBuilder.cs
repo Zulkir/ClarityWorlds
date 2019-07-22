@@ -115,5 +115,14 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 (x, v) => prop.SetValue(x, v),
                 minValue, maxValue, numSteps));
         }
+
+        public void NumericUpDown(Expression<Func<T, double>> path, double minValue, double maxValue)
+        {
+            var prop = CodingHelper.GetPropertyInfo(path);
+            addControl(new FluentNumericUpDown<T>(GetObject,
+                x => (double)prop.GetValue(x),
+                (x, v) => prop.SetValue(x, v),
+                minValue, maxValue));
+        }
     }
 }

@@ -114,6 +114,29 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var bgndOpacityRow = textGroupBox.Row();
                 bgndOpacityRow.Label("Bgnd Opacity");
                 bgndOpacityRow.Slider(x => x.BackgroundOpacity, 0, 1, 256);
+
+                var alignmentRow = textGroupBox.Row();
+                alignmentRow.Label("Alignment");
+                alignmentRow.DropDown(x => x.Alignment, new Dictionary<string, RtParagraphAlignment>
+                {
+                    ["Left"] = RtParagraphAlignment.Left,
+                    ["Center"] = RtParagraphAlignment.Center,
+                    ["Right"] = RtParagraphAlignment.Right,
+                    ["Justify"] = RtParagraphAlignment.Justify,
+                });
+                var directionRow = textGroupBox.Row();
+                directionRow.Label("Direction");
+                directionRow.DropDown(x => x.Direction, new Dictionary<string, RtParagraphDirection>
+                {
+                    ["LeftToRight"] = RtParagraphDirection.LeftToRight,
+                    ["RightToLeft"] = RtParagraphDirection.RightToLeft,
+                });
+                var tabsRow = textGroupBox.Row();
+                tabsRow.Label("Tabs");
+                tabsRow.NumericUpDown(x => x.Tabs, 0, 16);
+                var marginUpRow = textGroupBox.Row();
+                marginUpRow.Label("MarginUp");
+                marginUpRow.NumericUpDown(x => x.MarginUp, 0, 1000);
             }
             {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
@@ -185,8 +208,10 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 this.getComponent = getComponent;
             }
 
+            private IRichTextBox TextBox => getComponent()?.TextBox;
             private IRichText Text => getComponent()?.TextBox?.Text;
 
+            #region Text Properties
             public RtTransparencyMode BackgroundMode
             {
                 get => Text?.Style.TransparencyMode ?? RtTransparencyMode.Opaque;
@@ -216,6 +241,66 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                         Text.Style.BackgroundColor = new Color4(Text.Style.BackgroundColor.RGB, value);
                 }
             }
+            #endregion
+
+            #region Paragraph Properties
+
+            private T GetParagraphProperty<T>(Func<IRtParagraph, T> getProp)
+                where T : IEquatable<T>
+            {
+                var component = getComponent();
+                if (component == null)
+                    return default(T);
+                if (component.SelectionRange.HasValue)
+                {
+                    return component.TextBox.Text.TryGetCommonParagraphProperty(component.SelectionRange.Value, getProp, out var prop)
+                        ? prop
+                        : default(T);
+                }
+                else
+                {
+                    var para = component.TextBox.Text.Paragraphs[component.CursorPosition.ParaIndex];
+                    return getProp(para);
+                }
+            }
+
+            private void SetParagraphProperty<T>(T value, Action<IRtParagraph, T> setProp)
+            {
+                var component = getComponent();
+                if (component == null)
+                    return;
+                var range = component.SelectionRange;
+                if (range.HasValue)
+                    for (int i = range.Value.FirstCharPos.ParaIndex; i <= range.Value.LastCharPos.ParaIndex; i++)
+                        setProp(component.TextBox.Text.Paragraphs[i], value);
+                else
+                    setProp(component.TextBox.Text.Paragraphs[component.CursorPosition.ParaIndex], value);
+            }
+
+            public RtParagraphAlignment Alignment
+            {
+                get => (RtParagraphAlignment)GetParagraphProperty(p => (int)p.Style.Alignment);
+                set => SetParagraphProperty(value, (p, v) => p.Style.Alignment = v);
+            }
+
+            public RtParagraphDirection Direction
+            {
+                get => (RtParagraphDirection)GetParagraphProperty(p => (int)p.Style.Direction);
+                set => SetParagraphProperty(value, (p, v) => p.Style.Direction = v);
+            }
+
+            public double Tabs
+            {
+                get => GetParagraphProperty(p => p.Style.TabCount);
+                set => SetParagraphProperty(value, (p, v) => p.Style.TabCount = (int)Math.Round(v));
+            }
+
+            public double MarginUp
+            {
+                get => GetParagraphProperty(p => p.Style.MarginUp);
+                set => SetParagraphProperty(value, (p, v) => p.Style.MarginUp = (int)Math.Round(v));
+            }
+            #endregion
         }
 
         private void OnExportClick(IModelComponent component)
