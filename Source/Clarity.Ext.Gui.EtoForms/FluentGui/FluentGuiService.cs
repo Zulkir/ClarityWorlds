@@ -330,7 +330,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             #endregion
 
             #region Span Properties
-            private T GetSpanStyleProperty<T>(Func<IRtSpanStyle, T> getProp)
+            private T GetSpanStyleProperty<T>(Func<IRtSpanStyle, T> getProp, bool firstSpanAsDefault = false)
                 where T : IEquatable<T>
             {
                 var component = getComponent();
@@ -340,7 +340,29 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 {
                     return component.TextBox.Text.TryGetCommonSpanProperty(component.SelectionRange.Value, x => getProp(x.Style), out var prop)
                         ? prop
-                        : default(T);
+                        : firstSpanAsDefault
+                            ? getProp(component.TextBox.Text.GetSpan(component.SelectionRange.Value.FirstCharPos).Style)
+                            : default(T);
+                }
+                else
+                {
+                    return getProp(component.InputTextStyle);
+                }
+            }
+
+            private T? GetSpanStylePropertyNullable<T>(Func<IRtSpanStyle, T> getProp, bool firstSpanAsDefault = false)
+                where T : struct, IEquatable<T>
+            {
+                var component = getComponent();
+                if (component == null)
+                    return null;
+                if (component.SelectionRange.HasValue)
+                {
+                    return component.TextBox.Text.TryGetCommonSpanProperty(component.SelectionRange.Value, x => getProp(x.Style), out var prop)
+                        ? prop
+                        : firstSpanAsDefault 
+                            ? getProp(component.TextBox.Text.GetSpan(component.SelectionRange.Value.FirstCharPos).Style)
+                            : (T?)null;
                 }
                 else
                 {
@@ -382,7 +404,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
             public double Size
             {
-                get => GetSpanStyleProperty(x => x.Size);
+                get => GetSpanStyleProperty(x => x.Size, true);
                 set => SetSpanStyleProperty(value, (s, v) => s.Size = (float)v);
             }
 
@@ -392,28 +414,28 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 set => SetSpanStyleProperty(value, (s, v) => s.TextColor = v);
             }
 
-            public bool Bold
+            public bool? Bold
             {
-                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Bold));
-                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Bold, s, v));
+                get => GetSpanStylePropertyNullable(x => x.FontDecoration.HasFlags(FontDecoration.Bold));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Bold, s, v ?? false));
             }
 
-            public bool Italic
+            public bool? Italic
             {
-                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Italic));
-                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Italic, s, v));
+                get => GetSpanStylePropertyNullable(x => x.FontDecoration.HasFlags(FontDecoration.Italic));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Italic, s, v ?? false));
             }
 
-            public bool Underline
+            public bool? Underline
             {
-                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Underline));
-                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Underline, s, v));
+                get => GetSpanStylePropertyNullable(x => x.FontDecoration.HasFlags(FontDecoration.Underline));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Underline, s, v ?? false));
             }
 
-            public bool Strikethrough
+            public bool? Strikethrough
             {
-                get => GetSpanStyleProperty(x => x.FontDecoration.HasFlags(FontDecoration.Strikethrough));
-                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Strikethrough, s, v));
+                get => GetSpanStylePropertyNullable(x => x.FontDecoration.HasFlags(FontDecoration.Strikethrough));
+                set => SetSpanStyleProperty(value, (s, v) => SetFontDecoration(FontDecoration.Strikethrough, s, v ?? false));
             }
 
             public string HighlightGroup
