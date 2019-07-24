@@ -120,7 +120,9 @@
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutBuilder.cs" />
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutSpan.cs" />
     <Compile Include="Media\Text\Rich\RichTextDirection.cs" />
+    <Compile Include="Media\Text\Rich\RichTextHeadlessEditor.cs" />
     <Compile Include="Media\Text\Rich\RichTextPositionPreference.cs" />
+    <Compile Include="Media\Text\Rich\RtAbsRange.cs" />
     <Compile Include="Media\Text\Rich\RtEmbeddingSpan.cs" />
     <Compile Include="Media\Text\Rich\RtEmbeddingHandlerContainer.cs" />
     <Compile Include="Media\Text\Rich\RtListType.cs" />
