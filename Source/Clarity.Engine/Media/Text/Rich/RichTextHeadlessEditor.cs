@@ -7,7 +7,7 @@ using Clarity.Engine.Utilities;
 
 namespace Clarity.Engine.Media.Text.Rich
 {
-    public class RichTextHeadlessEditor
+    public class RichTextHeadlessEditor : IRichTextHeadlessEditor
     {
         private readonly IRichText text;
         private readonly IRtParagraphStyle defaultParaStyle;
@@ -142,7 +142,8 @@ namespace Clarity.Engine.Media.Text.Rich
         }
         #endregion
 
-        public void InsertString(string str)
+        #region Public Methods
+        public void InputString(string str)
         {
             if (selectionRange.HasValue)
             {
@@ -152,12 +153,121 @@ namespace Clarity.Engine.Media.Text.Rich
                 selectionRange = null;
             }
 
-            InsertStringTo(cursorAbsPos, str);
-            cursorAbsPos += str.Length;
+            var untokenizedStr = str;
+            while (untokenizedStr.Length > 0)
+            {
+                var nextNewLineIndex = untokenizedStr.IndexOf('\n');
+                if (nextNewLineIndex == 0)
+                {
+                    InsertNewLineAt(cursorAbsPos);
+                    cursorAbsPos++;
+                    untokenizedStr = untokenizedStr.Substring(1);
+                }
+                else if (nextNewLineIndex != -1)
+                {
+                    InsertStringAt(cursorAbsPos, untokenizedStr.Substring(0, nextNewLineIndex));
+                    cursorAbsPos += nextNewLineIndex;
+                    untokenizedStr = untokenizedStr.Substring(nextNewLineIndex);
+                }
+                else
+                {
+                    InsertStringAt(cursorAbsPos, untokenizedStr);
+                    cursorAbsPos += untokenizedStr.Length;
+                    untokenizedStr = "";
+                }
+            }
         }
 
-        private void InsertStringTo(int absPos, string str)
+        public void Erase()
         {
+            if (selectionRange.HasValue)
+            {
+                var range = selectionRange.Value;
+                EraseRange(range);
+                cursorAbsPos = range.FirstCharAbsPos;
+                selectionRange = null;
+            }
+            else if (cursorAbsPos > 0)
+            {
+                EraseChar(cursorAbsPos - 1);
+                cursorAbsPos--;
+            }
+        }
+
+        public void Tab()
+        {
+            int firstParaIndex, lastParaIndex;
+            if (selectionRange.HasValue)
+            {
+                var range = selectionRange.Value;
+                firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
+                lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
+            }
+            else
+            {
+                firstParaIndex = lastParaIndex = ToRelPos(cursorAbsPos, out _, out _).ParaIndex;
+            }
+
+            for (var i = firstParaIndex; i <= lastParaIndex; i++)
+                text.Paragraphs[i].Style.TabCount++;
+        }
+
+        public void ShiftTab()
+        {
+            int firstParaIndex, lastParaIndex;
+            if (selectionRange.HasValue)
+            {
+                var range = selectionRange.Value;
+                firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
+                lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
+            }
+            else
+            {
+                firstParaIndex = lastParaIndex = ToRelPos(cursorAbsPos, out _, out _).ParaIndex;
+            }
+
+            for (var i = firstParaIndex; i <= lastParaIndex; i++)
+            {
+                var style = text.Paragraphs[i].Style;
+                if (style.TabCount > 0)
+                    style.TabCount--;
+            }
+        }
+
+        public bool CanCopy()
+        {
+            return selectionRange.HasValue;
+        }
+
+        public string Copy()
+        {
+            if (!selectionRange.HasValue) 
+                return "";
+            var range = selectionRange.Value;
+            return text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
+        }
+
+        public string Cut()
+        {
+            if (!selectionRange.HasValue) 
+                return "";
+            var range = selectionRange.Value;
+            var resultText = text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
+            Erase();
+            return resultText;
+
+        }
+
+        public void Paste(string str)
+        {
+            InputString(str);
+        }
+        #endregion
+
+        private void InsertStringAt(int absPos, string str)
+        {
+            Debug.Assert(!str.Contains("\n"));
+
             var relPos = ToRelPos(absPos, out var para, out var span);
             if (span is IRtPureSpan pureSpan)
             {
@@ -179,10 +289,42 @@ namespace Clarity.Engine.Media.Text.Rich
             }
         }
 
+        private void InsertNewLineAt(int absPos)
+        {
+            var relPos = ToRelPos(absPos, out var para, out var span);
+            
+            int firstSpanIndexToNewPara;
+            if (relPos.CharIndex == 0)
+                firstSpanIndexToNewPara = relPos.SpanIndex;
+            else if (relPos.CharIndex == span.LayoutTextLength)
+                firstSpanIndexToNewPara = relPos.SpanIndex + 1;
+            else if (span is IRtPureSpan pureSpan)
+            {
+                var newSpan = CreatePureSpan(span.Style);
+                newSpan.Text = pureSpan.Text.SafeSubstring(relPos.CharIndex);
+                pureSpan.Text = pureSpan.Text.SafeSubstring(0, relPos.CharIndex);
+                para.Spans.Insert(relPos.SpanIndex + 1, newSpan);
+                firstSpanIndexToNewPara = relPos.SpanIndex + 1;
+            }
+            else
+                throw new InvalidOperationException("Trying to insert a new line in the middle of a non-pure span");
+
+            var newPara = CreatePara(para.Style, span.Style);
+            while (firstSpanIndexToNewPara < para.Spans.Count)
+            {
+                var spanToMove = para.Spans[firstSpanIndexToNewPara];
+                para.Spans.RemoveAt(firstSpanIndexToNewPara);
+                newPara.Spans.Add(spanToMove);
+            }
+            text.Paragraphs.Insert(relPos.ParaIndex + 1, newPara);
+            Normalize();
+        }
+
         private void EraseRange(RtAbsRange range)
         {
             Debug.Assert(range.FirstCharAbsPos >= 0, "range.FirstCharAbsPos >= 0");
             Debug.Assert(range.LastCharAbsPos < text.LayoutTextLength);
+
             var lastCharAbsPos = range.LastCharAbsPos;
             while (lastCharAbsPos > range.FirstCharAbsPos)
             {

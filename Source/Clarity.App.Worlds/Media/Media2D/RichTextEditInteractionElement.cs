@@ -1,7 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Text;
-using Clarity.App.Worlds.Helpers;
+﻿using Clarity.App.Worlds.Helpers;
 using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
@@ -12,7 +9,6 @@ using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Media.Text.Rich;
-using Clarity.Engine.Utilities;
 using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.App.Worlds.Media.Media2D
@@ -20,13 +16,16 @@ namespace Clarity.App.Worlds.Media.Media2D
     public class RichTextEditInteractionElement : IInteractionElement
     {
         private readonly IRichTextComponent cText;
+        private readonly IRichTextHeadlessEditor headlessEditor;
         private readonly IInputHandler inputHandler;
         private readonly IUndoRedoService undoRedo;
         private readonly IClipboard clipboard;
 
-        public RichTextEditInteractionElement(IRichTextComponent cText, IInputHandler inputHandler, IUndoRedoService undoRedo, IClipboard clipboard)
+        public RichTextEditInteractionElement(IRichTextComponent cText, IRichTextHeadlessEditor headlessEditor, 
+            IInputHandler inputHandler, IUndoRedoService undoRedo, IClipboard clipboard)
         {
             this.cText = cText;
+            this.headlessEditor = headlessEditor;
             this.undoRedo = undoRedo;
             this.clipboard = clipboard;
             this.inputHandler = inputHandler;
@@ -34,11 +33,12 @@ namespace Clarity.App.Worlds.Media.Media2D
 
         public bool TryHandleInteractionEvent(IInteractionEvent args)
         {
-            if (args is IMouseEvent mouseArgs)
-                return TryHandleMouseEvent(mouseArgs);
-            if (args is IKeyEvent keyboardArgs)
-                return TryHandleKeyEvent(keyboardArgs);
-            return false;
+            switch (args) 
+            {
+                case IMouseEvent mouseArgs: return TryHandleMouseEvent(mouseArgs);
+                case IKeyEvent keyboardArgs: return TryHandleKeyEvent(keyboardArgs);
+                default: return false;
+            }
         }
 
         private bool TryHandleKeyEvent(IKeyEvent args)
@@ -52,7 +52,7 @@ namespace Clarity.App.Worlds.Media.Media2D
 
             if (args.ComplexEventType == KeyEventType.TextInput)
             {
-                InputStr(args.Text);
+                headlessEditor.InputString(args.Text);
                 undoRedo.OnChange();
                 return true;
             }
@@ -108,33 +108,21 @@ namespace Clarity.App.Worlds.Media.Media2D
                         }
                     case Key.Enter:
                         {
-                            EnterNewLine();
+                            headlessEditor.InputString("\n");
+                            undoRedo.OnChange();
                             return true;
                         }
                     case Key.Backspace:
                         {
-                            if (cText.SelectionRange.HasValue)
-                            {
-                                EraseRange(cText.SelectionRange.Value);
-                                MoveCursorUpdatingInputStyle(cText.SelectionRange.Value.FirstCharPos);
-                                cText.SelectionStart = null;
-                            }
-                            else
-                            {
-                                var cp = cText.CursorPosition;
-                                EraseSingleChar(ref cp);
-                                MoveCursorUpdatingInputStyle(cp);
-                            }
+                            headlessEditor.Erase();
+                            undoRedo.OnChange();
                             return true;
                         }
                     case Key.Tab:
-                        if (cText.CursorPosition.SpanIndex != 0 || cText.CursorPosition.CharIndex != 0)
-                            return true;
-                        var paraStyle = text.Paragraphs[cText.CursorPosition.ParaIndex].Style;
                         if (args.KeyModifyers == KeyModifyers.None)
-                            paraStyle.TabCount++;
-                        else if (args.KeyModifyers == KeyModifyers.Shift && paraStyle.TabCount > 0)
-                            paraStyle.TabCount--;
+                            headlessEditor.Tab();
+                        else if (args.KeyModifyers == KeyModifyers.Shift)
+                            headlessEditor.ShiftTab();
                         return true;
                 }
             }
@@ -210,184 +198,29 @@ namespace Clarity.App.Worlds.Media.Media2D
             return InputEventProcessResult.ReleaseLock;
         }
 
-        private void InputStr(string str)
-        {
-            var textBox = cText.TextBox;
-            var text = textBox.Text;
-
-            if (cText.SelectionRange.HasValue)
-            {
-                var rangeStartPos = cText.SelectionRange.Value.FirstCharPos;
-                cText.InputTextStyle = text.Paragraphs[rangeStartPos.ParaIndex].Spans[rangeStartPos.SpanIndex].Style.CloneTyped();
-                EraseRange(cText.SelectionRange.Value);
-                cText.CursorPosition = cText.SelectionRange.Value.FirstCharPos;
-                cText.SelectionStart = null;
-            }
-            var span = text.GetSpan(cText.CursorPosition);
-            if (span is IRtPureSpan pureSpan && span.Style.Equals(cText.InputTextStyle))
-            {
-                pureSpan.Text = pureSpan.Text.Substring(0, cText.CursorPosition.CharIndex) +
-                                str +
-                                pureSpan.Text.Substring(cText.CursorPosition.CharIndex);
-                cText.CursorPosition = cText.CursorPosition.WithCharPlus(str.Length);
-            }
-            else
-            {
-                var newSpan = AmFactory.Create<RtPureSpan>();
-                newSpan.Style = cText.InputTextStyle.CloneTyped();
-                newSpan.Text = str;
-                text.SplitSpan(cText.CursorPosition, out var insertSpanIndex);
-                text.GetPara(cText.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
-                cText.CursorPosition = cText.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
-            }
-        }
-
-        private void EnterNewLine()
-        {
-            var text = cText.TextBox.Text;
-
-            text.SplitSpan(cText.CursorPosition, out var nextSpanIndex);
-            var paraIndex = cText.CursorPosition.ParaIndex;
-            var para = text.Paragraphs[paraIndex];
-            var defaultPrevStyle = para.Spans[0].Style;
-            var defaultNextStyle = para.Spans[Math.Min(nextSpanIndex, para.Spans.Count - 1)].Style;
-            var newPara = AmFactory.Create<RtParagraph>();
-            newPara.Style = para.Style.CloneTyped();
-            while (nextSpanIndex < para.Spans.Count)
-            {
-                var span = para.Spans[nextSpanIndex];
-                para.Spans.RemoveAt(nextSpanIndex);
-                newPara.Spans.Add(span);
-            }
-            if (para.Spans.Count == 0)
-            {
-                var newSpan = AmFactory.Create<RtPureSpan>();
-                newSpan.Style = defaultPrevStyle.CloneTyped();
-                newPara.Spans.Add(newSpan);
-            }
-            if (newPara.Spans.Count == 0)
-            {
-                var newSpan = AmFactory.Create<RtPureSpan>();
-                newSpan.Style = defaultNextStyle.CloneTyped();
-                newPara.Spans.Add(newSpan);
-            }
-            text.Paragraphs.Insert(paraIndex + 1, newPara);
-            cText.CursorPosition = new RtPosition(paraIndex + 1, 0, 0);
-        }
-
-        public bool CanCopy() => cText.SelectionRange.HasValue;
+        public bool CanCopy() => headlessEditor.CanCopy();
 
         public void Copy()
         {
-            var range = cText.SelectionRange.Value;
-            var text = cText.TextBox.Text;
-
-            var builder = new StringBuilder();
-            var first = range.FirstCharPos;
-            var last = range.LastCharPos;
-            for (var p = first.ParaIndex; p <= last.ParaIndex; p++)
-            {
-                var para = text.Paragraphs[p];
-                var isFirstPara = p == first.ParaIndex;
-                var isLastPara = p == last.ParaIndex;
-                // todo: copy/paste formulas
-                for (var s = (isFirstPara ? first.SpanIndex : 0); s <= (isLastPara ? last.SpanIndex : para.Spans.Count - 1); s++)
-                {
-                    var span = para.Spans[s];
-                    var isFirstSpan = isFirstPara && s == first.SpanIndex;
-                    var isLastSpan = isLastPara && s == last.SpanIndex;
-                    var firstChar = isFirstSpan ? first.CharIndex : 0;
-                    var lastChar = isLastSpan ? last.CharIndex : span.LayoutTextLength - 1;
-                    builder.Append(span.LayoutText.SafeSubstring(firstChar, lastChar - firstChar));
-                }
-                if (!isLastPara)
-                    builder.AppendLine();
-            }
-            clipboard.Text = builder.ToString();
+            var copiedText = headlessEditor.Copy();
+            if (!string.IsNullOrEmpty(copiedText))
+                clipboard.Text = copiedText;
         }
 
         public void Cut()
         {
-            Copy();
-            EraseRange(cText.SelectionRange.Value);
+            var copiedText = headlessEditor.Cut();
+            if (!string.IsNullOrEmpty(copiedText))
+                clipboard.Text = copiedText;
+            undoRedo.OnChange();
         }
 
         public bool CanPaste() => !string.IsNullOrEmpty(clipboard.Text);
 
         public void Paste()
         {
-            var lines = clipboard.Text.Replace("\r", "").Split('\n');
-            if (lines.Length == 0)
-                return;
-            InputStr(lines.First());
-            foreach (var line in lines.Skip(1))
-            {
-                EnterNewLine();
-                InputStr(line);
-            }
-        }
-
-        private void EraseRange(RtRange range)
-        {
-            var start = range.FirstCharPos;
-            var end = range.LastCharPos;
-            while (end != start)
-                EraseSingleChar(ref end);
-        }
-
-        private void EraseSingleChar(ref RtPosition cp)
-        {
-            var textBox = cText.TextBox;
-            var text = textBox.Text;
-            var para = text.Paragraphs[cp.ParaIndex];
-
-            if (cp.CharIndex > 0)
-            {
-                cp.CharIndex--;
-                var span = para.Spans[cp.SpanIndex];
-                if (span is IRtPureSpan pureSpan)
-                {
-                    pureSpan.Text = pureSpan.Text.SafeSubstring(0, cp.CharIndex) + pureSpan.Text.SafeSubstring(cp.CharIndex + 1);
-                    para.Normalize();
-                }
-                else
-                {
-                    para.Spans.RemoveAt(cp.SpanIndex);
-                }
-            }
-            else if (para.Spans.Take(cp.SpanIndex).Sum(x => x.LayoutTextLength) > 0)
-            {
-                cp.SpanIndex--;
-                while (para.Spans[cp.SpanIndex].LayoutTextLength == 0)
-                    cp.SpanIndex--;
-                var span = para.Spans[cp.SpanIndex];
-                cp.CharIndex = span.LayoutTextLength - 1;
-                if (span is IRtPureSpan pureSpan)
-                {
-                    pureSpan.Text = pureSpan.Text.Substring(0, pureSpan.Text.Length - 1);
-                    para.Normalize();
-                }
-                else
-                {
-                    para.Spans.RemoveAt(cp.SpanIndex);
-                }
-            }
-            else if (cp.ParaIndex > 0)
-            {
-                cp.ParaIndex--;
-                var prevPara = text.Paragraphs[cp.ParaIndex];
-                cp.SpanIndex = prevPara.Spans.Count - 1;
-                var lastSpan = prevPara.Spans[cp.SpanIndex];
-                cp.CharIndex = lastSpan.LayoutTextLength;
-                text.Paragraphs.RemoveAt(cp.ParaIndex + 1);
-                while (para.Spans.Count > 0)
-                {
-                    var span = para.Spans[0];
-                    para.Spans.RemoveAt(0);
-                    prevPara.Spans.Add(span);
-                }
-                text.Paragraphs[cp.ParaIndex].Normalize();
-            }
+            headlessEditor.Paste(clipboard.Text);
+            undoRedo.OnChange();
         }
 
         private void MoveCursorUpdatingInputStyle(RtPosition newValue)
