@@ -24,11 +24,11 @@ namespace Clarity.Engine.Media.Text.Rich
             return TryGetClosestSpanAt(point, out lspan) && lspan.Bounds.ContainsPoint(point);
         }
 
-        public RtPosition GetPosition(Vector2 point, RichTextPositionPreference preference)
+        public int GetPosition(Vector2 point)
         {
             return TryGetClosestSpanAt(point, out var lspan)
                 ? GetPositionInLspan(point, lspan) // todo: use preference
-                : new RtPosition(0, 0, 0);
+                : 0;
         }
 
         private bool TryGetClosestSpanAt(Vector2 point, out RichTextBoxLayoutSpan lspan)
@@ -42,15 +42,12 @@ namespace Clarity.Engine.Media.Text.Rich
             return true;
         }
 
-        private static RtPosition GetPositionInLspan(Vector2 point, RichTextBoxLayoutSpan lspan)
+        private static int GetPositionInLspan(Vector2 point, RichTextBoxLayoutSpan lspan)
         {
-            var lspanOffset = lspan.ClosestIndexFor(point.X);
-            var lspanPos = lspan.TextPosition;
-            lspanPos.CharIndex += lspanOffset;
-            return lspanPos;
+            return lspan.TextAbsPosition + lspan.ClosestIndexFor(point.X);
         }
 
-        public void GetCursorPoint(RtPosition pos, out Vector2 point, out float height)
+        public void GetCursorPoint(int pos, out Vector2 point, out float height)
         {
             GetLspanFor(pos, out var lspan, out _, out var charIndexInLspan);
             var xOffset = charIndexInLspan < lspan.CharOffsets.Count
@@ -60,13 +57,13 @@ namespace Clarity.Engine.Media.Text.Rich
             height = lspan.Bounds.Height;
         }
 
-        public IRtSpanStyle GetSpanStyleAt(RtPosition pos)
+        public IRtSpanStyle GetSpanStyleAt(int pos)
         {
             GetLspanFor(pos, out var lspan, out _, out _);
             return lspan.Style;
         }
 
-        public IEnumerable<AaRectangle2> GetSelectionRectangles(RtRange range)
+        public IEnumerable<AaRectangle2> GetSelectionRectangles(RtAbsRange range)
         {
             GetLspanFor(range.FirstCharPos, out var lspan1, out var lspanIndex1, out var charIndex1);
             GetLspanFor(range.LastCharPos, out var lspan2, out var lspanIndex2, out var charIndex2);
@@ -82,60 +79,30 @@ namespace Clarity.Engine.Media.Text.Rich
                 yield return LayoutSpans[i].Bounds;
             yield return new AaRectangle2(lspan2.Bounds.MinMin, endCorner);
         }
-
-        public bool TryGetRight(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos)
-        {
-            var globalIndex = Text.GetGlobalIndex(pos);
-
-            if (globalIndex == Text.LayoutTextLength)
-            {
-                newPos =  pos;
-                return false;
-            }
-
-            newPos = Text.GetPositionForCharIndex(globalIndex + 1, preference);
-            return true;
-        }
-
-        public bool TryGetLeft(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos)
-        {
-            var globalIndex = Text.GetGlobalIndex(pos);
-
-            if (globalIndex == 0)
-            {
-                newPos = pos;
-                return false;
-            }
-
-            newPos = Text.GetPositionForCharIndex(globalIndex - 1, preference);
-            return true;
-        }
-
-        public bool TryGetDown(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos)
+        
+        public bool TryGetDown(int pos, out int newPos)
         {
             GetCursorPoint(pos, out var point, out _);
             var newPoint = point + new Vector2(0, 2);
-            newPos = GetPosition(newPoint, preference);
+            newPos = GetPosition(newPoint);
             return pos != newPos;
         }
 
-        public bool TryGetUp(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos)
+        public bool TryGetUp(int pos, out int newPos)
         {
             GetLspanFor(pos, out var lspan, out _, out _);
             GetCursorPoint(pos, out var point, out _);
             var newPoint = point - new Vector2(0, lspan.Strip.Height + 2);
-            newPos = GetPosition(newPoint, preference);
+            newPos = GetPosition(newPoint);
             return pos != newPos;
         }
 
-        private void GetLspanFor(RtPosition pos, out RichTextBoxLayoutSpan lspan, out int lspanIndex, out int charIndexInLspan)
+        private void GetLspanFor(int pos, out RichTextBoxLayoutSpan lspan, out int lspanIndex, out int charIndexInLspan)
         {
-            var nextLspanIndex = Enumerable.Range(0, LayoutSpans.Count).Where(x => pos < LayoutSpans[x].TextPosition).FirstOrNull() ?? LayoutSpans.Count;
+            var nextLspanIndex = Enumerable.Range(0, LayoutSpans.Count).Where(x => pos < LayoutSpans[x].TextAbsPosition).FirstOrNull() ?? LayoutSpans.Count;
             lspanIndex = nextLspanIndex - 1;
             lspan = LayoutSpans[lspanIndex];
-            charIndexInLspan = pos.ParaIndex == lspan.TextPosition.ParaIndex && pos.SpanIndex == lspan.TextPosition.SpanIndex
-                ? pos.CharIndex - lspan.TextPosition.CharIndex
-                : lspan.Text.Length;
+            charIndexInLspan = pos - lspan.Text.Length;
         }
     }
 }

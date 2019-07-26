@@ -2,20 +2,20 @@
 {
     public struct RtAbsRange
     {
-        public int FirstCharAbsPos;
-        public int LastCharAbsPos;
+        public int FirstCharPos;
+        public int LastCharPos;
 
         public RtAbsRange(int pos1, int pos2)
         {
             if (pos1 <= pos2)
             {
-                FirstCharAbsPos = pos1;
-                LastCharAbsPos = pos2;
+                FirstCharPos = pos1;
+                LastCharPos = pos2;
             }
             else
             {
-                FirstCharAbsPos = pos2;
-                LastCharAbsPos = pos1;
+                FirstCharPos = pos2;
+                LastCharPos = pos1;
             }
         }
     }

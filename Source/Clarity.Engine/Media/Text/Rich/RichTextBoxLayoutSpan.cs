@@ -15,7 +15,8 @@ namespace Clarity.Engine.Media.Text.Rich
         public AaRectangle2 Bounds;
         public AaRectangle2 Strip;
         public IReadOnlyList<float> CharOffsets;
-        public RtPosition TextPosition;
+        public int TextAbsPosition;
+        public RtPosition TextRelPosition;
         public string Text;
         public IRtSpanStyle Style;
         [CanBeNull]

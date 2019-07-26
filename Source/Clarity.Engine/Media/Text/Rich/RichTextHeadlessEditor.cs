@@ -150,7 +150,7 @@ namespace Clarity.Engine.Media.Text.Rich
             if (SelectionRange.HasValue)
             {
                 var range = SelectionRange.Value;
-                var firstChar = range.FirstCharAbsPos;
+                var firstChar = range.FirstCharPos;
                 EraseRange(range);
                 cursorPos = firstChar;
                 ClearSelection();
@@ -187,7 +187,7 @@ namespace Clarity.Engine.Media.Text.Rich
             {
                 var range = SelectionRange.Value;
                 EraseRange(range);
-                cursorPos = range.FirstCharAbsPos;
+                cursorPos = range.FirstCharPos;
                 ClearSelection();
             }
             else if (cursorPos > 0)
@@ -203,8 +203,8 @@ namespace Clarity.Engine.Media.Text.Rich
             if (SelectionRange.HasValue)
             {
                 var range = SelectionRange.Value;
-                firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
-                lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
+                firstParaIndex = ToRelPos(range.FirstCharPos, out _, out _).ParaIndex;
+                lastParaIndex = ToRelPos(range.LastCharPos, out _, out _).ParaIndex;
             }
             else
             {
@@ -221,8 +221,8 @@ namespace Clarity.Engine.Media.Text.Rich
             if (SelectionRange.HasValue)
             {
                 var range = SelectionRange.Value;
-                firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
-                lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
+                firstParaIndex = ToRelPos(range.FirstCharPos, out _, out _).ParaIndex;
+                lastParaIndex = ToRelPos(range.LastCharPos, out _, out _).ParaIndex;
             }
             else
             {
@@ -247,7 +247,7 @@ namespace Clarity.Engine.Media.Text.Rich
             if (!SelectionRange.HasValue) 
                 return "";
             var range = SelectionRange.Value;
-            return text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
+            return text.LayoutText.Substring(range.FirstCharPos, range.LastCharPos - range.FirstCharPos + 1);
         }
 
         public string Cut()
@@ -255,7 +255,7 @@ namespace Clarity.Engine.Media.Text.Rich
             if (!SelectionRange.HasValue) 
                 return "";
             var range = SelectionRange.Value;
-            var resultText = text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
+            var resultText = text.LayoutText.Substring(range.FirstCharPos, range.LastCharPos - range.FirstCharPos + 1);
             Erase();
             return resultText;
 
@@ -325,11 +325,11 @@ namespace Clarity.Engine.Media.Text.Rich
 
         private void EraseRange(RtAbsRange range)
         {
-            Debug.Assert(range.FirstCharAbsPos >= 0, "range.FirstCharAbsPos >= 0");
-            Debug.Assert(range.LastCharAbsPos < text.LayoutTextLength);
+            Debug.Assert(range.FirstCharPos >= 0, "range.FirstCharPos >= 0");
+            Debug.Assert(range.LastCharPos < text.LayoutTextLength);
 
-            var lastCharAbsPos = range.LastCharAbsPos;
-            while (lastCharAbsPos > range.FirstCharAbsPos)
+            var lastCharAbsPos = range.LastCharPos;
+            while (lastCharAbsPos > range.FirstCharPos)
             {
                 EraseChar(lastCharAbsPos);
                 lastCharAbsPos--;

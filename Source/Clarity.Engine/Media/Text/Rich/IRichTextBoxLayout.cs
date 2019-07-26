@@ -10,17 +10,11 @@ namespace Clarity.Engine.Media.Text.Rich
         IReadOnlyList<RichTextBoxLayoutSpan> ExternalLayoutSpans { get; }
         bool TryGetSpanAt(Vector2 point, out RichTextBoxLayoutSpan lspan);
         int GetPosition(Vector2 point);
-        RtPosition GetPosition(Vector2 point, RichTextPositionPreference preference);
-        void GetCursorPoint(RtPosition pos, out Vector2 point, out float height);
-        IRtSpanStyle GetSpanStyleAt(RtPosition pos);
-        IEnumerable<AaRectangle2> GetSelectionRectangles(RtRange range);
+        void GetCursorPoint(int pos, out Vector2 point, out float height);
+        IRtSpanStyle GetSpanStyleAt(int pos);
+        IEnumerable<AaRectangle2> GetSelectionRectangles(RtAbsRange range);
 
         bool TryGetDown(int pos, out int newPos);
         bool TryGetUp(int pos, out int newPos);
-
-        bool TryGetRight(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos);
-        bool TryGetLeft(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos);
-        bool TryGetDown(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos);
-        bool TryGetUp(RtPosition pos, RichTextPositionPreference preference, out RtPosition newPos);
     }
 }
