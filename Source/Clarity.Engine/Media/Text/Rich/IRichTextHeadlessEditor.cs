@@ -2,8 +2,14 @@
 {
     public interface IRichTextHeadlessEditor
     {
-        int CursorAbsPosition { get; set; }
-        RtAbsRange? SelectionRange { get; set; }
+        int CursorPos { get; }
+        int? SelectionStartPos { get; }
+        RtAbsRange? SelectionRange { get; }
+
+        void MoveCursor(int newPos, bool selecting);
+        void MoveCursorSafe(int newPos, bool selecting);
+        void ClearSelection();
+
         void InputString(string str);
         void Erase();
         void Tab();

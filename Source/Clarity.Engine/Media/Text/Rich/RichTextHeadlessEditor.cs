@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Linq;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
+using Clarity.Common.Numericals;
 using Clarity.Engine.Utilities;
 
 namespace Clarity.Engine.Media.Text.Rich
@@ -13,8 +14,8 @@ namespace Clarity.Engine.Media.Text.Rich
         private readonly IRtParagraphStyle defaultParaStyle;
         private readonly IRtSpanStyle defaultSpanStyle;
 
-        private int cursorAbsPos;
-        private RtAbsRange? selectionRange;
+        private int cursorPos;
+        private int? selectionStartPos;
 
         public RichTextHeadlessEditor(IRichText text)
         {
@@ -24,26 +25,33 @@ namespace Clarity.Engine.Media.Text.Rich
             NormalizeText(text, defaultParaStyle, defaultSpanStyle);
         }
 
-        public int CursorAbsPosition
+        public int CursorPos => cursorPos;
+        public int? SelectionStartPos => selectionStartPos;
+
+        public RtAbsRange? SelectionRange => selectionStartPos.HasValue 
+            ? new RtAbsRange(selectionStartPos.Value, cursorPos) 
+            : (RtAbsRange?)null;
+
+        public void MoveCursor(int newPos, bool selecting)
         {
-            get => cursorAbsPos;
-            set
-            {
-                if (value < 0 || value > text.LayoutTextLength)
-                    throw new ArgumentOutOfRangeException();
-                cursorAbsPos = value;
-            }
+            if (newPos < 0 || newPos > text.LayoutTextLength)
+                throw new ArgumentOutOfRangeException();
+            selectionStartPos = selecting
+                ? selectionStartPos ?? cursorPos
+                : (int?)null;
+            cursorPos = newPos;
+            if (cursorPos == selectionStartPos)
+                selectionStartPos = null;
         }
 
-        public RtAbsRange? SelectionRange
+        public void MoveCursorSafe(int newPos, bool selecting)
         {
-            get => selectionRange;
-            set
-            {
-                if (value.HasValue && (value.Value.FirstCharAbsPos < 0 || value.Value.LastCharAbsPos >= text.LayoutTextLength))
-                    throw new ArgumentOutOfRangeException();
-                selectionRange = value;
-            }
+            MoveCursor(MathHelper.Clamp(newPos, 0, text.LayoutTextLength), selecting);
+        }
+
+        public void ClearSelection()
+        {
+            selectionStartPos = null;
         }
 
         private RtPosition ToRelPos(int absPos, out IRtParagraph para, out IRtSpan span)
@@ -74,12 +82,6 @@ namespace Clarity.Engine.Media.Text.Rich
             }
 
             throw new ArgumentOutOfRangeException();
-        }
-
-        private void GetParaAndSpan(RtPosition pos, out IRtParagraph para, out IRtSpan span)
-        {
-            para = text.Paragraphs[pos.ParaIndex];
-            span = para.Spans[pos.SpanIndex];
         }
 
         #region Normalization
@@ -145,12 +147,13 @@ namespace Clarity.Engine.Media.Text.Rich
         #region Public Methods
         public void InputString(string str)
         {
-            if (selectionRange.HasValue)
+            if (SelectionRange.HasValue)
             {
-                var firstChar = selectionRange.Value.FirstCharAbsPos;
-                EraseRange(selectionRange.Value);
-                cursorAbsPos = firstChar;
-                selectionRange = null;
+                var range = SelectionRange.Value;
+                var firstChar = range.FirstCharAbsPos;
+                EraseRange(range);
+                cursorPos = firstChar;
+                ClearSelection();
             }
 
             var untokenizedStr = str;
@@ -159,20 +162,20 @@ namespace Clarity.Engine.Media.Text.Rich
                 var nextNewLineIndex = untokenizedStr.IndexOf('\n');
                 if (nextNewLineIndex == 0)
                 {
-                    InsertNewLineAt(cursorAbsPos);
-                    cursorAbsPos++;
+                    InsertNewLineAt(cursorPos);
+                    cursorPos++;
                     untokenizedStr = untokenizedStr.Substring(1);
                 }
                 else if (nextNewLineIndex != -1)
                 {
-                    InsertStringAt(cursorAbsPos, untokenizedStr.Substring(0, nextNewLineIndex));
-                    cursorAbsPos += nextNewLineIndex;
+                    InsertStringAt(cursorPos, untokenizedStr.Substring(0, nextNewLineIndex));
+                    cursorPos += nextNewLineIndex;
                     untokenizedStr = untokenizedStr.Substring(nextNewLineIndex);
                 }
                 else
                 {
-                    InsertStringAt(cursorAbsPos, untokenizedStr);
-                    cursorAbsPos += untokenizedStr.Length;
+                    InsertStringAt(cursorPos, untokenizedStr);
+                    cursorPos += untokenizedStr.Length;
                     untokenizedStr = "";
                 }
             }
@@ -180,32 +183,32 @@ namespace Clarity.Engine.Media.Text.Rich
 
         public void Erase()
         {
-            if (selectionRange.HasValue)
+            if (SelectionRange.HasValue)
             {
-                var range = selectionRange.Value;
+                var range = SelectionRange.Value;
                 EraseRange(range);
-                cursorAbsPos = range.FirstCharAbsPos;
-                selectionRange = null;
+                cursorPos = range.FirstCharAbsPos;
+                ClearSelection();
             }
-            else if (cursorAbsPos > 0)
+            else if (cursorPos > 0)
             {
-                EraseChar(cursorAbsPos - 1);
-                cursorAbsPos--;
+                EraseChar(cursorPos - 1);
+                cursorPos--;
             }
         }
 
         public void Tab()
         {
             int firstParaIndex, lastParaIndex;
-            if (selectionRange.HasValue)
+            if (SelectionRange.HasValue)
             {
-                var range = selectionRange.Value;
+                var range = SelectionRange.Value;
                 firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
                 lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
             }
             else
             {
-                firstParaIndex = lastParaIndex = ToRelPos(cursorAbsPos, out _, out _).ParaIndex;
+                firstParaIndex = lastParaIndex = ToRelPos(cursorPos, out _, out _).ParaIndex;
             }
 
             for (var i = firstParaIndex; i <= lastParaIndex; i++)
@@ -215,15 +218,15 @@ namespace Clarity.Engine.Media.Text.Rich
         public void ShiftTab()
         {
             int firstParaIndex, lastParaIndex;
-            if (selectionRange.HasValue)
+            if (SelectionRange.HasValue)
             {
-                var range = selectionRange.Value;
+                var range = SelectionRange.Value;
                 firstParaIndex = ToRelPos(range.FirstCharAbsPos, out _, out _).ParaIndex;
                 lastParaIndex = ToRelPos(range.LastCharAbsPos, out _, out _).ParaIndex;
             }
             else
             {
-                firstParaIndex = lastParaIndex = ToRelPos(cursorAbsPos, out _, out _).ParaIndex;
+                firstParaIndex = lastParaIndex = ToRelPos(cursorPos, out _, out _).ParaIndex;
             }
 
             for (var i = firstParaIndex; i <= lastParaIndex; i++)
@@ -236,22 +239,22 @@ namespace Clarity.Engine.Media.Text.Rich
 
         public bool CanCopy()
         {
-            return selectionRange.HasValue;
+            return SelectionRange.HasValue;
         }
 
         public string Copy()
         {
-            if (!selectionRange.HasValue) 
+            if (!SelectionRange.HasValue) 
                 return "";
-            var range = selectionRange.Value;
+            var range = SelectionRange.Value;
             return text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
         }
 
         public string Cut()
         {
-            if (!selectionRange.HasValue) 
+            if (!SelectionRange.HasValue) 
                 return "";
-            var range = selectionRange.Value;
+            var range = SelectionRange.Value;
             var resultText = text.LayoutText.Substring(range.FirstCharAbsPos, range.LastCharAbsPos - range.FirstCharAbsPos + 1);
             Erase();
             return resultText;

@@ -1,7 +1,6 @@
 ﻿using Clarity.App.Worlds.Helpers;
 using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.UndoRedo;
-using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Engine.Gui;
 using Clarity.Engine.Interaction;
@@ -47,7 +46,6 @@ namespace Clarity.App.Worlds.Media.Media2D
                 return false;
 
             var textBox = cText.TextBox;
-            var text = textBox.Text;
             var layout = textBox.Layout;
 
             if (args.ComplexEventType == KeyEventType.TextInput)
@@ -63,47 +61,26 @@ namespace Clarity.App.Worlds.Media.Media2D
                 {
                     case Key.Left:
                         {
-                            if (layout.TryGetLeft(cText.CursorPosition, RichTextPositionPreference.ClosestWord, out var newPos))
-                            {
-                                cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
-                                    ? cText.SelectionStart ?? cText.CursorPosition 
-                                    : (RtPosition?)null;
-                                MoveCursorUpdatingInputStyle(newPos);
-                            }
-                            
+                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos - 1, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
                             return true;
                         }
                     case Key.Right:
                         {
-                            if (layout.TryGetRight(cText.CursorPosition, RichTextPositionPreference.ClosestWord, out var newPos))
-                            {
-                                cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
-                                    ? cText.SelectionStart ?? cText.CursorPosition 
-                                    : (RtPosition?)null;
-                                MoveCursorUpdatingInputStyle(newPos);
-                            }
+                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos + 1, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
                             return true;
                         }
                     case Key.Up:
                         {
-                            if (layout.TryGetUp(cText.CursorPosition, RichTextPositionPreference.ClosestWord, out var newPos))
-                            {
-                                cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
-                                    ? cText.SelectionStart ?? cText.CursorPosition 
-                                    : (RtPosition?)null;
-                                MoveCursorUpdatingInputStyle(newPos);
-                            }
+                            if (!layout.TryGetUp(headlessEditor.CursorPos, out var newPos))
+                                newPos = headlessEditor.CursorPos;
+                            headlessEditor.MoveCursor(newPos, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
                             return true;
                         }
                     case Key.Down:
                         {
-                            if (layout.TryGetDown(cText.CursorPosition, RichTextPositionPreference.ClosestWord, out var newPos))
-                            {
-                                cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
-                                    ? cText.SelectionStart ?? cText.CursorPosition 
-                                    : (RtPosition?)null;
-                                MoveCursorUpdatingInputStyle(newPos);
-                            }
+                            if (!layout.TryGetDown(headlessEditor.CursorPos, out var newPos))
+                                newPos = headlessEditor.CursorPos;
+                            headlessEditor.MoveCursor(newPos, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
                             return true;
                         }
                     case Key.Enter:
@@ -155,10 +132,8 @@ namespace Clarity.App.Worlds.Media.Media2D
 
             if (args.IsLeftDownEvent())
             {
-                cText.SelectionStart = args.KeyModifyers.HasFlag(KeyModifyers.Shift) 
-                    ? cText.SelectionStart ?? cText.CursorPosition 
-                    : (RtPosition?)null;
-                MoveCursorUpdatingInputStyle(layout.GetPosition(textBoxPoint, RichTextPositionPreference.ClosestWord));
+                var newPos = layout.GetPosition(textBoxPoint);
+                headlessEditor.MoveCursor(newPos, args.KeyModifyers == KeyModifyers.Shift);
                 inputHandler.AddLock(new InputLock<object>(null, MouseDownLockProc));
                 return true;
             }
@@ -186,19 +161,17 @@ namespace Clarity.App.Worlds.Media.Media2D
                 var textBoxPoint = new Vector2(textBoxPointYswapped.X, -textBoxPointYswapped.Y);
                 var layout = textBox.Layout;
 
-                cText.SelectionStart = cText.SelectionStart ?? cText.CursorPosition;
-                var preference = cText.CursorPosition == cText.SelectionStart 
-                    ? RichTextPositionPreference.ClosestWord 
-                    : cText.CursorPosition > cText.SelectionStart 
-                        ? RichTextPositionPreference.PreviousSpan 
-                        : RichTextPositionPreference.NextSpan;
-                MoveCursorUpdatingInputStyle(layout.GetPosition(textBoxPoint, preference));
+                var newPos = layout.GetPosition(textBoxPoint);
+                headlessEditor.MoveCursor(newPos, true);
                 return InputEventProcessResult.StopPropagating;
             }
             return InputEventProcessResult.ReleaseLock;
         }
 
-        public bool CanCopy() => headlessEditor.CanCopy();
+        public bool CanCopy()
+        {
+            return headlessEditor.CanCopy();
+        }
 
         public void Copy()
         {
@@ -215,18 +188,15 @@ namespace Clarity.App.Worlds.Media.Media2D
             undoRedo.OnChange();
         }
 
-        public bool CanPaste() => !string.IsNullOrEmpty(clipboard.Text);
+        public bool CanPaste()
+        {
+            return !string.IsNullOrEmpty(clipboard.Text);
+        }
 
         public void Paste()
         {
             headlessEditor.Paste(clipboard.Text);
             undoRedo.OnChange();
-        }
-
-        private void MoveCursorUpdatingInputStyle(RtPosition newValue)
-        {
-            cText.CursorPosition = newValue;
-            cText.InputTextStyle = cText.TextBox.Text.Paragraphs[newValue.ParaIndex].Spans[newValue.SpanIndex].Style.CloneTyped();
         }
     }
 }
