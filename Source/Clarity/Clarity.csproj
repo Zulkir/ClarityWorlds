@@ -95,6 +95,10 @@
       <Project>{9d038a15-a83e-4c71-80a9-916ce16c705a}</Project>
       <Name>Clarity.Ext.Simulation.Fluids</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Clarity.Ext.Simulation.SpherePacking\Clarity.Ext.Simulation.SpherePacking.csproj">
+      <Project>{93eaddf4-9d30-43e4-9158-f42075055c34}</Project>
+      <Name>Clarity.Ext.Simulation.SpherePacking</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Clarity.Ext.StoryLayout.Building\Clarity.Ext.StoryLayout.Building.csproj">
       <Project>{c0008e26-6102-4f8e-a3b3-c9737892f19b}</Project>
       <Name>Clarity.Ext.StoryLayout.Building</Name>
