@@ -13,6 +13,7 @@ namespace Clarity.Engine.Media.Text.Rich
         private readonly IRichText text;
         private readonly IRtParagraphStyle defaultParaStyle;
         private readonly IRtSpanStyle defaultSpanStyle;
+        private readonly IRtSpanStyle inputSpanStyle;
 
         private int cursorPos;
         private int? selectionStartPos;
@@ -22,7 +23,9 @@ namespace Clarity.Engine.Media.Text.Rich
             this.text = text;
             defaultParaStyle = AmFactory.Create<RtParagraphStyle>();
             defaultSpanStyle = AmFactory.Create<RtSpanStyle>();
+            inputSpanStyle = AmFactory.Create<RtSpanStyle>();
             NormalizeText(text, defaultParaStyle, defaultSpanStyle);
+            MoveCursor(0, false);
         }
 
         public IRichText Text => text;
@@ -30,7 +33,7 @@ namespace Clarity.Engine.Media.Text.Rich
         public int? SelectionStartPos => selectionStartPos;
 
         public RtAbsRange? SelectionRange => selectionStartPos.HasValue 
-            ? new RtAbsRange(selectionStartPos.Value, cursorPos) 
+            ? new RtAbsRange(Math.Min(selectionStartPos.Value, cursorPos), Math.Max(selectionStartPos.Value, cursorPos) - 1) 
             : (RtAbsRange?)null;
 
         public void MoveCursor(int newPos, bool selecting)
@@ -43,6 +46,8 @@ namespace Clarity.Engine.Media.Text.Rich
             cursorPos = newPos;
             if (cursorPos == selectionStartPos)
                 selectionStartPos = null;
+            ToRelPos(cursorPos, out _, out var span);
+            inputSpanStyle.CopyFrom(span.Style);
         }
 
         public void MoveCursorSafe(int newPos, bool selecting)
@@ -67,7 +72,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 for (var spanIndex = 0; spanIndex < para.Spans.Count; spanIndex++)
                 {
                     span = para.Spans[spanIndex];
-                    if (span.LayoutTextLength > absPos)
+                    if (span.LayoutTextLength > toSkip)
                         return new RtPosition(paraIndex, spanIndex, toSkip);
                     toSkip -= span.LayoutTextLength;
                 }
@@ -136,11 +141,20 @@ namespace Clarity.Engine.Media.Text.Rich
             return para;
         }
 
-        private static IRtPureSpan CreatePureSpan(IRtSpanStyle styleProto)
+        private static IRtPureSpan CreatePureSpan(IRtSpanStyle styleProto, string initialText = "")
         {
             var span = AmFactory.Create<RtPureSpan>();
             span.Style = styleProto.CloneTyped();
-            span.Text = "";
+            span.Text = initialText;
+            return span;
+        }
+
+        private static IRtEmbeddingSpan CreateEmbeddingSpan(IRtSpanStyle styleProto, string embeddingType, string initialSource = "")
+        {
+            var span = AmFactory.Create<RtEmbeddingSpan>();
+            span.Style = styleProto.CloneTyped();
+            span.EmbeddingType = embeddingType;
+            span.SourceCode = initialSource;
             return span;
         }
         #endregion
@@ -169,17 +183,33 @@ namespace Clarity.Engine.Media.Text.Rich
                 }
                 else if (nextNewLineIndex != -1)
                 {
-                    InsertStringAt(cursorPos, untokenizedStr.Substring(0, nextNewLineIndex));
+                    InsertSpanAt(cursorPos, CreatePureSpan(inputSpanStyle, untokenizedStr.Substring(0, nextNewLineIndex)));
                     cursorPos += nextNewLineIndex;
                     untokenizedStr = untokenizedStr.Substring(nextNewLineIndex);
                 }
                 else
                 {
-                    InsertStringAt(cursorPos, untokenizedStr);
+                    InsertSpanAt(cursorPos, CreatePureSpan(inputSpanStyle, untokenizedStr));
                     cursorPos += untokenizedStr.Length;
                     untokenizedStr = "";
                 }
             }
+        }
+
+        public void InsertEmbedding(string embeddingType, string str)
+        {
+            if (SelectionRange.HasValue)
+            {
+                var range = SelectionRange.Value;
+                var firstChar = range.FirstCharPos;
+                EraseRange(range);
+                cursorPos = firstChar;
+                ClearSelection();
+            }
+
+            var newSpan = CreateEmbeddingSpan(inputSpanStyle, embeddingType, str);
+            InsertSpanAt(cursorPos, newSpan);
+            cursorPos += newSpan.LayoutTextLength;
         }
 
         public void Erase()
@@ -266,31 +296,94 @@ namespace Clarity.Engine.Media.Text.Rich
         {
             InputString(str);
         }
-        #endregion
 
-        private void InsertStringAt(int absPos, string str)
+        public bool TryGetParaStyleProp<T>(Func<IRtParagraphStyle, T> getProp, out T prop)
+            where T : IEquatable<T>
         {
-            Debug.Assert(!str.Contains("\n"));
-
-            var relPos = ToRelPos(absPos, out var para, out var span);
-            if (span is IRtPureSpan pureSpan)
+            if (SelectionRange.HasValue)
             {
-                pureSpan.Text = pureSpan.Text.SafeSubstring(0, relPos.CharIndex) +
-                                str +
-                                pureSpan.Text.SafeSubstring(relPos.CharIndex);
+                var range = SelectionRange.Value;
+                var startRelPos = ToRelPos(range.FirstCharPos, out _, out _);
+                var endRelPos = ToRelPos(range.LastCharPos, out _, out _);
+                prop = getProp(text.Paragraphs[startRelPos.ParaIndex].Style);
+                for (var i = startRelPos.ParaIndex + 1; i <= endRelPos.ParaIndex; i++)
+                    if (!getProp(text.Paragraphs[i].Style).Equals(prop))
+                        return false;
+                return true;
             }
             else
             {
-                var newSpan = CreatePureSpan(span.Style);
-                newSpan.Text = str;
-                if (relPos.CharIndex == 0)
-                    para.Spans.Insert(relPos.SpanIndex, newSpan);
-                else if (relPos.CharIndex == span.LayoutTextLength)
-                    para.Spans.Insert(relPos.SpanIndex + 1, newSpan);
-                else
-                    throw new InvalidOperationException("Trying to insert a string in the middle of a non-pure span");
-                Normalize();
+                ToRelPos(cursorPos, out var para, out _);
+                prop = getProp(para.Style);
+                return true;
             }
+        }
+
+        public bool TryGetSpanStyleProp<T>(Func<IRtSpanStyle, T> getProp, out T prop)
+            where T : IEquatable<T>
+        {
+            if (SelectionRange.HasValue)
+            {
+                var range = SelectionRange.Value;
+                var startRelPos = ToRelPos(range.FirstCharPos, out _, out _);
+                var endRelPos = ToRelPos(range.LastCharPos, out _, out _);
+                prop = getProp(text.Paragraphs[startRelPos.ParaIndex].Spans[startRelPos.SpanIndex].Style);
+                foreach (var span in text.EnumerateSpans(new RtRange(startRelPos, endRelPos)).Skip(1))
+                    if (!getProp(span.Style).Equals(prop))
+                        return false;
+                return true;
+            }
+            else
+            {
+                prop = getProp(inputSpanStyle);
+                return true;
+            }
+        }
+
+        public void SetParaStyleProp<T>(T prop, Action<IRtParagraphStyle, T> setProp)
+        {
+            if (SelectionRange.HasValue)
+            {
+                var range = SelectionRange.Value;
+                var startRelPos = ToRelPos(range.FirstCharPos, out _, out _);
+                var endRelPos = ToRelPos(range.LastCharPos, out _, out _);
+                for (var i = startRelPos.ParaIndex; i <= endRelPos.ParaIndex; i++)
+                    setProp(text.Paragraphs[i].Style, prop);
+            }
+            else
+            {
+                ToRelPos(cursorPos, out var para, out _);
+                setProp(para.Style, prop);
+            }
+        }
+
+        public void SetSpanStyleProp<T>(T prop, Action<IRtSpanStyle, T> setProp)
+        {
+            if (SelectionRange.HasValue)
+            {
+                var range = SelectionRange.Value;
+                var startRelPos = ToRelPos(range.FirstCharPos, out _, out _);
+                text.SplitSpan(startRelPos, out _);
+                var endRelPos = ToRelPos(range.LastCharPos + 1, out _, out _);
+                text.SplitSpan(endRelPos, out _);
+                var newStartRelPos = ToRelPos(range.FirstCharPos, out _, out _);
+                var newEndRelPos = ToRelPos(range.LastCharPos, out _, out _);
+                foreach (var span in text.EnumerateSpans(new RtRange(newStartRelPos, newEndRelPos)))
+                    setProp(span.Style, prop);
+            }
+            else
+            {
+                setProp(inputSpanStyle, prop);
+            }
+        }
+        #endregion
+
+        private void InsertSpanAt(int absPos, IRtSpan span)
+        {
+            var relPos = ToRelPos(absPos, out var para, out _);
+            text.SplitSpan(relPos, out var nextSpanIndex);
+            para.Spans.Insert(nextSpanIndex, span);
+            Normalize();
         }
 
         private void InsertNewLineAt(int absPos)
@@ -330,7 +423,7 @@ namespace Clarity.Engine.Media.Text.Rich
             Debug.Assert(range.LastCharPos < text.LayoutTextLength);
 
             var lastCharAbsPos = range.LastCharPos;
-            while (lastCharAbsPos > range.FirstCharPos)
+            while (lastCharAbsPos >= range.FirstCharPos)
             {
                 EraseChar(lastCharAbsPos);
                 lastCharAbsPos--;

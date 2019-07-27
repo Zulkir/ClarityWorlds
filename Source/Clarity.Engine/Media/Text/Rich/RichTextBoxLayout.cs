@@ -66,7 +66,7 @@ namespace Clarity.Engine.Media.Text.Rich
         public IEnumerable<AaRectangle2> GetSelectionRectangles(RtAbsRange range)
         {
             GetLspanFor(range.FirstCharPos, out var lspan1, out var lspanIndex1, out var charIndex1);
-            GetLspanFor(range.LastCharPos, out var lspan2, out var lspanIndex2, out var charIndex2);
+            GetLspanFor(range.LastCharPos + 1, out var lspan2, out var lspanIndex2, out var charIndex2);
             var startCorner = lspan1.Bounds.MinMin + new Vector2(lspan1.GetCharOffset(charIndex1), 0);
             var endCorner = lspan2.Bounds.MinMax + new Vector2(lspan2.GetCharOffset(charIndex2), 0);
             if (lspanIndex1 == lspanIndex2)
@@ -102,7 +102,7 @@ namespace Clarity.Engine.Media.Text.Rich
             var nextLspanIndex = Enumerable.Range(0, LayoutSpans.Count).Where(x => pos < LayoutSpans[x].TextAbsPosition).FirstOrNull() ?? LayoutSpans.Count;
             lspanIndex = nextLspanIndex - 1;
             lspan = LayoutSpans[lspanIndex];
-            charIndexInLspan = pos - lspan.Text.Length;
+            charIndexInLspan = pos - lspan.TextAbsPosition;
         }
     }
 }

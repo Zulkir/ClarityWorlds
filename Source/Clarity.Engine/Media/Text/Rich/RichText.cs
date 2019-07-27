@@ -81,6 +81,7 @@ namespace Clarity.Engine.Media.Text.Rich
 
         public RtRange SplitRange(RtRange range)
         {
+            // todo: bug: need +1 on the end?
             var firstGlobalIndex = GetGlobalIndex(range.FirstCharPos);
             var lastGlobalIndex = GetGlobalIndex(range.LastCharPos);
 

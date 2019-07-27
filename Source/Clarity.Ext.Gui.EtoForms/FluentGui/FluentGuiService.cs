@@ -10,7 +10,6 @@ using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
-using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Media.Images;
@@ -272,60 +271,40 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             #endregion
 
             #region Paragraph Properties
-            private T GetParagraphProperty<T>(Func<IRtParagraph, T> getProp)
+            private T GetParagraphProperty<T>(Func<IRtParagraphStyle, T> getProp)
                 where T : IEquatable<T>
             {
                 var component = getComponent();
-                if (component == null)
-                    return default(T);
-                if (component.SelectionRange.HasValue)
-                {
-                    return component.TextBox.Text.TryGetCommonParagraphProperty(component.SelectionRange.Value, getProp, out var prop)
-                        ? prop
-                        : default(T);
-                }
-                else
-                {
-                    var para = component.TextBox.Text.Paragraphs[component.CursorPosition.ParaIndex];
-                    return getProp(para);
-                }
+                return component != null && component.HeadlessEditor.TryGetParaStyleProp(getProp, out var prop) ? prop : default(T);
             }
 
-            private void SetParagraphProperty<T>(T value, Action<IRtParagraph, T> setProp)
+            private void SetParagraphProperty<T>(T value, Action<IRtParagraphStyle, T> setProp)
             {
-                var component = getComponent();
-                if (component == null)
-                    return;
-                var range = component.SelectionRange;
-                if (range.HasValue)
-                    for (int i = range.Value.FirstCharPos.ParaIndex; i <= range.Value.LastCharPos.ParaIndex; i++)
-                        setProp(component.TextBox.Text.Paragraphs[i], value);
-                else
-                    setProp(component.TextBox.Text.Paragraphs[component.CursorPosition.ParaIndex], value);
+                getComponent()?.HeadlessEditor.SetParaStyleProp(value, setProp);
             }
 
             public RtParagraphAlignment Alignment
             {
-                get => (RtParagraphAlignment)GetParagraphProperty(p => (int)p.Style.Alignment);
-                set => SetParagraphProperty(value, (p, v) => p.Style.Alignment = v);
+                get => (RtParagraphAlignment)GetParagraphProperty(p => (int)p.Alignment);
+                set => SetParagraphProperty(value, (p, v) => p.Alignment = v);
             }
 
             public RtParagraphDirection Direction
             {
-                get => (RtParagraphDirection)GetParagraphProperty(p => (int)p.Style.Direction);
-                set => SetParagraphProperty(value, (p, v) => p.Style.Direction = v);
+                get => (RtParagraphDirection)GetParagraphProperty(p => (int)p.Direction);
+                set => SetParagraphProperty(value, (p, v) => p.Direction = v);
             }
 
             public double Tabs
             {
-                get => GetParagraphProperty(p => p.Style.TabCount);
-                set => SetParagraphProperty(value, (p, v) => p.Style.TabCount = (int)Math.Round(v));
+                get => GetParagraphProperty(p => p.TabCount);
+                set => SetParagraphProperty(value, (p, v) => p.TabCount = (int)Math.Round(v));
             }
 
             public double MarginUp
             {
-                get => GetParagraphProperty(p => p.Style.MarginUp);
-                set => SetParagraphProperty(value, (p, v) => p.Style.MarginUp = (int)Math.Round(v));
+                get => GetParagraphProperty(p => p.MarginUp);
+                set => SetParagraphProperty(value, (p, v) => p.MarginUp = (int)Math.Round(v));
             }
             #endregion
 
@@ -334,58 +313,19 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 where T : IEquatable<T>
             {
                 var component = getComponent();
-                if (component == null)
-                    return default(T);
-                if (component.SelectionRange.HasValue)
-                {
-                    return component.TextBox.Text.TryGetCommonSpanProperty(component.SelectionRange.Value, x => getProp(x.Style), out var prop)
-                        ? prop
-                        : firstSpanAsDefault
-                            ? getProp(component.TextBox.Text.GetSpan(component.SelectionRange.Value.FirstCharPos).Style)
-                            : default(T);
-                }
-                else
-                {
-                    return getProp(component.InputTextStyle);
-                }
+                return component != null && component.HeadlessEditor.TryGetSpanStyleProp(getProp, out var prop) ? prop : default(T);
             }
 
             private T? GetSpanStylePropertyNullable<T>(Func<IRtSpanStyle, T> getProp, bool firstSpanAsDefault = false)
                 where T : struct, IEquatable<T>
             {
                 var component = getComponent();
-                if (component == null)
-                    return null;
-                if (component.SelectionRange.HasValue)
-                {
-                    return component.TextBox.Text.TryGetCommonSpanProperty(component.SelectionRange.Value, x => getProp(x.Style), out var prop)
-                        ? prop
-                        : firstSpanAsDefault 
-                            ? getProp(component.TextBox.Text.GetSpan(component.SelectionRange.Value.FirstCharPos).Style)
-                            : (T?)null;
-                }
-                else
-                {
-                    return getProp(component.InputTextStyle);
-                }
+                return component != null && component.HeadlessEditor.TryGetSpanStyleProp(getProp, out var prop) ? prop : default(T?);
             }
 
             private void SetSpanStyleProperty<T>(T value, Action<IRtSpanStyle, T> setProp)
             {
-                var component = getComponent();
-                if (component == null)
-                    return;
-                var oldSpanRange = component.SelectionRange;
-                if (oldSpanRange.HasValue)
-                {
-                    var newSpanRange = component.TextBox.Text.SplitRange(oldSpanRange.Value);
-                    foreach (var span in component.TextBox.Text.EnumerateSpans(newSpanRange))
-                        setProp(span.Style, value);
-                }
-                else
-                {
-                    setProp(component.InputTextStyle, value);
-                }
+                getComponent()?.HeadlessEditor.SetSpanStyleProp(value, setProp);
             }
 
             private static void SetFontDecoration(FontDecoration flag, IRtSpanStyle spanStyle, bool value)
@@ -447,16 +387,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
             public void InsertFormula()
             {
-                var component = getComponent();
-                if (component == null)
-                    return;
-                var newSpan = AmFactory.Create<RtEmbeddingSpan>();
-                newSpan.Style = component.InputTextStyle.CloneTyped();
-                newSpan.SourceCode = @"y=\frac{x^2}{2}+\alpha";
-                newSpan.EmbeddingType = "latex";
-                component.TextBox.Text.SplitSpan(component.CursorPosition, out var insertSpanIndex);
-                component.TextBox.Text.GetPara(component.CursorPosition).Spans.Insert(insertSpanIndex, newSpan);
-                component.CursorPosition = component.CursorPosition.WithSpan(insertSpanIndex).WithChar(newSpan.LayoutTextLength);
+                getComponent()?.HeadlessEditor.InsertEmbedding("latex", @"y=\frac{x^2}{2}+\alpha");
             }
         }
 

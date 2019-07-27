@@ -141,7 +141,6 @@
     <Compile Include="Props\PropsGuiGroupHighlightOnMouse.cs" />
     <Compile Include="Props\PropsGuiGroupMovieRectangle.cs" />
     <Compile Include="Props\PropsGuiGroupRectangleEntity.cs" />
-    <Compile Include="Props\PropsGuiGroupRichTextEntity.cs" />
     <Compile Include="Props\PropsGuiGroupScene.cs" />
     <Compile Include="Props\PropsGuiGroupGeoModelEntity.cs" />
     <Compile Include="Props\PropsGuiGroupStoryComponent.cs" />
