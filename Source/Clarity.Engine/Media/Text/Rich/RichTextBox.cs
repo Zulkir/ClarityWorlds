@@ -33,6 +33,7 @@ namespace Clarity.Engine.Media.Text.Rich
         public ICacheContainer CacheContainer { get; }
 
         public static float DefaultPixelScaling { get; } = 512;
+        public static float DraggablePaddingInPixels { get; } = 10;
 
         protected RichTextBox(IRichTextBoxLayoutBuilder layoutBuilder)
         {

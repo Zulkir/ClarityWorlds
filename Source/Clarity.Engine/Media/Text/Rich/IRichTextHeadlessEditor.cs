@@ -2,6 +2,8 @@
 {
     public interface IRichTextHeadlessEditor
     {
+        IRichText Text { get; }
+
         int CursorPos { get; }
         int? SelectionStartPos { get; }
         RtAbsRange? SelectionRange { get; }

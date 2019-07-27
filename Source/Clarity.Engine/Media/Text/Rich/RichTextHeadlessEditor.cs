@@ -25,6 +25,7 @@ namespace Clarity.Engine.Media.Text.Rich
             NormalizeText(text, defaultParaStyle, defaultSpanStyle);
         }
 
+        public IRichText Text => text;
         public int CursorPos => cursorPos;
         public int? SelectionStartPos => selectionStartPos;
 
