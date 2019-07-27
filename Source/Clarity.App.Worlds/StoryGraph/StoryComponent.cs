@@ -109,11 +109,11 @@ namespace Clarity.App.Worlds.StoryGraph
             guiCommandBlock = new IGuiCommand[]
             {
                 // todo: undo/redo
-                new GuiCommand("Next into...", KeyModifyers.Control, Key.N, () =>
+                new GuiCommand("Next into...", KeyModifiers.Control, Key.N, () =>
                 {
                     toolService.CurrentTool = toolFactory.StoryBranchInto(Node.Id);
                 }),
-                new GuiCommand("Insert Next", KeyModifyers.Control, Key.I, () =>
+                new GuiCommand("Insert Next", KeyModifiers.Control, Key.I, () =>
                 {
                     StoryService.OnBeginTransaction(this);
                     var newNode = commonNodeFactory.StoryNode();
@@ -127,11 +127,11 @@ namespace Clarity.App.Worlds.StoryGraph
                         StoryService.AddEdge(newNode.Id, nextNode);
                     StoryService.OnEndTransaction(this);
                 }),
-                new GuiCommand("Connect to...", KeyModifyers.Control, Key.C, () =>
+                new GuiCommand("Connect to...", KeyModifiers.Control, Key.C, () =>
                 {
                     toolService.CurrentTool = toolFactory.AddExplicitStoryGraphEdge(Node.Id);
                 }), 
-                new GuiCommand("Wrap into", KeyModifyers.None, Key.None, () =>
+                new GuiCommand("Wrap into", KeyModifiers.None, Key.None, () =>
                 {
                     StoryOperations.AddChild(StoryService, commonNodeFactory, Node.Id, this);
                 }),
@@ -191,7 +191,7 @@ namespace Clarity.App.Worlds.StoryGraph
         public IEnumerable<IVisualEffect> GetVisualEffects() => visualEffects ?? EmptyArrays<IVisualEffect>.Array;
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable?.HitWithClick(clickInfo) ?? RayHitResult.Failure();
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable?.HitWithClick(clickInfo) ?? RayHitResult.Failure();
 
         // Interaction
         public bool TryHandleInteractionEvent(IInteractionEvent args)

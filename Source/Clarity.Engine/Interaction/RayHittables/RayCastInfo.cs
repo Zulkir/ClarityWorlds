@@ -9,8 +9,7 @@ using Clarity.Engine.Visualization.Views;
 
 namespace Clarity.Engine.Interaction.RayHittables
 {
-    // todo: rename to RayCastInfo
-    public class RayHitInfo
+    public class RayCastInfo
     {
         public IScene Scene { get; private set; }
         public Ray3 GlobalRay { get; private set; }
@@ -18,13 +17,13 @@ namespace Clarity.Engine.Interaction.RayHittables
         public IntSize2 ViewportSize { get; private set; }
         public float AspectRatio { get; private set; }
 
-        public RayHitInfo(IViewport viewport, IViewLayer layer, IntVector2 pointerPixelPos)
+        public RayCastInfo(IViewport viewport, IViewLayer layer, IntVector2 pointerPixelPos)
         {
             InitViewProperties(viewport, layer);
             GlobalRay = GenGlobalRayFromMousePos(layer.Camera, ViewportSize, AspectRatio, pointerPixelPos);
         }
 
-        public RayHitInfo(IViewport viewport, IViewLayer layer, Ray3 globalRay)
+        public RayCastInfo(IViewport viewport, IViewLayer layer, Ray3 globalRay)
         {
             InitViewProperties(viewport, layer);
             GlobalRay = globalRay;

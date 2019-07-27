@@ -56,7 +56,7 @@ namespace Clarity.Ext.TextImlets.Latex
 
         public bool TryHandleMouseEvent(IRtEmbeddingSpan embedding, IMouseEvent args)
         {
-            if (!args.IsLeftDoubleClickEvent() || args.KeyModifyers != KeyModifyers.None)
+            if (!args.IsLeftDoubleClickEvent() || args.KeyModifiers != KeyModifiers.None)
                 return false;
             windowQueryService.QueryTextMutable("Formula Editor", embedding.SourceCode, x => embedding.SourceCode = x);
             return true;

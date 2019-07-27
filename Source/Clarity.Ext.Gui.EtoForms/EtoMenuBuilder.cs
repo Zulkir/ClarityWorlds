@@ -27,7 +27,7 @@ namespace Clarity.Ext.Gui.EtoForms
             menu.Items.Add(new Command((s, a) => command.Execute())
             {
                 MenuText = command.Text,
-                Shortcut = Converters.ToEto(command.ShortcutKey, command.ShortcutModifyers),
+                Shortcut = Converters.ToEto(command.ShortcutKey, command.ShortcutModifiers),
                 Enabled = enabled
             });
             justStartedSection = false;

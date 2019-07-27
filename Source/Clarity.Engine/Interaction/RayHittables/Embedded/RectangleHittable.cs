@@ -29,7 +29,7 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
             this.planeTransform = planeTransform;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             var globalRay = clickInfo.GlobalRay;
             var globalTransformInverse = (planeTransform * Node.GlobalTransform).Invert();
@@ -48,8 +48,8 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
             var offset = getHitDistanceOffset(master);
             var globalPoint = globalRay.Point + globalRay.Direction * globalT;
             var localPoint = new Vector3(
-                (point.X - rectangle.Center.X) / rectangle.HalfWidth,
-                (point.Y - rectangle.Center.Y) / rectangle.HalfHeight,
+                (point.X - rectangle.Center.X) / (rectangle.HalfWidth * 2),
+                (point.Y - rectangle.Center.Y) / (rectangle.HalfHeight * 2),
                 0);
             return new RayHitResult
             {

@@ -28,7 +28,7 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
             this.strTag = strTag;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             var globalRay = clickInfo.GlobalRay;
             var globalTransformInverse = (planeTransform * Node.GlobalTransform).Invert();

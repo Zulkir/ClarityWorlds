@@ -32,7 +32,7 @@ namespace Clarity.Ext.Gui.EtoForms
             var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.Down,
-                KeyModifyers = GetModifyers(keyEventArgs),
+                KeyModifiers = GetModifiers(keyEventArgs),
                 EventKey = keyEventArgs.Key.ToClarity(),
                 HasFocus = renderControl.HasFocus,
                 State = new KeyboardState(keys.Copy()),
@@ -50,7 +50,7 @@ namespace Clarity.Ext.Gui.EtoForms
             var cEventArgs = new KeyEvent
             {
                 ComplexEventType = KeyEventType.Up,
-                KeyModifyers = GetModifyers(keyEventArgs),
+                KeyModifiers = GetModifiers(keyEventArgs),
                 EventKey = keyEventArgs.Key.ToClarity(),
                 HasFocus = renderControl.HasFocus,
                 State = new KeyboardState(keys.Copy()),
@@ -84,15 +84,15 @@ namespace Clarity.Ext.Gui.EtoForms
             inputService.OnInputEvent(cEventArgs);
         }
         
-        private static KeyModifyers GetModifyers(EKeyEventArgs keyEventArgs)
+        private static KeyModifiers GetModifiers(EKeyEventArgs keyEventArgs)
         {
-            var result = KeyModifyers.None;
+            var result = KeyModifiers.None;
             if (keyEventArgs.Shift)
-                result |= KeyModifyers.Shift;
+                result |= KeyModifiers.Shift;
             if (keyEventArgs.Control)
-                result |= KeyModifyers.Control;
+                result |= KeyModifiers.Control;
             if (keyEventArgs.Alt)
-                result |= KeyModifyers.Alt;
+                result |= KeyModifiers.Alt;
             return result;
         }
 

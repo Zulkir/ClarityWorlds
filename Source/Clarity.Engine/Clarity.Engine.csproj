@@ -187,7 +187,7 @@
     <Compile Include="Interaction\RayHittables\Embedded\SphereHittable.cs" />
     <Compile Include="Interaction\RayHittables\Embedded\RectangleHittable.cs" />
     <Compile Include="Interaction\RayHittables\RayHitIndex.cs" />
-    <Compile Include="Interaction\RayHittables\RayHitInfo.cs" />
+    <Compile Include="Interaction\RayHittables\RayCastInfo.cs" />
     <Compile Include="Utilities\AmFactory.cs" />
     <Compile Include="Platforms\FrameTime.cs" />
     <Compile Include="Platforms\IEnvironment.cs" />
@@ -212,7 +212,7 @@
     <Compile Include="Interaction\Input\Keyboard\KeyboardState.cs" />
     <Compile Include="Interaction\Input\Keyboard\KeyEvent.cs" />
     <Compile Include="Interaction\Input\Keyboard\KeyEventType.cs" />
-    <Compile Include="Interaction\Input\Keyboard\KeyModifyers.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyModifiers.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseButtons.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseEvent.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseEventArgsExtensions.cs" />

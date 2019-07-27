@@ -21,7 +21,7 @@ namespace Clarity.App.Worlds.Interaction
         {
             if (!(args is IMouseEvent cargs))
                 return false;
-            if ((cargs.IsLeftClickEvent() || cargs.IsRightClickEvent()) && cargs.KeyModifyers == KeyModifyers.None)
+            if ((cargs.IsLeftClickEvent() || cargs.IsRightClickEvent()) && cargs.KeyModifiers == KeyModifiers.None)
                 viewService.SelectedNode = nodeBound.Node;
             return false;
         }

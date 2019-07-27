@@ -51,7 +51,7 @@ namespace Clarity.App.Transport.Prototype.FirstProto.Visualization
             return node;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return hittable.HitWithClick(clickInfo);
         }

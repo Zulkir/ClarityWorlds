@@ -151,7 +151,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
                     var scale = 0.01f;
                     var deltaYaw = -scale * eventArgs.Delta.X;
                     var deltaPitch = scale * eventArgs.Delta.Y;
-                    if (eventArgs.KeyModifyers == KeyModifyers.None)
+                    if (eventArgs.KeyModifiers == KeyModifiers.None)
                     {
                         realProps.Yaw += deltaYaw;
                         realProps.Pitch += deltaPitch;
@@ -165,7 +165,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
                     var viewFrame = realProps.GetFrame();
                     var scale = 0.00115f * realProps.Distance;
                     var offset = -viewFrame.Right * scale * eventArgs.Delta.X + viewFrame.Up * scale * eventArgs.Delta.Y;
-                    if (eventArgs.KeyModifyers == KeyModifyers.None)
+                    if (eventArgs.KeyModifiers == KeyModifiers.None)
                     {
                         realProps.Target += offset;
                         return true;
@@ -176,7 +176,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
             {
                 var scale = 0.1f;
                 var distanceScale = 1f - scale * eventArgs.WheelDelta;
-                if (eventArgs.KeyModifyers == KeyModifyers.None)
+                if (eventArgs.KeyModifiers == KeyModifiers.None)
                 {
                     realProps.Distance *= distanceScale;
                     return true;

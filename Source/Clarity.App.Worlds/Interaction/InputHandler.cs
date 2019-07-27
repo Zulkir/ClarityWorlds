@@ -81,20 +81,22 @@ namespace Clarity.App.Worlds.Interaction
                 var hitSomething = false;
                 foreach (var layer in inputEvent.Viewport.View.Layers)
                 {
-                    var clickInfo = new RayHitInfo(margs.Viewport, layer, margs.State.Position);
+                    var clickInfo = new RayCastInfo(margs.Viewport, layer, margs.State.Position);
                     var hitResults = rayHitIndex.CastRay(clickInfo);
                     // todo: introduce different levels of stopping propagation and remove '.Take(1)'
                     foreach (var hitResult in hitResults.Take(1))
                     {
                         hitSomething = true;
+                        margs.RayHitResult = hitResult;
                         foreach (var interactionElement in hitResult.Node.SearchComponents<IInteractionComponent>())
                             if (interactionElement.TryHandleInteractionEvent(margs))
                                 return;
                     }
+                    margs.RayHitResult = default(RayHitResult);
                     if (layer.Camera is IControlledCamera controlledCamera && controlledCamera.TryHandleInput(inputEvent))
                         return;
                 }
-                if (margs.IsLeftClickEvent() && margs.KeyModifyers == KeyModifyers.None && !hitSomething)
+                if (margs.IsLeftClickEvent() && margs.KeyModifiers == KeyModifiers.None && !hitSomething)
                     viewService.SelectedNode = null;
             }
 

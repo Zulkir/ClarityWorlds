@@ -49,7 +49,7 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
                 return InputEventProcessResult.StopPropagating;
             var or = originalRect;
             var asp = originalRect.Width / originalRect.Height;
-            var converseAspectRatio = (args.KeyModifyers & KeyModifyers.Shift) != 0;
+            var converseAspectRatio = (args.KeyModifiers & KeyModifiers.Shift) != 0;
             switch (place)
             {
                 case ResizeRectangleGizmoPlace.Left:

@@ -128,7 +128,7 @@ namespace Clarity.App.Worlds.Interaction.Queries.Scene
             return true;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return hittable.HitWithClick(clickInfo);
         }

@@ -71,7 +71,7 @@ namespace Clarity.Ext.Simulation.Fluids
             {
                 //new SelectOnClickInteractionElement(this, viewService),
                 new ActionOnEventInteractionElement(
-                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.None,
+                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifiers == KeyModifiers.None,
                     () =>
                     {
                         if (simulationRunning)
@@ -92,7 +92,7 @@ namespace Clarity.Ext.Simulation.Fluids
                         simulationRunning = !simulationRunning;
                     }),
                 new ActionOnEventInteractionElement(
-                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifyers == KeyModifyers.Shift,
+                    args => args is IMouseEvent m && m.IsRightClickEvent() && m.KeyModifiers == KeyModifiers.Shift,
                     () =>
                     {
                         Reset();
@@ -347,6 +347,6 @@ namespace Clarity.Ext.Simulation.Fluids
         }
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable.HitWithClick(clickInfo);
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable.HitWithClick(clickInfo);
     }
 }

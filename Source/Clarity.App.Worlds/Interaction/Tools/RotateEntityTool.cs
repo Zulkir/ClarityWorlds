@@ -35,7 +35,7 @@ namespace Clarity.App.Worlds.Interaction.Tools
             var pixelPos = eventArgs.Viewport.GetPixelPos(entity);
             var pixelDelta = eventArgs.State.Position - pixelPos;
             var radianDelta = (Vector2)pixelDelta / 50f;
-            var rotation = (eventArgs.KeyModifyers & KeyModifyers.Shift) == 0  
+            var rotation = (eventArgs.KeyModifiers & KeyModifiers.Shift) == 0  
                 ? Quaternion.RotationX(-radianDelta.Y) * Quaternion.RotationY(-radianDelta.X)
                 : Quaternion.RotationZ(radianDelta.X) * Quaternion.RotationY(-radianDelta.Y);
             var newTransform = new Transform

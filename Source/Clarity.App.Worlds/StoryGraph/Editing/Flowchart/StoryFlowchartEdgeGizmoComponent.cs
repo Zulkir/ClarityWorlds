@@ -81,6 +81,6 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
             return false;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable.HitWithClick(clickInfo);
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable.HitWithClick(clickInfo);
     }
 }

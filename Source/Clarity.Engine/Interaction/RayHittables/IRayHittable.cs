@@ -2,6 +2,6 @@ namespace Clarity.Engine.Interaction.RayHittables
 {
     public interface IRayHittable
     {
-        RayHitResult HitWithClick(RayHitInfo clickInfo);
+        RayHitResult HitWithClick(RayCastInfo clickInfo);
     }
 }

@@ -32,7 +32,7 @@ namespace Clarity.App.Worlds.StoryGraph.Editing
                 return false;
             if (!args.IsLeftClickEvent())
                 return false;
-            var clickInfo = new RayHitInfo(args.Viewport, args.Viewport.View.Layers.Single(), args.State.Position);
+            var clickInfo = new RayCastInfo(args.Viewport, args.Viewport.View.Layers.Single(), args.State.Position);
             var hitResult = rayHitIndex.CastRay(clickInfo).FirstOrNull() ?? RayHitResult.Failure();
             if (hitResult.Successful)
             {

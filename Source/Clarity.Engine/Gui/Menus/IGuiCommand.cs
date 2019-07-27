@@ -4,7 +4,7 @@ namespace Clarity.Engine.Gui.Menus
 {
     public interface IGuiCommand : IGuiMenuItem
     {
-        KeyModifyers ShortcutModifyers { get; }
+        KeyModifiers ShortcutModifiers { get; }
         Key ShortcutKey { get; }
         void Execute();
     }

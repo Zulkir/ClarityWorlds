@@ -61,26 +61,26 @@ namespace Clarity.App.Worlds.Media.Media2D
                 {
                     case Key.Left:
                         {
-                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos - 1, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
+                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos - 1, args.KeyModifiers.HasFlag(KeyModifiers.Shift));
                             return true;
                         }
                     case Key.Right:
                         {
-                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos + 1, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
+                            headlessEditor.MoveCursorSafe(headlessEditor.CursorPos + 1, args.KeyModifiers.HasFlag(KeyModifiers.Shift));
                             return true;
                         }
                     case Key.Up:
                         {
                             if (!layout.TryGetUp(headlessEditor.CursorPos, out var newPos))
                                 newPos = headlessEditor.CursorPos;
-                            headlessEditor.MoveCursor(newPos, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
+                            headlessEditor.MoveCursor(newPos, args.KeyModifiers.HasFlag(KeyModifiers.Shift));
                             return true;
                         }
                     case Key.Down:
                         {
                             if (!layout.TryGetDown(headlessEditor.CursorPos, out var newPos))
                                 newPos = headlessEditor.CursorPos;
-                            headlessEditor.MoveCursor(newPos, args.KeyModifyers.HasFlag(KeyModifyers.Shift));
+                            headlessEditor.MoveCursor(newPos, args.KeyModifiers.HasFlag(KeyModifiers.Shift));
                             return true;
                         }
                     case Key.Enter:
@@ -96,9 +96,9 @@ namespace Clarity.App.Worlds.Media.Media2D
                             return true;
                         }
                     case Key.Tab:
-                        if (args.KeyModifyers == KeyModifyers.None)
+                        if (args.KeyModifiers == KeyModifiers.None)
                             headlessEditor.Tab();
-                        else if (args.KeyModifyers == KeyModifyers.Shift)
+                        else if (args.KeyModifiers == KeyModifiers.Shift)
                             headlessEditor.ShiftTab();
                         return true;
                 }
@@ -133,7 +133,7 @@ namespace Clarity.App.Worlds.Media.Media2D
             if (args.IsLeftDownEvent())
             {
                 var newPos = layout.GetPosition(textBoxPoint);
-                headlessEditor.MoveCursor(newPos, args.KeyModifyers == KeyModifyers.Shift);
+                headlessEditor.MoveCursor(newPos, args.KeyModifiers == KeyModifiers.Shift);
                 inputHandler.AddLock(new InputLock<object>(null, MouseDownLockProc));
                 return true;
             }

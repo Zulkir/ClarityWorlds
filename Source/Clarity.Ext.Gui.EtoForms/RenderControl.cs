@@ -177,7 +177,7 @@ namespace Clarity.Ext.Gui.EtoForms
                 ? new ContextMenu(commands.Select(x => new ButtonMenuItem(new Command((s, a) => x.Execute())
                 {
                     MenuText = x.Text,
-                    Shortcut = Converters.ToEto(x.ShortcutKey, x.ShortcutModifyers)
+                    Shortcut = Converters.ToEto(x.ShortcutKey, x.ShortcutModifiers)
                 })))
                 : null;
         }

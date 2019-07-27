@@ -148,7 +148,7 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return RayHitResult.Failure();
             //return hittable.HitWithClick(clickInfo);

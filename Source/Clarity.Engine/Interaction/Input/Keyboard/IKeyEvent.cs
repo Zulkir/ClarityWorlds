@@ -5,7 +5,7 @@
         KeyEventType ComplexEventType { get; }
         Key EventKey { get; }
         IKeyboardState State { get; }
-        KeyModifyers KeyModifyers { get; }
+        KeyModifiers KeyModifiers { get; }
         string Text { get; }
         bool HasFocus { get; }
     }

@@ -6,7 +6,7 @@ namespace Clarity.Engine.Interaction.RayHittables
 {
     public class RayHitIndex : IRayHitIndex
     {
-        public IEnumerable<RayHitResult> CastRay(RayHitInfo clickInfo)
+        public IEnumerable<RayHitResult> CastRay(RayCastInfo clickInfo)
         {
             return clickInfo.Scene == null
                 ? Enumerable.Empty<RayHitResult>()

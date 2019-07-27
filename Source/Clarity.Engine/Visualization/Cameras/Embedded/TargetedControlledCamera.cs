@@ -160,7 +160,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
                     return true;
                 }
             }
-            else if (mouseArgs.ComplexEventType == MouseEventType.Wheel && mouseArgs.KeyModifyers == KeyModifyers.None)
+            else if (mouseArgs.ComplexEventType == MouseEventType.Wheel && mouseArgs.KeyModifiers == KeyModifiers.None)
             {
                 var scale = 0.1f;
                 realProps.Distance *= (1f - scale * mouseArgs.WheelDelta);

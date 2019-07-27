@@ -150,7 +150,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
         {
             if (eventArgs.ComplexEventType == MouseEventType.Move)
             {
-                if (eventArgs.State.Buttons == MouseButtons.Right && eventArgs.KeyModifyers == KeyModifyers.None)
+                if (eventArgs.State.Buttons == MouseButtons.Right && eventArgs.KeyModifiers == KeyModifiers.None)
                 {
                     var scale = 0.00925f * realProps.GetScale();
                     var offset = -Vector2.UnitX * scale * eventArgs.Delta.X + Vector2.UnitY * scale * eventArgs.Delta.Y;
@@ -163,7 +163,7 @@ namespace Clarity.Engine.Visualization.Cameras.Embedded
             {
                 var scale = 0.1f;
                 var distanceScale = 1f - scale * eventArgs.WheelDelta;
-                if (eventArgs.KeyModifyers == KeyModifyers.None)
+                if (eventArgs.KeyModifiers == KeyModifiers.None)
                     realProps.Distance *= distanceScale;
                 EnforceBounds();
                 return true;

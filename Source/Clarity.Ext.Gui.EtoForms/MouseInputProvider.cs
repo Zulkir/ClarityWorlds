@@ -94,7 +94,7 @@ namespace Clarity.Ext.Gui.EtoForms
                 State = currState,
                 Delta = delta,
                 WheelDelta = wheelDelta,
-                KeyModifyers = ToClarity(eArgs.Modifiers),
+                KeyModifiers = ToClarity(eArgs.Modifiers),
                 Viewport = viewport
             };
 
@@ -115,15 +115,15 @@ namespace Clarity.Ext.Gui.EtoForms
             return result;
         }
 
-        private static KeyModifyers ToClarity(Keys modifyers)
+        private static KeyModifiers ToClarity(Keys modifiers)
         {
-            var result = KeyModifyers.None;
-            if ((modifyers & Keys.Control) != 0)
-                result |= KeyModifyers.Control;
-            if ((modifyers & Keys.Shift) != 0)
-                result |= KeyModifyers.Shift;
-            if ((modifyers & Keys.Alt) != 0)
-                result |= KeyModifyers.Alt;
+            var result = KeyModifiers.None;
+            if ((modifiers & Keys.Control) != 0)
+                result |= KeyModifiers.Control;
+            if ((modifiers & Keys.Shift) != 0)
+                result |= KeyModifiers.Shift;
+            if ((modifiers & Keys.Alt) != 0)
+                result |= KeyModifiers.Alt;
             return result;
         }
 
