@@ -1,4 +1,5 @@
-﻿using Clarity.App.Worlds.Interaction;
+﻿using Clarity.App.Worlds.Helpers;
+using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Engine.Gui;
@@ -7,6 +8,7 @@ using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.Input.Keyboard;
 using Clarity.Engine.Interaction.Input.Mouse;
 using Clarity.Engine.Media.Text.Rich;
+using Clarity.Engine.Visualization.Viewports;
 
 namespace Clarity.App.Worlds.Media.Media2D
 {
@@ -113,7 +115,9 @@ namespace Clarity.App.Worlds.Media.Media2D
         {
             var rect = cText.Node.GetComponent<IRectangleComponent>().Rectangle;
             var textBox = cText.TextBox;
-            var hmgnPoint = args.RayHitResult.LocalHitPoint.Xy;
+            if (!args.RayHitResult.HasValue)
+                return false;
+            var hmgnPoint = args.RayHitResult.Value.LocalHitPoint.Xy;
             var textBoxPoint = new Vector2(
                 (1 + hmgnPoint.X) / 2 * rect.Width * textBox.PixelScaling,
                 (1 - hmgnPoint.Y) / 2 * rect.Height * textBox.PixelScaling);
@@ -145,12 +149,17 @@ namespace Clarity.App.Worlds.Media.Media2D
                 return InputEventProcessResult.DontCare;
             if (args.IsOfType(MouseEventType.Move) && args.State.Buttons == MouseButtons.Left)
             {
-                var rect = cText.Node.GetComponent<IRectangleComponent>().Rectangle;
+                var placementSurface = cText.Node.PresentationInfra().Placement;
+                if (placementSurface == null)
+                    return InputEventProcessResult.StopPropagating;
+                var globalRay = args.Viewport.GetGlobalRayForPixelPos(args.State.Position);
+                if (!placementSurface.PlacementSurface2D.TryFindPoint2D(globalRay, out var point2D))
+                    return InputEventProcessResult.StopPropagating;
+                var cRect = cText.Node.GetComponent<IRectangleComponent>();
+                var rect = cRect.Rectangle;
                 var textBox = cText.TextBox;
-                var hmgnPoint = args.RayHitResult.LocalHitPoint.Xy;
-                var textBoxPoint = new Vector2(
-                    (1 + hmgnPoint.X) / 2 * rect.Width * textBox.PixelScaling,
-                    (1 - hmgnPoint.Y) / 2 * rect.Height * textBox.PixelScaling);
+                var textBoxPointYswapped = (point2D - rect.MinMax) * textBox.PixelScaling;
+                var textBoxPoint = new Vector2(textBoxPointYswapped.X, -textBoxPointYswapped.Y);
                 var layout = textBox.Layout;
 
                 var newPos = layout.GetPosition(textBoxPoint);

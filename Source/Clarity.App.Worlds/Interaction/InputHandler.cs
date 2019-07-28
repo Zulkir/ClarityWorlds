@@ -92,7 +92,7 @@ namespace Clarity.App.Worlds.Interaction
                             if (interactionElement.TryHandleInteractionEvent(margs))
                                 return;
                     }
-                    margs.RayHitResult = default(RayHitResult);
+                    margs.RayHitResult = null;
                     if (layer.Camera is IControlledCamera controlledCamera && controlledCamera.TryHandleInput(inputEvent))
                         return;
                 }

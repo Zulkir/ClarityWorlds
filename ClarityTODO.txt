@@ -36,6 +36,7 @@
 - Move WorldRoot components outside of first scene root
 - Allow FluentArrayTable by refactoring Builders to templates
 - Layered input event system, where more info added to an event as it gets passed down to componenets
+- Restrict InputLock to a given viewport layer
 
 ** Large coding improvements **
 

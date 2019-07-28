@@ -12,6 +12,6 @@ namespace Clarity.Engine.Interaction.Input.Mouse
         IntVector2 Delta { get; }
         int WheelDelta { get; }
         KeyModifiers KeyModifiers { get; }
-        RayHitResult RayHitResult { get; set; }
+        RayHitResult? RayHitResult { get; set; }
     }
 }
