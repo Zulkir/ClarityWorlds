@@ -44,8 +44,8 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
             var cRect = GetRectComponent();
             // todo: make overridable and override in more specific components
             if (cRect.DragByBorders &&
-                (1 - hitResult.LocalHitPoint.X.Abs()) * cRect.Rectangle.HalfWidth * RichTextBox.DefaultPixelScaling < RichTextBox.DraggablePaddingInPixels &&
-                (1 - hitResult.LocalHitPoint.Y.Abs()) * cRect.Rectangle.HalfHeight * RichTextBox.DefaultPixelScaling < RichTextBox.DraggablePaddingInPixels)
+                (1 - hitResult.LocalHitPoint.X.Abs()) * cRect.Rectangle.HalfWidth * RichTextBox.DefaultPixelScaling > RichTextBox.DraggablePaddingInPixels &&
+                (1 - hitResult.LocalHitPoint.Y.Abs()) * cRect.Rectangle.HalfHeight * RichTextBox.DefaultPixelScaling > RichTextBox.DraggablePaddingInPixels)
                 return RayHitResult.Failure();
             return hitResult;
         }

@@ -48,8 +48,8 @@ namespace Clarity.Engine.Interaction.RayHittables.Embedded
             var offset = getHitDistanceOffset(master);
             var globalPoint = globalRay.Point + globalRay.Direction * globalT;
             var localPoint = new Vector3(
-                (point.X - rectangle.Center.X) / (rectangle.HalfWidth * 2),
-                (point.Y - rectangle.Center.Y) / (rectangle.HalfHeight * 2),
+                (point.X - rectangle.Center.X) / rectangle.HalfWidth,
+                (point.Y - rectangle.Center.Y) / rectangle.HalfHeight,
                 0);
             return new RayHitResult
             {
