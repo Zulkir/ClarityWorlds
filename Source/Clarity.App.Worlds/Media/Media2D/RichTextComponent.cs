@@ -79,7 +79,8 @@ namespace Clarity.App.Worlds.Media.Media2D
             var rectMaterial = StandardMaterial.New(this)
                 .SetDiffuseMap(x => x.GetTextImage())
                 .SetIgnoreLighting(true)
-                .SetRtTransparencyMode(x => x.TextBox.Text.Style.TransparencyMode);
+                .SetRtTransparencyMode(x => x.TextBox.Text.Style.TransparencyMode)
+                .SetHighlightEffect(x => x.MustShowBorder() ? HighlightEffect.BlackWhiteBorder : HighlightEffect.None);
             var rectModel = embeddedResources.SimplePlaneXyModel();
             rectVisualElement = new ModelVisualElement<RichTextComponent>(this)
                 .SetModel(rectModel)
@@ -152,6 +153,31 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Visual
+        private bool MustShowBorder()
+        {
+            return viewService.SelectedNode == Node ||
+                   BackgroundIsCompletelyTransparent() &&
+                   TextBox.Text.Paragraphs
+                       .SelectMany(p => p.Spans)
+                       .All(s => string.IsNullOrWhiteSpace(s.LayoutText));
+        }
+
+        private bool BackgroundIsCompletelyTransparent()
+        {
+            switch (TextBox.Text.Style.TransparencyMode)
+            {
+                case RtTransparencyMode.Opaque:
+                    return false;
+                case RtTransparencyMode.Native:
+                    return TextBox.Text.Style.BackgroundColor.A == 0;
+                case RtTransparencyMode.BlackIsTransparent:
+                case RtTransparencyMode.WhiteIsTransparent:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public IEnumerable<IVisualElement> GetVisualElements()
         {
             yield return rectVisualElement;
