@@ -302,6 +302,28 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Copy Paste
+        public bool Overrides(CopyPasteCommand command)
+        {
+            switch (command)
+            {
+                case CopyPasteCommand.Cut:
+                case CopyPasteCommand.Copy:
+                    return editInteractionElement.HeadlessEditor.SelectionRange.HasValue;
+                case CopyPasteCommand.Paste:
+                    return true;
+                case CopyPasteCommand.Duplicate:
+                case CopyPasteCommand.Delete:
+                case CopyPasteCommand.MoveTop:
+                case CopyPasteCommand.MoveUp:
+                case CopyPasteCommand.MoveDown:
+                case CopyPasteCommand.MoveBottom:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(command), command, null);
+            }
+            return editInteractionElement.HeadlessEditor.SelectionRange.HasValue;
+        }
+
         public bool CanExecute(CopyPasteCommand command)
         {
             switch (command)

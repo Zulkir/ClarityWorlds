@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Clarity.App.Worlds.CopyPaste;
 using Clarity.App.Worlds.Helpers;
 using Clarity.App.Worlds.Interaction.Manipulation3D;
@@ -70,13 +72,16 @@ namespace Clarity.App.Worlds.Gui
 
         private void ExecuteCopyPaste(CopyPasteCommand command)
         {
-            GetCopyPasteComponent().Execute(command);
+            var cCopyPaste = GetCopyPasteComponents().FirstOrDefault(x => x.Overrides(command));
+            if (cCopyPaste == null || !cCopyPaste.CanExecute(command))
+                return;
+            cCopyPaste.Execute(command);
             undoRedoService.OnChange();
         }
 
-        private ICopyPasteComponent GetCopyPasteComponent()
+        private IEnumerable<ICopyPasteComponent> GetCopyPasteComponents()
         {
-            return ViewService.SelectedNode.SearchComponent<ICopyPasteComponent>();
+            return ViewService.SelectedNode.SearchComponents<ICopyPasteComponent>();
         }
 
         /*
