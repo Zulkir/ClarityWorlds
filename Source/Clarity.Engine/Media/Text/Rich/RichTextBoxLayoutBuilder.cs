@@ -46,7 +46,7 @@ namespace Clarity.Engine.Media.Text.Rich
             this.embeddingHandlerContainer = embeddingHandlerContainer;
         }
 
-        public IRichTextBoxLayout Build(IRichText text, IntSize2 size)
+        public IRichTextBoxLayout Build(IRichText text, IntSize2 size, float padding)
         {
             text.Normalize();
             var lspans = new List<RichTextBoxLayoutSpan>();
@@ -56,7 +56,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 Text = text,
                 LayoutSpans = lspans,
                 ExternalLayoutSpans = externalLayoutSpans,
-                RemainingShape = new AaRectangle2(Vector2.Zero, new Vector2(size.Width, size.Height))
+                RemainingShape = new AaRectangle2(new Vector2(padding), new Vector2(size.Width, size.Height) - new Vector2(padding))
             };
 
             for (var i = 0; i < text.Paragraphs.Count; i++)
@@ -296,7 +296,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 var strip = AaRectangle2.FromCornerAndDimensions(
                     context.StripStartPoint.X, context.StripStartPoint.Y, 
                     commonSize.Width, commonSize.Height);
-                var rectOffsetX = tabOffset;
+                var rectOffsetX = context.StripStartPoint.X + tabOffset;
                 var charIndex = 0;
 
                 for (var i = 0; i < mergedSubspans.Count; i++)
