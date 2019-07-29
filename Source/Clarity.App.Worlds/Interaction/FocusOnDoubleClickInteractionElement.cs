@@ -19,7 +19,7 @@ namespace Clarity.App.Worlds.Interaction
         {
             if (!(args is IMouseEvent cargs))
                 return false;
-            if (cargs.IsLeftDoubleClickEvent() && cargs.KeyModifyers == KeyModifyers.None)
+            if (cargs.IsLeftDoubleClickEvent() && cargs.KeyModifiers == KeyModifiers.None)
             {
                 (args.Viewport.View as IFocusableView)?.FocusOn(master.Node.GetComponent<IFocusNodeComponent>());
                 return true;

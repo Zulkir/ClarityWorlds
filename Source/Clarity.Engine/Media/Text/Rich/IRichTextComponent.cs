@@ -10,9 +10,6 @@ namespace Clarity.Engine.Media.Text.Rich
         Vector2[] BorderCurve { get; set; }
         IList<Vector2> VisualBorderCurve { get; set; }
         bool BorderComplete { get; set; }
-        RtPosition CursorPosition { get; set; }
-        RtPosition? SelectionStart { get;set; }
-        RtRange? SelectionRange { get; }
-        IRtSpanStyle InputTextStyle { get; set; }
+        IRichTextHeadlessEditor HeadlessEditor { get; }
     }
 }

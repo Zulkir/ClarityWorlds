@@ -221,7 +221,21 @@ void main()
         float amount = saturate((1.0 - distanceH) * (0.8 + 0.4 * cos(Time * 5)));
         out_color = mix(preDecorationColor, PulsatingColor, amount);
     }
-    else if (IsEdited || IsSelected)
+    else if (IsEdited)
+    {
+        vec2 centeredTexCoord = v_tex_coord * 2.0 - vec2(1.0, 1.0);
+        vec2 distancesFromCenter = abs(centeredTexCoord);
+        vec2 distancesFromBorders = vec2(1.0, 1.0) - distancesFromCenter;
+        float distFromBorder = 1.0 - max(distancesFromCenter.x, distancesFromCenter.y);
+        vec2 dtdx = vec2(dFdx(distancesFromBorders));
+        vec2 dtdy = vec2(dFdy(distancesFromBorders));
+        float rateTx = 0.1 / length(vec2(dtdx.x, dtdy.x));
+        float rateTy = 0.1 / length(vec2(dtdx.y, dtdy.y));
+        float whiteAmount = mod(floor(distancesFromBorders.x * rateTx) + floor(distancesFromBorders.y * rateTy), 2.0);
+        float scaledDistanceFromBorder = min(distancesFromBorders.x * rateTx, distancesFromBorders.y * rateTy) / 2;
+        out_color = mix(preDecorationColor, vec4(vec3(1,1,1) * saturate(whiteAmount), 1), 0.5 * (1.0 - round(saturate(scaledDistanceFromBorder))));
+    }
+    else if (IsSelected)
     {
         float t = (Time + v_tex_coord.x * 2 + v_tex_coord.y * 2) * 3.14 ;
         vec2 dtdx = vec2(dFdx(v_tex_coord));
@@ -233,18 +247,9 @@ void main()
         vec2 biDistanceH = min(biDistanceHX, biDistanceHY);
         float distanceH = min(biDistanceH.x, biDistanceH.y);        
         float amount = mix(0.0, 1.0, clamp(1.0 - pow(distanceH / 6, 4), 0.0, 1.0));
-        
-        if (IsEdited)
-        {
-            float decorationMono = sin((v_tex_coord.x + v_tex_coord.y) * 300);
-            vec4 decoration = vec4(decorationMono, decorationMono, decorationMono, 1.0);
-            out_color = mix(preDecorationColor, decoration, amount);
-        }
-        else if (IsSelected)
-        {
-            vec4 decoration = vec4(poscos(t - 0.0 * 6.28), poscos(t - 0.33 * 6.28), poscos(t - 0.66 * 6.28), 1.0);
-            out_color = mix(preDecorationColor, decoration, amount);
-        }
+        // Rainbow:
+        vec4 decoration = vec4(poscos(t - 0.0 * 6.28), poscos(t - 0.33 * 6.28), poscos(t - 0.66 * 6.28), 1.0);
+        out_color = mix(preDecorationColor, decoration, amount);
     }
     else
     {

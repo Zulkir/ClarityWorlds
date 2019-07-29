@@ -46,10 +46,7 @@ namespace Clarity.App.Worlds.Media.Media2D
         public abstract IRichTextBox TextBox { get; set; }
 
         public Vector2[] BorderCurve { get => TextBox.BorderCurve; set => TextBox.BorderCurve = value; }
-        public RtPosition CursorPosition { get; set; }
-        public RtPosition? SelectionStart { get; set; }
-        public RtRange? SelectionRange => SelectionStart.HasValue ? new RtRange(SelectionStart.Value, CursorPosition) : (RtRange?)null;
-        public IRtSpanStyle InputTextStyle { get; set; }
+        public IRichTextHeadlessEditor HeadlessEditor => editInteractionElement.HeadlessEditor;
 
         private readonly IMaterial selectionRectMaterial;
         private readonly IMaterial highlightRectMaterial;
@@ -82,7 +79,8 @@ namespace Clarity.App.Worlds.Media.Media2D
             var rectMaterial = StandardMaterial.New(this)
                 .SetDiffuseMap(x => x.GetTextImage())
                 .SetIgnoreLighting(true)
-                .SetRtTransparencyMode(x => x.TextBox.Text.Style.TransparencyMode);
+                .SetRtTransparencyMode(x => x.TextBox.Text.Style.TransparencyMode)
+                .SetHighlightEffect(x => x.MustShowBorder() ? HighlightEffect.BlackWhiteBorder : HighlightEffect.None);
             var rectModel = embeddedResources.SimplePlaneXyModel();
             rectVisualElement = new ModelVisualElement<RichTextComponent>(this)
                 .SetModel(rectModel)
@@ -108,7 +106,7 @@ namespace Clarity.App.Worlds.Media.Media2D
                 {
                     var rect = x.GetRect();
                     var textBox = x.TextBox;
-                    textBox.Layout.GetCursorPoint(x.CursorPosition, out var point, out var height);
+                    textBox.Layout.GetCursorPoint(x.editInteractionElement.HeadlessEditor.CursorPos, out var point, out var height);
                     var nodeCoordPoint = rect.MinMax + new Vector2(point.X, -point.Y) / textBox.PixelScaling;
                     return new Transform(
                         height / textBox.PixelScaling, 
@@ -148,13 +146,38 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return RayHitResult.Failure();
             //return hittable.HitWithClick(clickInfo);
         }
 
         // Visual
+        private bool MustShowBorder()
+        {
+            return viewService.SelectedNode == Node ||
+                   BackgroundIsCompletelyTransparent() &&
+                   TextBox.Text.Paragraphs
+                       .SelectMany(p => p.Spans)
+                       .All(s => string.IsNullOrWhiteSpace(s.LayoutText));
+        }
+
+        private bool BackgroundIsCompletelyTransparent()
+        {
+            switch (TextBox.Text.Style.TransparencyMode)
+            {
+                case RtTransparencyMode.Opaque:
+                    return false;
+                case RtTransparencyMode.Native:
+                    return TextBox.Text.Style.BackgroundColor.A == 0;
+                case RtTransparencyMode.BlackIsTransparent:
+                case RtTransparencyMode.WhiteIsTransparent:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         public IEnumerable<IVisualElement> GetVisualElements()
         {
             yield return rectVisualElement;
@@ -164,8 +187,8 @@ namespace Clarity.App.Worlds.Media.Media2D
                 yield return cursorVisualElement;
 
                 selectionRectangles.Clear();
-                if (SelectionRange.HasValue)
-                    selectionRectangles.AddRange(TextBox.Layout.GetSelectionRectangles(SelectionRange.Value));
+                if (HeadlessEditor.SelectionRange.HasValue)
+                    selectionRectangles.AddRange(TextBox.Layout.GetSelectionRectangles(HeadlessEditor.SelectionRange.Value));
                 while (selectionVisualElements.Count < selectionRectangles.Count)
                 {
                     var index = selectionVisualElements.Count;
@@ -294,7 +317,7 @@ namespace Clarity.App.Worlds.Media.Media2D
             var textBoxPointYswapped = (point2D - rect.MinMax) * TextBox.PixelScaling;
             var textBoxPoint = new Vector2(textBoxPointYswapped.X, -textBoxPointYswapped.Y);
 
-            var pos = TextBox.Layout.GetPosition(textBoxPoint, RichTextPositionPreference.ClosestWord);
+            var pos = TextBox.Layout.GetPosition(textBoxPoint);
             var spanStyle = TextBox.Layout.GetSpanStyleAt(pos);
             return spanStyle.HighlightGroup;
         }
@@ -305,6 +328,28 @@ namespace Clarity.App.Worlds.Media.Media2D
         }
 
         // Copy Paste
+        public bool Overrides(CopyPasteCommand command)
+        {
+            switch (command)
+            {
+                case CopyPasteCommand.Cut:
+                case CopyPasteCommand.Copy:
+                    return editInteractionElement.HeadlessEditor.SelectionRange.HasValue;
+                case CopyPasteCommand.Paste:
+                    return true;
+                case CopyPasteCommand.Duplicate:
+                case CopyPasteCommand.Delete:
+                case CopyPasteCommand.MoveTop:
+                case CopyPasteCommand.MoveUp:
+                case CopyPasteCommand.MoveDown:
+                case CopyPasteCommand.MoveBottom:
+                    return false;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(command), command, null);
+            }
+            return editInteractionElement.HeadlessEditor.SelectionRange.HasValue;
+        }
+
         public bool CanExecute(CopyPasteCommand command)
         {
             switch (command)

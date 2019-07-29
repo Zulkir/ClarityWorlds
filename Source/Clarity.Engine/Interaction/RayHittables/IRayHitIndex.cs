@@ -4,6 +4,6 @@ namespace Clarity.Engine.Interaction.RayHittables
 {
     public interface IRayHitIndex
     {
-        IEnumerable<RayHitResult> CastRay(RayHitInfo clickInfo);
+        IEnumerable<RayHitResult> CastRay(RayCastInfo clickInfo);
     }
 }

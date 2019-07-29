@@ -70,15 +70,16 @@ namespace Clarity.App.Worlds.WorldTree
             if (cCopyPaste != null)
             {
                 menuBuilder.StartSection();
-                menuBuilder.AddCommand(commands.Cut, cCopyPaste.CanExecute(CopyPasteCommand.Cut));
-                menuBuilder.AddCommand(commands.Copy, cCopyPaste.CanExecute(CopyPasteCommand.Copy));
-                menuBuilder.AddCommand(commands.Duplicate, cCopyPaste.CanExecute(CopyPasteCommand.Duplicate));
-                menuBuilder.AddCommand(commands.Paste, cCopyPaste.CanExecute(CopyPasteCommand.Paste));
-                menuBuilder.AddCommand(commands.Delete, cCopyPaste.CanExecute(CopyPasteCommand.Delete));
+                // todo: return enabled/disabled when the context menu can be changed without deselection
+                menuBuilder.AddCommand(commands.Cut);
+                menuBuilder.AddCommand(commands.Copy);
+                menuBuilder.AddCommand(commands.Duplicate);
+                menuBuilder.AddCommand(commands.Paste);
+                menuBuilder.AddCommand(commands.Delete);
                 menuBuilder.StartSection();
                 // todo: top, bottom
-                menuBuilder.AddCommand(commands.MoveUp, cCopyPaste.CanExecute(CopyPasteCommand.MoveUp));
-                menuBuilder.AddCommand(commands.MoveDown, cCopyPaste.CanExecute(CopyPasteCommand.MoveDown));
+                menuBuilder.AddCommand(commands.MoveUp);
+                menuBuilder.AddCommand(commands.MoveDown);
             }
             
             if (node.HasComponent<ITransformable3DComponent>())
@@ -89,6 +90,11 @@ namespace Clarity.App.Worlds.WorldTree
         }
 
         // CopyPaste
+        public bool Overrides(CopyPasteCommand command)
+        {
+            return true;
+        }
+
         public bool CanExecute(CopyPasteCommand command)
         {
             switch (command)

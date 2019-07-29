@@ -135,15 +135,10 @@
     <Compile Include="Props\IPropsGuiGroup.cs" />
     <Compile Include="Props\PropsGui.cs" />
     <Compile Include="Props\PropsGuiGroupComponents.cs" />
-    <Compile Include="Props\PropsGuiGroupAbstractNode.cs" />
     <Compile Include="Props\PropsGuiGroupCommon.cs" />
     <Compile Include="Props\PropsGuiGroupFluidSimulation.cs" />
     <Compile Include="Props\PropsGuiGroupHighlightOnMouse.cs" />
     <Compile Include="Props\PropsGuiGroupMovieRectangle.cs" />
-    <Compile Include="Props\PropsGuiGroupRectangleEntity.cs" />
-    <Compile Include="Props\PropsGuiGroupRichTextEntity.cs" />
-    <Compile Include="Props\PropsGuiGroupScene.cs" />
-    <Compile Include="Props\PropsGuiGroupGeoModelEntity.cs" />
     <Compile Include="Props\PropsGuiGroupStoryComponent.cs" />
     <Compile Include="FluentGui\FluentColorPicker.cs" />
     <Compile Include="RenderControl.cs" />

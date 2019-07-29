@@ -96,6 +96,6 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
         public bool TryHandleInteractionEvent(IInteractionEvent args) => interactionElement.TryHandleInteractionEvent(args);
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable.HitWithClick(clickInfo);
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable.HitWithClick(clickInfo);
     }
 }

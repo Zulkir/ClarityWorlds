@@ -12,7 +12,7 @@ namespace Clarity.Engine.Interaction.Input
         // todo: refactor to actual querying or clear on defocus
         public IViewport FocusedViewport { get; private set; }
         public IKeyboardState CurrentKeyboardState { get; private set; }
-        public KeyModifyers CurrentKeyModifiers { get; private set; }
+        public KeyModifiers CurrentKeyModifiers { get; private set; }
 
         public InputService(IEventRoutingService eventRoutingService)
         {
@@ -25,7 +25,7 @@ namespace Clarity.Engine.Interaction.Input
             if (args is IKeyEvent keyArgs)
             {
                 CurrentKeyboardState = keyArgs.State;
-                CurrentKeyModifiers = keyArgs.KeyModifyers;
+                CurrentKeyModifiers = keyArgs.KeyModifiers;
             }
             else if (args is IMouseEvent margs && margs.IsOfType(MouseEventType.Down))
             {

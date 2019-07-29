@@ -2,7 +2,7 @@
 {
     public class DummyHittable : IRayHittable
     {
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) =>
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) =>
             RayHitResult.Failure();
     }
 }

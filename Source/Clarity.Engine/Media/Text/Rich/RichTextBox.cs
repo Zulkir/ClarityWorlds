@@ -24,7 +24,7 @@ namespace Clarity.Engine.Media.Text.Rich
             {
                 if (!layoutIsDirty)
                     return layout;
-                layout = layoutBuilder.Build(Text, Size);
+                layout = layoutBuilder.Build(Text, Size, DraggablePaddingInPixels);
                 layoutIsDirty = false;
                 return layout;
             }
@@ -33,6 +33,7 @@ namespace Clarity.Engine.Media.Text.Rich
         public ICacheContainer CacheContainer { get; }
 
         public static float DefaultPixelScaling { get; } = 512;
+        public static float DraggablePaddingInPixels { get; } = 20;
 
         protected RichTextBox(IRichTextBoxLayoutBuilder layoutBuilder)
         {

@@ -16,14 +16,14 @@ namespace Clarity.Ext.Gui.EtoForms
     {
         public static Key ToClarity(this ef.Keys key) => (Key)((int)key & 0x7F);
         public static ef.Keys ToEto(this Key key) => (ef.Keys)key;
-        public static ef.Keys ToEto(Key key, KeyModifyers modifyers)
+        public static ef.Keys ToEto(Key key, KeyModifiers modifiers)
         {
             var result = key.ToEto();
-            if (CodingHelper.HasFlag((int)modifyers, (int)KeyModifyers.Control))
+            if (CodingHelper.HasFlag((int)modifiers, (int)KeyModifiers.Control))
                 result |= ef.Keys.Control;
-            if (CodingHelper.HasFlag((int)modifyers, (int)KeyModifyers.Shift))
+            if (CodingHelper.HasFlag((int)modifiers, (int)KeyModifiers.Shift))
                 result |= ef.Keys.Shift;
-            if (CodingHelper.HasFlag((int)modifyers, (int)KeyModifyers.Alt))
+            if (CodingHelper.HasFlag((int)modifiers, (int)KeyModifiers.Alt))
                 result |= ef.Keys.Alt;
             return result;
         }

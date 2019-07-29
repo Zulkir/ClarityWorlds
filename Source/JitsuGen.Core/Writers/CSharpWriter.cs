@@ -90,10 +90,10 @@ namespace JitsuGen.Core.Writers
             return builder.ToString();
         }
 
-        public void WriteMethodDeclaration(string modifyers, MethodInfo methodInfo)
+        public void WriteMethodDeclaration(string modifiers, MethodInfo methodInfo)
         {
             WriteIndent();
-            Write(modifyers);
+            Write(modifiers);
             Write(" ");
             Write(UseType(methodInfo.ReturnType));
             Write(" ");
@@ -111,11 +111,11 @@ namespace JitsuGen.Core.Writers
             // todo: write generic constrains
         }
 
-        public void WriteProperty(string modifyers, string resolvedType, string name, 
+        public void WriteProperty(string modifiers, string resolvedType, string name, 
             Action<CSharpWriter> writeGetter,
             Action<CSharpWriter> writeSetter)
         {
-            WriteLine($"{modifyers} {resolvedType} {name}");
+            WriteLine($"{modifiers} {resolvedType} {name}");
             using (Curly())
             {
                 if (writeGetter != null)

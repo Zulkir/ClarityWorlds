@@ -2,12 +2,14 @@
 using Clarity.App.Worlds.Interaction.Placement;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.UndoRedo;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
 using Clarity.Engine.Interaction;
 using Clarity.Engine.Interaction.Input;
 using Clarity.Engine.Interaction.RayHittables;
 using Clarity.Engine.Interaction.RayHittables.Embedded;
+using Clarity.Engine.Media.Text.Rich;
 using Clarity.Engine.Objects.WorldTree;
 
 namespace Clarity.App.Worlds.Interaction.RectangleManipulation
@@ -36,7 +38,18 @@ namespace Clarity.App.Worlds.Interaction.RectangleManipulation
         private IRectangleComponent GetRectComponent() => GetRectNode()?.SearchComponent<IRectangleComponent>();
         private IPlacementSurface GetChildSpace() => GetRectNode()?.ParentNode?.PresentationInfra().Placement.PlacementSurface2D;
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => GetRectComponent().DragByBorders ? RayHitResult.Failure() : hittable.HitWithClick(clickInfo);
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
+        {
+            var hitResult = hittable.HitWithClick(clickInfo);
+            var cRect = GetRectComponent();
+            // todo: make overridable and override in more specific components
+            if (cRect.DragByBorders &&
+                (1 - hitResult.LocalHitPoint.X.Abs()) * cRect.Rectangle.HalfWidth * RichTextBox.DefaultPixelScaling > RichTextBox.DraggablePaddingInPixels &&
+                (1 - hitResult.LocalHitPoint.Y.Abs()) * cRect.Rectangle.HalfHeight * RichTextBox.DefaultPixelScaling > RichTextBox.DraggablePaddingInPixels)
+                return RayHitResult.Failure();
+            return hitResult;
+        }
+
         public bool TryHandleInteractionEvent(IInteractionEvent args) => interactionElement.TryHandleInteractionEvent(args);
     }
 }

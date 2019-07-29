@@ -41,12 +41,23 @@ namespace Clarity.Engine.Media.Text.Rich
                 FontFamily == other.FontFamily &&
                 FontDecoration == other.FontDecoration &&
                 Size == other.Size &&
-                TextColor == other.TextColor;
+                TextColor == other.TextColor &&
+                HighlightGroup == other.HighlightGroup;
         }
 
         public override int GetHashCode()
         {
-            return FontFamily.GetHashCode() ^ FontDecoration.GetHashCode() ^ Size.GetHashCode() ^ TextColor.GetHashCode();
+            return FontFamily.GetHashCode() ^ FontDecoration.GetHashCode() ^ 
+                   Size.GetHashCode() ^ TextColor.GetHashCode() ^ (HighlightGroup?.GetHashCode() ?? 0);
+        }
+
+        public void CopyFrom(IRtSpanStyle other)
+        {
+            FontFamily = other.FontFamily;
+            FontDecoration = other.FontDecoration;
+            Size = other.Size;
+            TextColor = other.TextColor;
+            HighlightGroup = other.HighlightGroup;
         }
     }
 }

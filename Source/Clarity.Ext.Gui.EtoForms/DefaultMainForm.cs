@@ -21,7 +21,6 @@ using Clarity.Engine.Utilities;
 using Clarity.Ext.Gui.EtoForms.AppModes;
 using Clarity.Ext.Gui.EtoForms.Commands;
 using Clarity.Ext.Gui.EtoForms.FluentGui;
-using Clarity.Ext.Gui.EtoForms.Props;
 using Clarity.Ext.Gui.EtoForms.ResourceExplorer;
 using Clarity.Ext.Gui.EtoForms.SaveLoad;
 using Clarity.Ext.Gui.EtoForms.SceneTree;
@@ -44,7 +43,7 @@ namespace Clarity.Ext.Gui.EtoForms
 
         public DefaultMainForm(IUndoRedoService undoRedoService, IToolFactory toolFactory, IToolService toolService,
             RenderControl renderControl, IAppModesCommands appModesCommands,
-            ISaveLoadGuiCommands saveLoadGuiCommands, ISceneTreeGui sceneTreeGui, IPropsGui propsGui, IFluentGuiService fluentGuiService,
+            ISaveLoadGuiCommands saveLoadGuiCommands, ISceneTreeGui sceneTreeGui, /*IPropsGui propsGui,*/ IFluentGuiService fluentGuiService,
             IAmDiBasedObjectFactory objectFactory, IAssetService assetService, IEmbeddedResources embeddedResources,
             IResourceExplorerGui resourceExplorerGui, IReadOnlyList<IToolMenuItem> toolMenuItems, IStoryGraphGui storyGraphGui,
             IReadOnlyList<IAssetLoader> assetLoaders, IViewService viewService, ICommonGuiObjects commonGuiObjects,
@@ -179,7 +178,7 @@ namespace Clarity.Ext.Gui.EtoForms
             };
 
             var rightLayout = new TableLayout();
-            rightLayout.Rows.Add(new TableRow(propsGui.PropsPanel, fluentGuiService.RootEtoControl));
+            rightLayout.Rows.Add(new TableRow(/*propsGui.PropsPanel, */fluentGuiService.RootEtoControl));
 
             var layout = new TableLayout();
             layout.Rows.Add(

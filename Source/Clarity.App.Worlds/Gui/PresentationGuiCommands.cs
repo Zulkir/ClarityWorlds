@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using Clarity.App.Worlds.CopyPaste;
 using Clarity.App.Worlds.Helpers;
 using Clarity.App.Worlds.Interaction.Manipulation3D;
@@ -51,32 +53,35 @@ namespace Clarity.App.Worlds.Gui
             this.viewServiceLazy = viewServiceLazy;
 
             //LayoutHere = GuiCommandsHelper.Create("Layout Here", ExecLayoutHere);
-            Move = new GuiCommand("Move", KeyModifyers.Control, Key.T, ExecMove);
-            Move3D = new GuiCommand("Move3D", KeyModifyers.Control | KeyModifyers.Shift , Key.T, ExecMove3D);
-            Rotate = new GuiCommand("Rotate", KeyModifyers.Control, Key.R, ExecRotate);
-            Scale = new GuiCommand("Scale", KeyModifyers.Control, Key.E, ExecScale);
-            Cut = new GuiCommand("Cut", KeyModifyers.Control, Key.X, ExecCut);
-            Copy = new GuiCommand("Copy", KeyModifyers.Control, Key.C, ExecCopy);
-            Paste = new GuiCommand("Paste", KeyModifyers.Control, Key.V, ExecPaste);
-            Duplicate = new GuiCommand("Duplicate", KeyModifyers.Control, Key.D, ExecDuplicate);
+            Move = new GuiCommand("Move", KeyModifiers.Control, Key.T, ExecMove);
+            Move3D = new GuiCommand("Move3D", KeyModifiers.Control | KeyModifiers.Shift , Key.T, ExecMove3D);
+            Rotate = new GuiCommand("Rotate", KeyModifiers.Control, Key.R, ExecRotate);
+            Scale = new GuiCommand("Scale", KeyModifiers.Control, Key.E, ExecScale);
+            Cut = new GuiCommand("Cut", KeyModifiers.Control, Key.X, ExecCut);
+            Copy = new GuiCommand("Copy", KeyModifiers.Control, Key.C, ExecCopy);
+            Paste = new GuiCommand("Paste", KeyModifiers.Control, Key.V, ExecPaste);
+            Duplicate = new GuiCommand("Duplicate", KeyModifiers.Control, Key.D, ExecDuplicate);
             Delete = new GuiCommand("Delete", Key.Delete, ExecDelete);
-            FocusView = new GuiCommand("Focus View", KeyModifyers.Control, Key.Enter, ExecFocusView);
+            FocusView = new GuiCommand("Focus View", KeyModifiers.Control, Key.Enter, ExecFocusView);
             AddNewAdaptiveLayout = new GuiCommand("Adaptive Layout", ExecNewAdaptiveLayout);
-            MoveUp = new GuiCommand("Move Up", KeyModifyers.Control, Key.Up, ExecMoveUp);
-            MoveDown = new GuiCommand("Move Down", KeyModifyers.Control, Key.Down, ExecMoveDown);
+            MoveUp = new GuiCommand("Move Up", KeyModifiers.Control, Key.Up, ExecMoveUp);
+            MoveDown = new GuiCommand("Move Down", KeyModifiers.Control, Key.Down, ExecMoveDown);
             SetBorderCurve = new GuiCommand("Set Border Curve", ExecSetBorderCurve);
             MakeScenePortal = new GuiCommand("Make Scene Portal", ExecMakeScenePortal);
         }
 
         private void ExecuteCopyPaste(CopyPasteCommand command)
         {
-            GetCopyPasteComponent().Execute(command);
+            var cCopyPaste = GetCopyPasteComponents().FirstOrDefault(x => x.Overrides(command));
+            if (cCopyPaste == null || !cCopyPaste.CanExecute(command))
+                return;
+            cCopyPaste.Execute(command);
             undoRedoService.OnChange();
         }
 
-        private ICopyPasteComponent GetCopyPasteComponent()
+        private IEnumerable<ICopyPasteComponent> GetCopyPasteComponents()
         {
-            return ViewService.SelectedNode.SearchComponent<ICopyPasteComponent>();
+            return ViewService.SelectedNode.SearchComponents<ICopyPasteComponent>();
         }
 
         /*

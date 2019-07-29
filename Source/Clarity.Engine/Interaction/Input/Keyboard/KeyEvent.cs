@@ -8,7 +8,7 @@ namespace Clarity.Engine.Interaction.Input.Keyboard
         public KeyEventType ComplexEventType { get; set; }
         public Key EventKey { get; set; }
         public IKeyboardState State { get; set; }
-        public KeyModifyers KeyModifyers { get; set; }
+        public KeyModifiers KeyModifiers { get; set; }
         public string Text { get; set; }
         public bool HasFocus { get; set; }
         public IViewport Viewport { get; set; }

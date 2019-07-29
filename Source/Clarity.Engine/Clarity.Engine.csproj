@@ -110,6 +110,7 @@
     <Compile Include="Media\Text\Rich\DefaultRtListStyle.cs" />
     <Compile Include="Media\Text\Rich\IRichTextBoxLayout.cs" />
     <Compile Include="Media\Text\Rich\IRichTextBoxLayoutBuilder.cs" />
+    <Compile Include="Media\Text\Rich\IRichTextHeadlessEditor.cs" />
     <Compile Include="Media\Text\Rich\IRichTextMeasurer.cs" />
     <Compile Include="Media\Text\Rich\IRtEmbeddingSpan.cs" />
     <Compile Include="Media\Text\Rich\IRtEmbeddingHandler.cs" />
@@ -120,7 +121,9 @@
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutBuilder.cs" />
     <Compile Include="Media\Text\Rich\RichTextBoxLayoutSpan.cs" />
     <Compile Include="Media\Text\Rich\RichTextDirection.cs" />
+    <Compile Include="Media\Text\Rich\RichTextHeadlessEditor.cs" />
     <Compile Include="Media\Text\Rich\RichTextPositionPreference.cs" />
+    <Compile Include="Media\Text\Rich\RtAbsRange.cs" />
     <Compile Include="Media\Text\Rich\RtEmbeddingSpan.cs" />
     <Compile Include="Media\Text\Rich\RtEmbeddingHandlerContainer.cs" />
     <Compile Include="Media\Text\Rich\RtListType.cs" />
@@ -184,7 +187,7 @@
     <Compile Include="Interaction\RayHittables\Embedded\SphereHittable.cs" />
     <Compile Include="Interaction\RayHittables\Embedded\RectangleHittable.cs" />
     <Compile Include="Interaction\RayHittables\RayHitIndex.cs" />
-    <Compile Include="Interaction\RayHittables\RayHitInfo.cs" />
+    <Compile Include="Interaction\RayHittables\RayCastInfo.cs" />
     <Compile Include="Utilities\AmFactory.cs" />
     <Compile Include="Platforms\FrameTime.cs" />
     <Compile Include="Platforms\IEnvironment.cs" />
@@ -209,7 +212,7 @@
     <Compile Include="Interaction\Input\Keyboard\KeyboardState.cs" />
     <Compile Include="Interaction\Input\Keyboard\KeyEvent.cs" />
     <Compile Include="Interaction\Input\Keyboard\KeyEventType.cs" />
-    <Compile Include="Interaction\Input\Keyboard\KeyModifyers.cs" />
+    <Compile Include="Interaction\Input\Keyboard\KeyModifiers.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseButtons.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseEvent.cs" />
     <Compile Include="Interaction\Input\Mouse\MouseEventArgsExtensions.cs" />

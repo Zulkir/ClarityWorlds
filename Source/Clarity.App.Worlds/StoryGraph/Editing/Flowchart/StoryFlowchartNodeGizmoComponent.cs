@@ -90,13 +90,13 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
             if (!(args is IMouseEvent margs))
                 return false;
 
-            if (margs.IsLeftDoubleClickEvent() && margs.KeyModifyers == KeyModifyers.None)
+            if (margs.IsLeftDoubleClickEvent() && margs.KeyModifiers == KeyModifiers.None)
             {
                 viewService.MainView.FocusOn(ReferencedNode.GetComponent<IFocusNodeComponent>());
                 return true;
             }
 
-            if ((margs.IsLeftClickEvent() || margs.IsRightClickEvent()) && margs.KeyModifyers == KeyModifyers.None)
+            if ((margs.IsLeftClickEvent() || margs.IsRightClickEvent()) && margs.KeyModifiers == KeyModifiers.None)
             {
                 viewService.SelectedNode = ReferencedNode;
                 return true;
@@ -106,6 +106,6 @@ namespace Clarity.App.Worlds.StoryGraph.Editing.Flowchart
         }
 
         // Hittable
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) => hittable.HitWithClick(clickInfo);
+        public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable.HitWithClick(clickInfo);
     }
 }

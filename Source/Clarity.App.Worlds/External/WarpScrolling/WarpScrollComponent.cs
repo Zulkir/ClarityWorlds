@@ -29,7 +29,7 @@ namespace Clarity.App.Worlds.External.WarpScrolling
         {
             if (!(args is IMouseEvent margs))
                 return false;
-            if (margs.ComplexEventType != MouseEventType.Wheel || margs.KeyModifyers != KeyModifyers.Control)
+            if (margs.ComplexEventType != MouseEventType.Wheel || margs.KeyModifiers != KeyModifiers.Control)
                 return false;
             RealScrollAmount += margs.WheelDelta * 0.01f;
             if (RealScrollAmount < 0.2f)

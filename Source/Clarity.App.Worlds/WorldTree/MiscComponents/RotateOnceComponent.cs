@@ -42,7 +42,7 @@ namespace Clarity.App.Worlds.WorldTree.MiscComponents
             if (!(args is IMouseEvent margs))
                 return false;
 
-            if (!margs.IsLeftDoubleClickEvent() || margs.KeyModifyers != KeyModifyers.None)
+            if (!margs.IsLeftDoubleClickEvent() || margs.KeyModifiers != KeyModifiers.None)
                 return false;
 
             originalTransform = Node.Transform;

@@ -96,7 +96,7 @@ namespace Clarity.App.Worlds.Interaction.Manipulation3D
             yield break;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return hittable.HitWithClick(clickInfo);
         }

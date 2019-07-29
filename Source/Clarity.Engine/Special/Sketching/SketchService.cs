@@ -23,7 +23,7 @@ namespace Clarity.Engine.Special.Sketching
         {
             if (!isDrawing)
             {
-                if (args.IsLeftDownEvent() && args.KeyModifyers == KeyModifyers.Shift)
+                if (args.IsLeftDownEvent() && args.KeyModifiers == KeyModifiers.Shift)
                 {
                     isDrawing = true;
                     var newSketch = new List<Vector2>();
@@ -31,7 +31,7 @@ namespace Clarity.Engine.Special.Sketching
                     sketches.Add(newSketch);
                     return true;
                 }
-                if (args.IsRightClickEvent() && args.KeyModifyers == KeyModifyers.Shift)
+                if (args.IsRightClickEvent() && args.KeyModifiers == KeyModifiers.Shift)
                 {
                     if (sketches.Any())
                         sketches.RemoveAt(sketches.Count - 1);
@@ -40,7 +40,7 @@ namespace Clarity.Engine.Special.Sketching
             }
             else
             {
-                if (args.IsLeftUpEvent() || args.KeyModifyers != KeyModifyers.Shift)
+                if (args.IsLeftUpEvent() || args.KeyModifiers != KeyModifiers.Shift)
                 {
                     sketches.Last().Add(args.State.HmgnPosition);
                     isDrawing = false;

@@ -14,5 +14,7 @@ namespace Clarity.Engine.Media.Text.Rich
         Color4 TextColor { get; set; }
         [CanBeNull]
         string HighlightGroup { get; set; }
+
+        void CopyFrom(IRtSpanStyle other);
     }
 }

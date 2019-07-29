@@ -37,7 +37,7 @@ namespace Clarity.App.Worlds.Misc.HighlightOnMouse
             var layer = mevent.Viewport.View.Layers.FirstOrDefault(x => x.VisibleScene == Node.Scene);
             if (layer == null)
                 return;
-            var rayHitInfo = new RayHitInfo(mevent.Viewport, layer, mevent.State.Position);
+            var rayHitInfo = new RayCastInfo(mevent.Viewport, layer, mevent.State.Position);
             var isMouseOver = Node.SearchComponents<IRayHittableComponent>()
                 .Any(x => x.HitWithClick(rayHitInfo).Successful);
             if (!wasMouseOver && isMouseOver)

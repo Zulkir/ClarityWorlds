@@ -23,7 +23,7 @@ namespace Clarity.Engine.Media.Text.Rich
 
         private struct Subspan
         {
-            public RtPosition TextPosition;
+            public RtPosition TextRelPosition;
             public string Text;
             public IRtSpanStyle Style;
             public IRtEmbeddingSpan Embedding;
@@ -46,7 +46,7 @@ namespace Clarity.Engine.Media.Text.Rich
             this.embeddingHandlerContainer = embeddingHandlerContainer;
         }
 
-        public IRichTextBoxLayout Build(IRichText text, IntSize2 size)
+        public IRichTextBoxLayout Build(IRichText text, IntSize2 size, float padding)
         {
             text.Normalize();
             var lspans = new List<RichTextBoxLayoutSpan>();
@@ -56,7 +56,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 Text = text,
                 LayoutSpans = lspans,
                 ExternalLayoutSpans = externalLayoutSpans,
-                RemainingShape = new AaRectangle2(Vector2.Zero, new Vector2(size.Width, size.Height))
+                RemainingShape = new AaRectangle2(new Vector2(padding), new Vector2(size.Width, size.Height) - new Vector2(padding))
             };
 
             for (var i = 0; i < text.Paragraphs.Count; i++)
@@ -67,7 +67,8 @@ namespace Clarity.Engine.Media.Text.Rich
                 var defaultStyle = text.Paragraphs[0].Spans[0].Style;
                 lspans.Add(new RichTextBoxLayoutSpan
                 {
-                    TextPosition = new RtPosition(),
+                    TextAbsPosition = 0,
+                    TextRelPosition = new RtPosition(),
                     Bounds = new AaRectangle2(new Vector2(0, 0), new Vector2(1f, defaultStyle.Size)),
                     Strip = new AaRectangle2(new Vector2(0, 0), new Vector2(1f, defaultStyle.Size)),
                     Style = defaultStyle,
@@ -143,7 +144,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 iconStyle.TextColor = paragraph.Style.ListStyle.GetIconColor(firstSpanStyle.TextColor);
                 subspans.Add(new Subspan
                 {
-                    TextPosition = new RtPosition(paragraphIndex, 0, 0),
+                    TextRelPosition = new RtPosition(paragraphIndex, 0, 0),
                     Text = icon,
                     Style = iconStyle,
                     ParagraphDirection = paragraph.Style.Direction,
@@ -152,7 +153,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 });
                 subspans.Add(new Subspan
                 {
-                    TextPosition = new RtPosition(paragraphIndex, 0, 0),
+                    TextRelPosition = new RtPosition(paragraphIndex, 0, 0),
                     Text = new string('\t', tabIndex + 1),
                     Style = iconStyle,
                     ParagraphDirection = paragraph.Style.Direction,
@@ -174,7 +175,7 @@ namespace Clarity.Engine.Media.Text.Rich
                         var image = handler.BuildImage(embeddingSpan);
                         subspans.Add(new Subspan
                         {
-                            TextPosition = new RtPosition(paragraphIndex, spanIndex, 0),
+                            TextRelPosition = new RtPosition(paragraphIndex, spanIndex, 0),
                             Text = "☒",
                             Style = span.Style,
                             CanBreakAfter = true,
@@ -198,7 +199,7 @@ namespace Clarity.Engine.Media.Text.Rich
                             {
                                 subspans.Add(new Subspan
                                 {
-                                    TextPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
+                                    TextRelPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
                                     Text = pureSpan.Text.Substring(previousBreakCharIndex, charIndex - previousBreakCharIndex),
                                     Style = span.Style,
                                     // todo: consider text direction
@@ -212,7 +213,7 @@ namespace Clarity.Engine.Media.Text.Rich
 
                         subspans.Add(new Subspan
                         {
-                            TextPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
+                            TextRelPosition = new RtPosition(paragraphIndex, spanIndex, previousBreakCharIndex),
                             Text = pureSpan.Text.Substring(previousBreakCharIndex),
                             Style = span.Style,
                             // todo: consider text direction
@@ -231,7 +232,7 @@ namespace Clarity.Engine.Media.Text.Rich
             {
                 subspans.Add(new Subspan
                 {
-                    TextPosition = new RtPosition(paragraphIndex, 0, 0),
+                    TextRelPosition = new RtPosition(paragraphIndex, 0, 0),
                     Text = "",
                     Style = firstSpanStyle,
                     ParagraphDirection = para.Style.Direction,
@@ -295,7 +296,7 @@ namespace Clarity.Engine.Media.Text.Rich
                 var strip = AaRectangle2.FromCornerAndDimensions(
                     context.StripStartPoint.X, context.StripStartPoint.Y, 
                     commonSize.Width, commonSize.Height);
-                var rectOffsetX = tabOffset;
+                var rectOffsetX = context.StripStartPoint.X + tabOffset;
                 var charIndex = 0;
 
                 for (var i = 0; i < mergedSubspans.Count; i++)
@@ -311,7 +312,8 @@ namespace Clarity.Engine.Media.Text.Rich
                     
                     newRectangles[i] = new RichTextBoxLayoutSpan
                     {
-                        TextPosition = subspan.TextPosition,
+                        TextRelPosition = subspan.TextRelPosition,
+                        TextAbsPosition = context.Text.GetGlobalIndex(subspan.TextRelPosition),
                         Bounds = new AaRectangle2(
                             new Vector2(rectOffsetX, context.StripStartPoint.Y),
                             new Vector2(rectOffsetX + subspanSize.Width, context.StripStartPoint.Y + commonSize.Height)),
@@ -396,14 +398,14 @@ namespace Clarity.Engine.Media.Text.Rich
                 toMerge.Add(first);
                 
                 // todo: consider span direction
-                while (index < subspans.Count && subspans[index].TextPosition.SpanIndex == toMerge[0].TextPosition.SpanIndex)
+                while (index < subspans.Count && subspans[index].TextRelPosition.SpanIndex == toMerge[0].TextRelPosition.SpanIndex)
                 {
                     toMerge.Add(subspans[index]);
                     index++;
                 }
                 resultList.Add(new Subspan
                 {
-                    TextPosition = first.TextPosition,
+                    TextRelPosition = first.TextRelPosition,
                     Text = toMerge.Select(x => x.Text).Aggregate((x, y) => x + y),
                     Style = first.Style,
                     CanBreakAfter = toMerge.Last().CanBreakAfter,

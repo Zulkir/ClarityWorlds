@@ -182,7 +182,7 @@ namespace Clarity.App.Worlds.Navigation
 
             if (e.EventKey == Key.Right)
             {
-                if (e.KeyModifyers.HasFlag(KeyModifyers.Control))
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
                 {
                     if (CanGoForward)
                         GoForward();
@@ -197,7 +197,7 @@ namespace Clarity.App.Worlds.Navigation
             
             if (e.EventKey == Key.Left)
             {
-                if (e.KeyModifyers.HasFlag(KeyModifyers.Control))
+                if (e.KeyModifiers.HasFlag(KeyModifiers.Control))
                 {
                     if (CanGoBack)
                         GoBack();

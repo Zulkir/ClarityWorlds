@@ -50,7 +50,7 @@ namespace Clarity.App.Transport.Prototype.Temp
             return node;
         }
 
-        public RayHitResult HitWithClick(RayHitInfo clickInfo)
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
         {
             return hittable.HitWithClick(clickInfo);
         }
