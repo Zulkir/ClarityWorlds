@@ -14,15 +14,20 @@ namespace Clarity.Ext.Simulation.SpherePacking
     {
         public abstract float CircleRadius { get; set; }
 
+        private readonly CirclePacker circlePacker;
+
         protected CirclePackingNodeComponent()
         {
-
+            circlePacker = new CirclePacker();
         }
 
         public Sphere LocalBoundingSphere { get; }
         public IEnumerable<IVisualElement> GetVisualElements() { throw new System.NotImplementedException(); }
         public IEnumerable<IVisualEffect> GetVisualEffects() { throw new System.NotImplementedException(); }
         public bool TryHandleInteractionEvent(IInteractionEvent args) { throw new System.NotImplementedException(); }
-        public RayHitResult HitWithClick(RayHitInfo clickInfo) { throw new System.NotImplementedException(); }
+        public RayHitResult HitWithClick(RayCastInfo clickInfo)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }

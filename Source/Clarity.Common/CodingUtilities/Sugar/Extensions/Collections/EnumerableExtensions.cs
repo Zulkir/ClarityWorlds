@@ -133,19 +133,22 @@ namespace Clarity.Common.CodingUtilities.Sugar.Extensions.Collections
             yield return item;
         }
 
-        public static IEnumerable<Pair<T>> SequentialPairs<T>(this IEnumerable<T> source)
+        public static IEnumerable<Pair<T>> SequentialPairs<T>(this IEnumerable<T> source, bool cyclic = false)
         {
             using (var enumerator = source.GetEnumerator())
             {
                 if (!enumerator.MoveNext())
                     yield break;
-                var curr = enumerator.Current;
+                var first = enumerator.Current;
+                var curr = first;
                 while (enumerator.MoveNext())
                 {
                     var prev = curr;
                     curr = enumerator.Current;
                     yield return new Pair<T>(prev, curr);
                 }
+                if (cyclic)
+                    yield return new Pair<T>(curr, first);
             }
         }
 

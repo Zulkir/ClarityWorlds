@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Clarity.Common.Numericals.Algebra;
 
 namespace Clarity.Ext.Simulation.SpherePacking
@@ -11,17 +10,17 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private const float MaxDensity = 0.907f;
 
         private float circleRadius;
-        private Vector2[] border;
+        private CirclePackingBorder border;
         private Vector2[] circleCenters;
         private int numCircles;
 
         public Vector2[] CircleCenters => circleCenters;
         public int NumCircles => numCircles;
 
-        public CirclePacker(float circleRadius, IEnumerable<Vector2> roughBorder)
+        public void Initialize(float circleRadius, Vector2[] borderPoints)
         {
             this.circleRadius = circleRadius;
-            border = NormalizeBorder(roughBorder, circleRadius * BorderMinDistanceInRadii).ToArray();
+            this.border = new CirclePackingBorder(borderPoints, circleRadius);
         }
 
         private static IEnumerable<Vector2> NormalizeBorder(IEnumerable<Vector2> roughBorder, float maxDistance)
