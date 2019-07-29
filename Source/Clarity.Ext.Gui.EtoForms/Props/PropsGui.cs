@@ -36,10 +36,6 @@ namespace Clarity.Ext.Gui.EtoForms.Props
             groups = new IPropsGuiGroup[]
             {
                 new PropsGuiGroupCommon(undoRedo),
-                new PropsGuiGroupScene(undoRedo, embeddedResources),
-                new PropsGuiGroupAbstractNode(undoRedo),
-                new PropsGuiGroupGeoModelEntity(undoRedo, assetService),
-                new PropsGuiGroupRectangleEntity(undoRedo),
                 new PropsGuiGroupFluidSimulation(undoRedo), 
                 new PropsGuiGroupStoryComponent(undoRedo, storyLayouts, worldTreeService, storyService), 
                 new PropsGuiGroupMovieRectangle(undoRedo, assetService, windowQueryService, movieUrlLoader),
