@@ -1,6 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using Clarity.Common.Numericals.Algebra;
+using Clarity.Common.Numericals.Geometry;
 
 namespace Clarity.Ext.Simulation.SpherePacking
 {
@@ -10,44 +11,30 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private const float MaxDensity = 0.907f;
 
         private float circleRadius;
+        private float circleArea;
         private CirclePackingBorder border;
         private Vector2[] circleCenters;
         private int numCircles;
 
+        public float CircleRadius => circleRadius;
+        public CirclePackingBorder Border => border;
         public Vector2[] CircleCenters => circleCenters;
         public int NumCircles => numCircles;
 
         public void Initialize(float circleRadius, Vector2[] borderPoints)
         {
             this.circleRadius = circleRadius;
+            circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
             this.border = new CirclePackingBorder(borderPoints, circleRadius);
-        }
-
-        private static IEnumerable<Vector2> NormalizeBorder(IEnumerable<Vector2> roughBorder, float maxDistance)
-        {
-            using (var e = roughBorder.GetEnumerator())
-            {
-                if (!e.MoveNext())
-                    throw new ArgumentException("'roughBorder' contains no elements");
-                var firstPoint = e.Current;
-                yield return firstPoint;
-                var prevPoint = firstPoint;
-                while (e.MoveNext())
-                {
-                    var nextPoint = e.Current;
-                    var numMidPoints = (int)((nextPoint - prevPoint).Length() / maxDistance);
-                    for (var i = 0; i < numMidPoints; i++)
-                        yield return Vector2.Lerp(prevPoint, nextPoint, (float)(i + 1) / (numMidPoints + 1));
-                    yield return nextPoint;
-                    prevPoint = nextPoint;
-                }
-
-                {
-                    var numMidPoints = (int)((firstPoint - prevPoint).Length() / maxDistance);
-                    for (var i = 0; i < numMidPoints; i++)
-                        yield return Vector2.Lerp(prevPoint, firstPoint, (float)(i + 1) / (numMidPoints + 1));
-                }
-            }
+            numCircles = (int)(border.Area / circleArea);
+            var rnd = new Random();
+            circleCenters = Enumerable.Range(0, int.MaxValue)
+                .Select(x => new Vector2(
+                    (border.BoundingRect.MinX + circleRadius) + (float)rnd.NextDouble() * (border.BoundingRect.Width - 2 * circleRadius),
+                    (border.BoundingRect.MinY + circleRadius) + (float)rnd.NextDouble() * (border.BoundingRect.Height - 2 * circleRadius)))
+                .Where(x => border.PointIsValid(x))
+                .Take(numCircles)
+                .ToArray();
         }
     }
 }

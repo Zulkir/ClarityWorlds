@@ -30,7 +30,7 @@ namespace Clarity.Engine.Media.Models.Explicit.Embedded
             protected override int GetFieldsHashCode() => 
                 Inverse ? HalfNumCircleSegments : HalfNumCircleSegments << 1;
 
-            protected override bool FieldsAreEual(Source other) =>
+            protected override bool FieldsAreEqual(Source other) =>
                 HalfNumCircleSegments == other.HalfNumCircleSegments &&
                 Inverse == other.Inverse;
         }

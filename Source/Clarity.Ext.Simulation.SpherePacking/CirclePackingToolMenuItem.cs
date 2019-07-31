@@ -1,5 +1,6 @@
 ﻿using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.App.Worlds.UndoRedo;
+using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Utilities;
 
@@ -21,6 +22,8 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public void OnActivate()
         {
             var entity = AmFactory.Create<SceneNode>();
+            entity.Name = "CirclePacking";
+            entity.Components.Add(AmFactory.Create<PresentationComponent>());
             entity.Components.Add(AmFactory.Create<CirclePackingNodeComponent>());
             var tool = new MoveEntityTool(entity, true, toolService, undoRedoService);
             toolService.CurrentTool = tool;

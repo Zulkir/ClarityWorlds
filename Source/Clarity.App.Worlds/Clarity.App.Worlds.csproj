@@ -77,6 +77,7 @@
     <Compile Include="Coroutines\CoroutineService.cs" />
     <Compile Include="Coroutines\ICoroutineService.cs" />
     <Compile Include="External\Movies\IMovieUrlLoader.cs" />
+    <Compile Include="External\SpherePacking\ICirclePackingComponent.cs" />
     <Compile Include="External\WarpScrolling\WarpScrollComponent.cs" />
     <Compile Include="Gui\FullscreenMode.cs" />
     <Compile Include="Gui\IGui.cs" />

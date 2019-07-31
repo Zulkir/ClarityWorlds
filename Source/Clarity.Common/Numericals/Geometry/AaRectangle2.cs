@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Runtime.InteropServices;
+using Clarity.Common.CodingUtilities;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals.Algebra;
 
@@ -59,6 +59,8 @@ namespace Clarity.Common.Numericals.Geometry
             HalfWidth = Math.Abs(corner2.X - corner1.X) / 2;
             HalfHeight = Math.Abs(corner2.Y - corner1.Y) / 2;
         }
+
+        public float Area => Width * Height;
 
         public bool ContainsX(float x, float eps = MathHelper.Eps5) =>
             MinX - eps <= x && x <= MaxX + eps;
@@ -168,10 +170,26 @@ namespace Clarity.Common.Numericals.Geometry
                 MathHelper.Lerp(left.HalfHeight, right.HalfHeight, amount));
         }
 
+        public static AaRectangle2 BoundingRect(IEnumerable<Vector2> points)
+        {
+            var minX = float.MaxValue;
+            var minY = float.MaxValue;
+            var maxX = float.MinValue;
+            var maxY = float.MinValue;
+
+            foreach (var point in points)
+            {
+                CodingHelper.UpdateIfLess(ref minX, point.X);
+                CodingHelper.UpdateIfLess(ref minY, point.Y);
+                CodingHelper.UpdateIfGreater(ref maxX, point.X);
+                CodingHelper.UpdateIfGreater(ref maxY, point.Y);
+            }
+
+            return minX != float.MaxValue ? FromBounds(minX, maxX, minY, maxY) : new AaRectangle2();
+        }
+
         public static AaRectangle2 BoundingRect(IEnumerable<AaRectangle2> rects)
         {
-            if (!rects.Any())
-                return new AaRectangle2();
             var minX = float.MaxValue;
             var minY = float.MaxValue;
             var maxX = float.MinValue;
@@ -179,17 +197,13 @@ namespace Clarity.Common.Numericals.Geometry
 
             foreach (var rect in rects)
             {
-                if (rect.MinX < minX)
-                    minX = rect.MinX;
-                if (rect.MaxX > maxX)
-                    maxX = rect.MaxX;
-                if (rect.MinY < minY)
-                    minY = rect.MinY;
-                if (rect.MaxY > maxY)
-                    maxY = rect.MaxY;
+                CodingHelper.UpdateIfLess(ref minX, rect.MinX);
+                CodingHelper.UpdateIfLess(ref minY, rect.MinY);
+                CodingHelper.UpdateIfGreater(ref maxX, rect.MaxX);
+                CodingHelper.UpdateIfGreater(ref maxY, rect.MaxY);
             }
 
-            return FromBounds(minX, maxX, minY, maxY);
+            return minX != float.MaxValue ? FromBounds(minX, maxX, minY, maxY) : new AaRectangle2();
         }
     }
 }

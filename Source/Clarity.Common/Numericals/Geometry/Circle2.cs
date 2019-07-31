@@ -20,6 +20,8 @@ namespace Clarity.Common.Numericals.Geometry
             Radius = radius;
         }
 
+        public float Area => MathHelper.Pi * Radius.Sq();
+
         #region Equality, Hash, String
         public override int GetHashCode() => 
             Center.GetHashCode() ^ (Radius.GetHashCode() << 1);

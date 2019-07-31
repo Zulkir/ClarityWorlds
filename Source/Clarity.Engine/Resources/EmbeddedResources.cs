@@ -11,6 +11,7 @@ namespace Clarity.Engine.Resources
     public class EmbeddedResources : IEmbeddedResources
     {
         private readonly CircleModelFactory circleModelFactory;
+        private readonly RectangleModelFactory rectangleModelFactory;
         private readonly CubeModelFactory cubeModelFactory;
         private readonly LineModelFactory lineModelFactory;
         private readonly PlaneModelFactory planeModelFactory;
@@ -29,6 +30,7 @@ namespace Clarity.Engine.Resources
             this.skyboxLoader = skyboxLoader;
             this.embeddedResourceFiles = embeddedResourceFiles;
             circleModelFactory = resourceFactories.OfType<CircleModelFactory>().First();
+            rectangleModelFactory = resourceFactories.OfType<RectangleModelFactory>().First();
             cubeModelFactory = resourceFactories.OfType<CubeModelFactory>().First();
             lineModelFactory = resourceFactories.OfType<LineModelFactory>().First();
             planeModelFactory = resourceFactories.OfType<PlaneModelFactory>().First();
@@ -43,6 +45,9 @@ namespace Clarity.Engine.Resources
 
         public IExplicitModel CircleModel(int numSegments) =>
             (IExplicitModel)circleModelFactory.GetModelSource(numSegments).GetResource();
+
+        public IExplicitModel RectangleModel() =>
+            (IExplicitModel)rectangleModelFactory.GetModelSource().GetResource();
 
         public IExplicitModel CubeModel() =>
             (IExplicitModel)cubeModelFactory.GetModelSource().GetResource();

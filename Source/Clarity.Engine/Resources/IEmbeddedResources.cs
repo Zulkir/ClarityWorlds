@@ -9,6 +9,7 @@ namespace Clarity.Engine.Resources
     {
         IExplicitModel LineModel();
         IExplicitModel CircleModel(int numSegments);
+        IExplicitModel RectangleModel();
         IExplicitModel SimplePlaneXyModel();
         IExplicitModel SimplePlaneXzModel();
         IExplicitModel CubeModel();

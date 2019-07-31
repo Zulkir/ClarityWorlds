@@ -14,18 +14,24 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private readonly float circleRadius;
         private readonly float circleRadiusSq;
 
+        public IReadOnlyList<Vector2> Points => points;
+        public AaRectangle2 BoundingRect { get; }
+        public float Area { get; }
+
         private IEnumerable<LineSegment2> Segments => EnumerateSegments(points);
 
-        public CirclePackingBorder(IEnumerable<Vector2> points, float circleRadius)
+        public CirclePackingBorder(IEnumerable<Vector2> rawPoints, float circleRadius)
         {
-            this.points = Normalize(points);
+            points = Normalize(rawPoints);
             this.circleRadius = circleRadius;
             circleRadiusSq = circleRadius.Sq();
+            BoundingRect = AaRectangle2.BoundingRect(points);
+            Area = CalculateArea(points);
         }
 
         private static Vector2[] Normalize(IEnumerable<Vector2> points)
         {
-            var pointsList = points.ToList();
+            var pointsList = new List<Vector2>(points);
             PurgeDuplicates(pointsList);
             var sumAngles = EnumerateSegments(pointsList)
                 .Select(x => x.ToArrowVector()).SequentialPairs(true)
@@ -33,6 +39,32 @@ namespace Clarity.Ext.Simulation.SpherePacking
             if (sumAngles < 0)
                 pointsList.Reverse();
             return pointsList.ToArray();
+            // todo: check no self-crossing
+        }
+
+        private static float CalculateArea(IEnumerable<Vector2> points)
+        {
+            var remainingPoints = new List<Vector2>(points);
+            if (remainingPoints.Count < 3)
+                return 0;
+
+            var area = 0f;
+            while (remainingPoints.Count > 3)
+            {
+                for (var i = remainingPoints.Count - 3; i >= 0; i--)
+                {
+                    var p1 = remainingPoints[i];
+                    var p2 = remainingPoints[i+1];
+                    var p3 = remainingPoints[i+2];
+                    var signedParallelogramArea = Vector2.Cross(p2 - p1, p3 - p2);
+                    if (signedParallelogramArea >= 0)
+                    {
+                        area += signedParallelogramArea / 2;
+                        remainingPoints.RemoveAt(i + 1);
+                    }
+                }
+            }
+            return area;
         }
 
         private static void PurgeDuplicates(List<Vector2> points)
@@ -94,9 +126,14 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         public bool PointIsValid(Vector2 point)
         {
-            FindClosestBorderPoint(point, out var closestBorderPoint, out var distanceSq, out var isInside);
+            FindClosestBorderPoint(point, out _, out var distanceSq, out var isInside);
             return isInside && distanceSq >= circleRadiusSq;
         }
-        
+
+        public Vector2 FindClosestValidPoint(Vector2 point)
+        {
+            FindClosestBorderPoint(point, out var closestBorderPoint, out var distanceSq, out var isInside);
+            return closestBorderPoint + (point - closestBorderPoint).Normalize() * distanceSq.Sqrt();
+        }
     }
 }

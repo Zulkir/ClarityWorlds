@@ -99,6 +99,7 @@
     <Compile Include="Interaction\Input\VRController\VRControllerState.cs" />
     <Compile Include="Media\Images\IImageLoader.cs" />
     <Compile Include="Media\Images\ImageResourceLoader.cs" />
+    <Compile Include="Media\Models\Explicit\Embedded\RectangleModelFactory.cs" />
     <Compile Include="Media\Models\Explicit\ExplicitModel.cs" />
     <Compile Include="Media\Models\IModel3D.cs" />
     <Compile Include="Media\Movies\MoviePlaybackImage.cs" />
