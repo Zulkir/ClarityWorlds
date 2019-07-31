@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
+using Clarity.App.Worlds.External.SpherePacking;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.StoryGraph;
@@ -164,6 +166,21 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
                 var formulaRow = textGroupBox.Row();
                 formulaRow.Button("Insert Formula", vm => vm.InsertFormula());
+            }
+            {
+                var circlePackingGroupBox = builder.Row().GroupBox("Circle Packing", x => x.SearchComponent<ICirclePackingComponent>(), x => x != null).Table();
+                var radiusRow = circlePackingGroupBox.Row();
+                radiusRow.Label("Radius");
+                radiusRow.TextBox(x => x.CircleRadius);
+                var areaRow = circlePackingGroupBox.Row();
+                areaRow.Label("Area");
+                areaRow.Label(x => x.Area.ToString(CultureInfo.InvariantCulture));
+                var numCirclesRow = circlePackingGroupBox.Row();
+                numCirclesRow.Label(x => "Num Circles: " + x.CurrentNumCircles);
+                numCirclesRow.Label(x => "Uppber Bound: " + x.MaxCircles);
+                var resetRow = circlePackingGroupBox.Row();
+                resetRow.Label("");
+                resetRow.Button("Reset Circles", x => x.ResetPacker());
             }
             {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();

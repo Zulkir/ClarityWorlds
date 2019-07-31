@@ -40,6 +40,10 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private readonly IInteractionElement selectOnClickInterationElement;
         private readonly IRayHittable hittable;
 
+        public float Area => circlePacker.Border.Area;
+        public int MaxCircles => circlePacker.MaxNumCircles;
+        public int CurrentNumCircles => circlePacker.NumCircles;
+
         protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService)
         {
             this.embeddedResources = embeddedResources;
@@ -48,13 +52,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
             CircleRadius = 1;
 
             circlePacker = new CirclePacker();
-            circlePacker.Initialize(CircleRadius, new []
-            {
-                new Vector2(-5, -5), 
-                new Vector2(-5, 5), 
-                new Vector2(5, 5), 
-                new Vector2(5, -5), 
-            });
+            ResetPacker();
             borderModel = new ExplicitModel(ResourceVolatility.Stable)
             {
                 IndexSubranges = new ExplicitModelIndexSubrange[1],
@@ -72,6 +70,17 @@ namespace Clarity.Ext.Simulation.SpherePacking
             hittable = new RectangleHittable<CirclePackingNodeComponent>(this, Transform.Identity, 
                 x => circlePacker.Border.BoundingRect,
                 x => 0);
+        }
+
+        public void ResetPacker()
+        {
+            circlePacker.Reset(CircleRadius, new[]
+            {
+                new Vector2(-5, -5),
+                new Vector2(-5, 5),
+                new Vector2(5, 5),
+                new Vector2(5, -5),
+            });
         }
 
         public Sphere LocalBoundingSphere => 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq.Expressions;
 using Clarity.Common.CodingUtilities;
 using Clarity.Common.Numericals.Colors;
@@ -97,6 +98,14 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             addControl(new FluentTextBox<T>(GetObject, 
                 x => (string)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v)));
+        }
+
+        public void TextBox(Expression<Func<T, float>> path)
+        {
+            var prop = CodingHelper.GetPropertyInfo(path);
+            addControl(new FluentTextBox<T>(GetObject,
+                x => ((float)prop.GetValue(x)).ToString(CultureInfo.InvariantCulture),
+                (x, v) => prop.SetValue(x, float.TryParse(v, out var fv) ? fv : 0)));
         }
 
         public void DropDown<TValue>(Expression<Func<T, TValue>> path, Dictionary<string, TValue> values)
