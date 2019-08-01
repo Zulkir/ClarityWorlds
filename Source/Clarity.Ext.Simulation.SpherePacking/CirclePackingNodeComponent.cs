@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.External.SpherePacking;
 using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.Interaction.Manipulation3D;
@@ -44,14 +45,14 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public int MaxCircles => circlePacker.MaxNumCircles;
         public int CurrentNumCircles => circlePacker.NumCircles;
 
-        protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService)
+        protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {
             this.embeddedResources = embeddedResources;
             Width = 16;
             Height = 16;
             CircleRadius = 1;
 
-            circlePacker = new CirclePacker();
+            circlePacker = new CirclePacker(coroutineService);
             ResetPacker();
             borderModel = new ExplicitModel(ResourceVolatility.Stable)
             {
@@ -83,6 +84,16 @@ namespace Clarity.Ext.Simulation.SpherePacking
             });
         }
 
+        public void OptimizeStep()
+        {
+            circlePacker.OptimizeStep();
+        }
+
+        public void RunOptimization()
+        {
+            circlePacker.RunOptimization();
+        }
+
         public Sphere LocalBoundingSphere => 
             new Sphere(Vector3.Zero, new Vector2(Width, Height).Length());
 
@@ -111,7 +122,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
                         .SetMaterial(StandardMaterial.New(this)
                             .SetIgnoreLighting(true)
                             .SetDiffuseColor(Color4.Yellow))
-                        .SetTransform(x => new Transform(x.circlePacker.CircleRadius, Quaternion.Identity, new Vector3(x.circlePacker.CircleCenters[iLoc], 0))));
+                        .SetTransform(x => new Transform(x.circlePacker.CircleRadius, Quaternion.Identity, new Vector3(x.circlePacker.FrontCircleCenters[iLoc], 0))));
                 yield return circleVisualElements[i];
             }
         }

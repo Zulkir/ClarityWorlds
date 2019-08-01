@@ -13,5 +13,7 @@ namespace Clarity.App.Worlds.External.SpherePacking
         int CurrentNumCircles { get; }
 
         void ResetPacker();
+        void OptimizeStep();
+        void RunOptimization();
     }
 }

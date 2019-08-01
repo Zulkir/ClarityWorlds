@@ -181,6 +181,12 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var resetRow = circlePackingGroupBox.Row();
                 resetRow.Label("");
                 resetRow.Button("Reset Circles", x => x.ResetPacker());
+                var optimizeStepRow = circlePackingGroupBox.Row();
+                optimizeStepRow.Label("");
+                optimizeStepRow.Button("Optimize Step", x => x.OptimizeStep());
+                var runOptimizeRow = circlePackingGroupBox.Row();
+                runOptimizeRow.Label("");
+                runOptimizeRow.Button("Run Optimization", x => x.RunOptimization());
             }
             {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
