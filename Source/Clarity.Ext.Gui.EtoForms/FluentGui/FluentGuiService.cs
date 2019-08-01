@@ -172,6 +172,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var radiusRow = circlePackingGroupBox.Row();
                 radiusRow.Label("Radius");
                 radiusRow.TextBox(x => x.CircleRadius);
+                var quakeRow = circlePackingGroupBox.Row();
+                quakeRow.Label("Quake");
+                quakeRow.Slider(x => x.RandomFactor, 0, 1, 32);
                 var areaRow = circlePackingGroupBox.Row();
                 areaRow.Label("Area");
                 areaRow.Label(x => x.Area.ToString(CultureInfo.InvariantCulture));

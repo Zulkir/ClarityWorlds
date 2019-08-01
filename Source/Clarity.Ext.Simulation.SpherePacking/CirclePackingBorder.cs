@@ -133,7 +133,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public Vector2 FindClosestValidPoint(Vector2 point)
         {
             FindClosestBorderPoint(point, out var closestBorderPoint, out var distanceSq, out var isInside);
-            if (distanceSq >= circleRadiusSq)
+            if (distanceSq >= circleRadiusSq - MathHelper.Eps5)
                 return point;
             var directionSign = isInside ? 1f : -1f;
             var potentialClosestValidPoint = closestBorderPoint + directionSign * (point - closestBorderPoint).Normalize() * circleRadius;

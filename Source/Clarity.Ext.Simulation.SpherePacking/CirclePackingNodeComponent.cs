@@ -7,6 +7,7 @@ using Clarity.App.Worlds.Interaction.Manipulation3D;
 using Clarity.App.Worlds.Views;
 using Clarity.Common.CodingUtilities.Collections;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
+using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Common.Numericals.Geometry;
@@ -20,6 +21,7 @@ using Clarity.Engine.Resources;
 using Clarity.Engine.Visualization.Elements;
 using Clarity.Engine.Visualization.Elements.Effects;
 using Clarity.Engine.Visualization.Elements.Materials;
+using Clarity.Engine.Visualization.Elements.RenderStates;
 
 namespace Clarity.Ext.Simulation.SpherePacking 
 {
@@ -31,11 +33,13 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public abstract int Width { get; set; }
         public abstract int Height { get; set; }
         public abstract float CircleRadius { get; set; }
+        
 
         private readonly CirclePacker circlePacker;
-
+        
         private readonly ExplicitModel borderModel;
         private CirclePackingBorder lastBorder;
+        private readonly IVisualElement backgroundVisualElement;
         private readonly IVisualElement borderVisualElement;
         private readonly List<IVisualElement> circleVisualElements;
         private readonly IInteractionElement selectOnClickInterationElement;
@@ -44,6 +48,12 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public float Area => circlePacker.Border.Area;
         public int MaxCircles => circlePacker.MaxNumCircles;
         public int CurrentNumCircles => circlePacker.NumCircles;
+
+        public float RandomFactor
+        {
+            get => circlePacker.RandomFactor;
+            set => circlePacker.RandomFactor = value;
+        }
 
         protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {
@@ -59,6 +69,19 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 IndexSubranges = new ExplicitModelIndexSubrange[1],
                 Topology = ExplicitModelPrimitiveTopology.LineStrip
             };
+            backgroundVisualElement = ModelVisualElement.New(this)
+                .SetModel(embeddedResources.SimplePlaneXyModel())
+                .SetMaterial(StandardMaterial.New()
+                    .SetIgnoreLighting(true)
+                    .SetDiffuseColor(Color4.Black)
+                    .FromGlobalCache())
+                .SetRenderState(StandardRenderState.New()
+                    .SetZOffset(-GraphicsHelper.MinZOffset))
+                .SetTransform(x => Transform.Translation(new Vector3(x.circlePacker.Border.BoundingRect.Center, 0)))
+                .SetNonUniformScale(x => new Vector3(
+                    x.circlePacker.Border.BoundingRect.HalfWidth,
+                    x.circlePacker.Border.BoundingRect.HalfHeight, 
+                    1));
             borderVisualElement = ModelVisualElement.New(this)
                 .SetModel(x => x.GetRelevantBorderModel())
                 .SetMaterial(StandardMaterial.New()
@@ -113,6 +136,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public IEnumerable<IVisualElement> GetVisualElements()
         {
             yield return borderVisualElement;
+            yield return backgroundVisualElement;
             for (int i = 0; i < circlePacker.NumCircles; i++)
             {
                 var iLoc = i;

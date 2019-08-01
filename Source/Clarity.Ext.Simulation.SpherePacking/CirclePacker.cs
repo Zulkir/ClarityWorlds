@@ -15,6 +15,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private const float MaxDensity = 0.907f;
 
         private readonly ICoroutineService coroutineService;
+        private readonly Random random;
 
         private float circleRadius;
         private float circleArea;
@@ -26,10 +27,13 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         private bool circlesConverged;
         private bool runningAsync;
+        
+        public float RandomFactor { get; set; }
 
         public CirclePacker(ICoroutineService coroutineService)
         {
             this.coroutineService = coroutineService;
+            random = new Random();
         }
 
         public float CircleRadius => circleRadius;
@@ -38,17 +42,24 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public int MaxNumCircles => maxNumCircles;
         public int NumCircles => numCircles;
 
+        private Vector2 GetRandomVector(float minX, float maxX, float minY, float maxY)
+        {
+            return new Vector2(
+                minX + (float)random.NextDouble() * (maxX - minX),
+                minY + (float)random.NextDouble() * (maxY - minY));
+        }
+
         public void Reset(float circleRadius, Vector2[] borderPoints)
         {
             this.circleRadius = circleRadius;
             circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
             this.border = new CirclePackingBorder(borderPoints, circleRadius);
             maxNumCircles = (int)(border.Area / circleArea);
-            var rnd = new Random();
+            
             frontCircleCenters = Enumerable.Range(0, int.MaxValue)
-                .Select(x => new Vector2(
-                    (border.BoundingRect.MinX + circleRadius) + (float)rnd.NextDouble() * (border.BoundingRect.Width - 2 * circleRadius),
-                    (border.BoundingRect.MinY + circleRadius) + (float)rnd.NextDouble() * (border.BoundingRect.Height - 2 * circleRadius)))
+                .Select(x => GetRandomVector(
+                    border.BoundingRect.MinX + circleRadius, border.BoundingRect.MaxX - circleRadius,
+                    border.BoundingRect.MinY + circleRadius, border.BoundingRect.MaxY - circleRadius))
                 .Where(x => border.PointIsValid(x))
                 .Take(maxNumCircles)
                 .ToArray();
@@ -77,6 +88,9 @@ namespace Clarity.Ext.Simulation.SpherePacking
                         var offsetMagnitude = MathHelper.Pow((1 - normalizedDist), 1.5f) * circleRadius / 2;
                         offset += fromNeighbor / dist * offsetMagnitude;
                     }
+
+                    var randomRange = RandomFactor * circleRadius;
+                    offset += GetRandomVector(-randomRange, randomRange, -randomRange, randomRange);
                     if (offset.Length() > circleRadius / 2)
                         offset = offset.Normalize() * circleRadius / 2;
                     var unrestrictedNewCenter = circleToMove + offset;

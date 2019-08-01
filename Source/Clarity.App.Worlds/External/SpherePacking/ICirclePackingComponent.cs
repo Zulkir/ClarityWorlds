@@ -7,6 +7,7 @@ namespace Clarity.App.Worlds.External.SpherePacking
         int Width { get; set; }
         int Height { get; set; }
         float CircleRadius { get; set; }
+        float RandomFactor { get; set; }
 
         float Area { get; }
         int MaxCircles { get; }
