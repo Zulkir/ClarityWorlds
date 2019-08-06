@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.Common.CodingUtilities;
@@ -22,6 +24,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private CirclePackingBorder border;
         private Vector2[] frontCircleCenters;
         private Vector2[] backCircleCenters;
+        private CircleStatus[] frontCircleStatuses;
         private int maxNumCircles;
         private int numCircles;
 
@@ -29,6 +32,8 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private bool runningAsync;
         
         public float RandomFactor { get; set; }
+        public int NumIterationPerBreak { get; set; } = 100;
+        public int BatchSize { get; set; } = 100;
 
         public CirclePacker(ICoroutineService coroutineService)
         {
@@ -65,6 +70,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 .ToArray();
             numCircles = maxNumCircles;
             backCircleCenters = frontCircleCenters.ToArray();
+            frontCircleStatuses = new CircleStatus[numCircles];
             circlesConverged = false;
         }
 
@@ -72,6 +78,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         {
             if (!circlesConverged)
             {
+                // todo: parallelize
                 for (int i = 0; i < numCircles; i++)
                 {
                     var iLoc = i;
@@ -101,25 +108,42 @@ namespace Clarity.Ext.Simulation.SpherePacking
             }
         }
 
-        public async void RunOptimization()
+        private IEnumerable<Vector2> GetNeighbors(Vector2 circleCenter)
         {
-            if (runningAsync)
-            {
-                runningAsync = false;
-                return;
-            }
-
-            runningAsync = true;
-            while (runningAsync)
-            {
-                OptimizeStep();
-                await coroutineService.WaitUpdates(1);
-            }
+            return frontCircleCenters
+                .Where(x => x != circleCenter)
+                .Where(x => (x - circleCenter).LengthSquared() <= (2 * circleRadius).Sq());
         }
 
         private void SwapBuffers()
         {
             CodingHelper.Swap(ref frontCircleCenters, ref backCircleCenters);
+        }
+
+        private void RefreshStatuses()
+        {
+
+        }
+
+        public async void RunOptimization()
+        {
+            if (runningAsync)
+                return;
+
+            var c = 0;
+            runningAsync = true;
+            while (runningAsync)
+            {
+                OptimizeStep();
+                c++;
+                if (c % NumIterationPerBreak == 0)
+                    await coroutineService.WaitUpdates(1);
+            }
+        }
+
+        public void StopOptimization()
+        {
+            runningAsync = false;
         }
     }
 }

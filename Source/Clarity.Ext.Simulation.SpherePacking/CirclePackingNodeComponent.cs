@@ -29,11 +29,8 @@ namespace Clarity.Ext.Simulation.SpherePacking
         ICirclePackingComponent, ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittableComponent
     {
         private readonly IEmbeddedResources embeddedResources;
-
-        public abstract int Width { get; set; }
-        public abstract int Height { get; set; }
-        public abstract float CircleRadius { get; set; }
         
+        public abstract float CircleRadius { get; set; }
 
         private readonly CirclePacker circlePacker;
         
@@ -48,6 +45,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public float Area => circlePacker.Border.Area;
         public int MaxCircles => circlePacker.MaxNumCircles;
         public int CurrentNumCircles => circlePacker.NumCircles;
+        public int CurrentIterationNumber { get; }
 
         public float RandomFactor
         {
@@ -55,11 +53,21 @@ namespace Clarity.Ext.Simulation.SpherePacking
             set => circlePacker.RandomFactor = value;
         }
 
+        public int BatchSize
+        {
+            get => circlePacker.BatchSize;
+            set => circlePacker.BatchSize = value;
+        }
+
+        public int NumIterationPerBreak
+        {
+            get => circlePacker.NumIterationPerBreak;
+            set => circlePacker.NumIterationPerBreak = value;
+        }
+
         protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {
             this.embeddedResources = embeddedResources;
-            Width = 16;
-            Height = 16;
             CircleRadius = 1;
 
             circlePacker = new CirclePacker(coroutineService);
@@ -107,18 +115,19 @@ namespace Clarity.Ext.Simulation.SpherePacking
             });
         }
 
-        public void OptimizeStep()
-        {
-            circlePacker.OptimizeStep();
-        }
+        public void OptimizeStep() => circlePacker.OptimizeStep();
+        public void RunOptimization() => circlePacker.RunOptimization();
+        public void StopOptimization() => circlePacker.StopOptimization();
+        public void DeleteCircle() => circlePacker.DeleteCircle();
 
-        public void RunOptimization()
+        public Sphere LocalBoundingSphere
         {
-            circlePacker.RunOptimization();
+            get
+            {
+                var boundingCircle = circlePacker.Border.BoundingRect.GetBoundingCircle();
+                return new Sphere(new Vector3(boundingCircle.Center, 0), boundingCircle.Radius);
+            }
         }
-
-        public Sphere LocalBoundingSphere => 
-            new Sphere(Vector3.Zero, new Vector2(Width, Height).Length());
 
         private IModel3D GetRelevantBorderModel()
         {
