@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.Common.CodingUtilities;
-using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
@@ -24,6 +22,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private CirclePackingBorder border;
         private Vector2[] frontCircleCenters;
         private Vector2[] backCircleCenters;
+        private CirclePackingCircleGrid frontCirclesGrid;
         private CircleStatus[] frontCircleStatuses;
         private int maxNumCircles;
         private int numCircles;
@@ -32,8 +31,9 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private bool runningAsync;
         
         public float RandomFactor { get; set; }
-        public int NumIterationPerBreak { get; set; } = 100;
+        public int NumIterationPerBreak { get; set; } = 1;
         public int BatchSize { get; set; } = 100;
+        public int MaxIterations { get; set; } = int.MaxValue;
 
         public CirclePacker(ICoroutineService coroutineService)
         {
@@ -44,6 +44,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public float CircleRadius => circleRadius;
         public CirclePackingBorder Border => border;
         public Vector2[] FrontCircleCenters => frontCircleCenters;
+        public CircleStatus[] FrontCircleStatuses => frontCircleStatuses;
         public int MaxNumCircles => maxNumCircles;
         public int NumCircles => numCircles;
 
@@ -61,16 +62,20 @@ namespace Clarity.Ext.Simulation.SpherePacking
             this.border = new CirclePackingBorder(borderPoints, circleRadius);
             maxNumCircles = (int)(border.Area / circleArea);
             
+            frontCirclesGrid = new CirclePackingCircleGrid(circleRadius, border.BoundingRect);
             frontCircleCenters = Enumerable.Range(0, int.MaxValue)
                 .Select(x => GetRandomVector(
                     border.BoundingRect.MinX + circleRadius, border.BoundingRect.MaxX - circleRadius,
                     border.BoundingRect.MinY + circleRadius, border.BoundingRect.MaxY - circleRadius))
+                .Where(x => frontCirclesGrid.TryFit(x))
                 .Where(x => border.PointIsValid(x))
                 .Take(maxNumCircles)
                 .ToArray();
             numCircles = maxNumCircles;
             backCircleCenters = frontCircleCenters.ToArray();
+            frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
             frontCircleStatuses = new CircleStatus[numCircles];
+            RefreshStatuses();
             circlesConverged = false;
         }
 
@@ -79,18 +84,23 @@ namespace Clarity.Ext.Simulation.SpherePacking
             if (!circlesConverged)
             {
                 // todo: parallelize
-                for (int i = 0; i < numCircles; i++)
+                for (var i = 0; i < numCircles; i++)
                 {
                     var iLoc = i;
-                    var circleToMove = frontCircleCenters[i];
-                    var closestNeighbors = frontCircleCenters.Where((x, j) => j != iLoc).Where(x => (x - circleToMove).LengthSquared() <= (2 * circleRadius).Sq());
+                    var circleToMove = frontCircleCenters[iLoc];
+                    var neighborIndices = frontCirclesGrid.GetNeighborIndices(iLoc);
                     var offset = Vector2.Zero;
-                    foreach (var closestNeighbor in closestNeighbors)
+                    foreach (var neighborIndex in neighborIndices)
                     {
-                        var fromNeighbor = circleToMove - closestNeighbor;
-                        var dist = fromNeighbor.Length();
+                        var neighborCenter = frontCircleCenters[neighborIndex];
+                        var fromNeighbor = circleToMove - neighborCenter;
+                        
                         var minDist = circleRadius;
-                        var maxDist = 2 * circleRadius;
+                        var maxDist = 2.1f * circleRadius;
+                        
+                        var dist = fromNeighbor.Length();
+                        if (dist >= maxDist)
+                            continue;
                         var normalizedDist = MathHelper.Clamp((dist - minDist) / (maxDist - minDist), 0, 1);
                         var offsetMagnitude = MathHelper.Pow((1 - normalizedDist), 1.5f) * circleRadius / 2;
                         offset += fromNeighbor / dist * offsetMagnitude;
@@ -101,28 +111,28 @@ namespace Clarity.Ext.Simulation.SpherePacking
                     if (offset.Length() > circleRadius / 2)
                         offset = offset.Normalize() * circleRadius / 2;
                     var unrestrictedNewCenter = circleToMove + offset;
-                    backCircleCenters[i] = border.FindClosestValidPoint(unrestrictedNewCenter);
+                    backCircleCenters[iLoc] = border.FindClosestValidPoint(unrestrictedNewCenter);
                 }
-                //circlesConverged = true;
                 SwapBuffers();
             }
-        }
-
-        private IEnumerable<Vector2> GetNeighbors(Vector2 circleCenter)
-        {
-            return frontCircleCenters
-                .Where(x => x != circleCenter)
-                .Where(x => (x - circleCenter).LengthSquared() <= (2 * circleRadius).Sq());
         }
 
         private void SwapBuffers()
         {
             CodingHelper.Swap(ref frontCircleCenters, ref backCircleCenters);
+            frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
         }
 
         private void RefreshStatuses()
         {
-
+            for (var i = 0; i < numCircles; i++)
+            {
+                var center = frontCircleCenters[i];
+                var closestDistanceSq = frontCirclesGrid.GetNeighborIndices(i)
+                    .Select(x => (frontCircleCenters[x] - center).LengthSquared())
+                    .MinOrNull() ?? float.MaxValue;
+                frontCircleStatuses[i] = new CircleStatus(MathHelper.Sqrt(closestDistanceSq) / circleRadius);
+            }
         }
 
         public async void RunOptimization()
@@ -130,20 +140,29 @@ namespace Clarity.Ext.Simulation.SpherePacking
             if (runningAsync)
                 return;
 
-            var c = 0;
             runningAsync = true;
-            while (runningAsync)
+            for (int i = 0; i < MaxIterations; i++)
             {
+                if (!runningAsync)
+                    break;
                 OptimizeStep();
-                c++;
-                if (c % NumIterationPerBreak == 0)
+                if ((i+1) % NumIterationPerBreak == 0)
+                {
+                    RefreshStatuses();
                     await coroutineService.WaitUpdates(1);
+                }
             }
+            runningAsync = false;
         }
 
         public void StopOptimization()
         {
             runningAsync = false;
+        }
+
+        public void DeleteCircle()
+        {
+            numCircles--;
         }
     }
 }

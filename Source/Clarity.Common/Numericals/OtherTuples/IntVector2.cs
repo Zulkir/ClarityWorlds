@@ -16,6 +16,12 @@ namespace Clarity.Common.Numericals.OtherTuples
             Y = y;
         }
 
+        public IntVector2(Vector2 floatVector)
+        {
+            X = (int)floatVector.X;
+            Y = (int)floatVector.Y;
+        }
+
         #region Equality, Hash, String
         public override int GetHashCode()
         {

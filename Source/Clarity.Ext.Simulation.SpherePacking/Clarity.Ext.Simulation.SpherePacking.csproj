@@ -43,7 +43,7 @@
   <ItemGroup>
     <Compile Include="CirclePacker.cs" />
     <Compile Include="CirclePackingBorder.cs" />
-    <Compile Include="CirclePackingCircleSet.cs" />
+    <Compile Include="CirclePackingCircleGrid.cs" />
     <Compile Include="CircleStatus.cs" />
     <Compile Include="SpherePackingExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

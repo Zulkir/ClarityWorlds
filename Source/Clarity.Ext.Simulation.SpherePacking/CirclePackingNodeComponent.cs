@@ -154,10 +154,17 @@ namespace Clarity.Ext.Simulation.SpherePacking
                         .SetModel(x => x.embeddedResources.CircleModel(64))
                         .SetMaterial(StandardMaterial.New(this)
                             .SetIgnoreLighting(true)
-                            .SetDiffuseColor(Color4.Yellow))
+                            .SetDiffuseColor(x => ColorForStatus(x.circlePacker.FrontCircleStatuses[iLoc])))
                         .SetTransform(x => new Transform(x.circlePacker.CircleRadius, Quaternion.Identity, new Vector3(x.circlePacker.FrontCircleCenters[iLoc], 0))));
                 yield return circleVisualElements[i];
             }
+        }
+
+        private static Color4 ColorForStatus(CircleStatus status)
+        {
+            return status.MinRelativeDistance >= 2 
+                ? Color4.Green 
+                : Color4.Lerp(Color4.Red, Color4.Yellow, MathHelper.Clamp(status.MinRelativeDistance - 1, 0, 1));
         }
 
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;

@@ -181,6 +181,12 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var numCirclesRow = circlePackingGroupBox.Row();
                 numCirclesRow.Label(x => "Num Circles: " + x.CurrentNumCircles);
                 numCirclesRow.Label(x => "Uppber Bound: " + x.MaxCircles);
+                //var iterPerBreakRow = circlePackingGroupBox.Row();
+                //iterPerBreakRow.Label("Iteractions per Display");
+                //iterPerBreakRow.TextBox(x => x.NumIterationPerBreak);
+                //var batchSizeRow = circlePackingGroupBox.Row();
+                //batchSizeRow.Label("Batch Size");
+                //batchSizeRow.TextBox(x => x.BatchSize);
                 var resetRow = circlePackingGroupBox.Row();
                 resetRow.Label("");
                 resetRow.Button("Reset Circles", x => x.ResetPacker());
@@ -190,6 +196,12 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var runOptimizeRow = circlePackingGroupBox.Row();
                 runOptimizeRow.Label("");
                 runOptimizeRow.Button("Run Optimization", x => x.RunOptimization());
+                var stopOptimizeRow = circlePackingGroupBox.Row();
+                stopOptimizeRow.Label("");
+                stopOptimizeRow.Button("Stop Optimization", x => x.StopOptimization());
+                var deleteCircleRow = circlePackingGroupBox.Row();
+                deleteCircleRow.Label("");
+                deleteCircleRow.Button("Delete Circle", x => x.DeleteCircle());
             }
             {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();

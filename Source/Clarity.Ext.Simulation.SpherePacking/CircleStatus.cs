@@ -2,11 +2,11 @@
 {
     public struct CircleStatus
     {
-        public float MinSignificantDistance;
+        public float MinRelativeDistance;
 
-        public CircleStatus(float minSignificantDistance)
+        public CircleStatus(float minRelativeDistance)
         {
-            MinSignificantDistance = minSignificantDistance;
+            MinRelativeDistance = minRelativeDistance;
         }
     }
 }
