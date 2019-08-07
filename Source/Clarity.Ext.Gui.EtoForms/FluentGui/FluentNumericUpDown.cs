@@ -37,6 +37,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public void Update()
         {
+            if (etoControl.HasFocus)
+                return;
             var value = getValue(getObject());
             if (etoControl.Value == value)
                 return;
