@@ -105,7 +105,7 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             var prop = CodingHelper.GetPropertyInfo(path);
             addControl(new FluentTextBox<T>(GetObject,
                 x => ((float)prop.GetValue(x)).ToString(CultureInfo.InvariantCulture),
-                (x, v) => prop.SetValue(x, float.TryParse(v, out var fv) ? fv : 0)));
+                (x, v) => prop.SetValue(x, float.TryParse(v, NumberStyles.Any, CultureInfo.InvariantCulture, out var fv) ? fv : 0)));
         }
 
         public void DropDown<TValue>(Expression<Func<T, TValue>> path, Dictionary<string, TValue> values)

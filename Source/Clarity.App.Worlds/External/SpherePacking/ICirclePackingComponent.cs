@@ -4,6 +4,7 @@ namespace Clarity.App.Worlds.External.SpherePacking
 {
     public interface ICirclePackingComponent : ISceneNodeComponent
     {
+        string ShapeName { get; set; }
         float CircleRadius { get; set; }
         float RandomFactor { get; set; }
         int NumIterationPerBreak { get; set; }

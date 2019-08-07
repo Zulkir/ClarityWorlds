@@ -31,7 +31,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private bool runningAsync;
         
         public float RandomFactor { get; set; }
-        public int NumIterationPerBreak { get; set; } = 1;
+        public int NumIterationPerBreak { get; set; } = 10;
         public int BatchSize { get; set; } = 100;
         public int MaxIterations { get; set; } = int.MaxValue;
 

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.External.SpherePacking;
@@ -29,7 +30,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         ICirclePackingComponent, ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittableComponent
     {
         private readonly IEmbeddedResources embeddedResources;
-        
+
         public abstract float CircleRadius { get; set; }
 
         private readonly CirclePacker circlePacker;
@@ -42,10 +43,24 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private readonly IInteractionElement selectOnClickInterationElement;
         private readonly IRayHittable hittable;
 
+        private string shapeName = "Square";
+
         public float Area => circlePacker.Border.Area;
         public int MaxCircles => circlePacker.MaxNumCircles;
         public int CurrentNumCircles => circlePacker.NumCircles;
+
         public int CurrentIterationNumber { get; }
+
+        public string ShapeName
+        {
+            get => shapeName;
+            set
+            {
+                shapeName = value;
+                StopOptimization();
+                ResetPacker();
+            }
+        }
 
         public float RandomFactor
         {
@@ -106,13 +121,34 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         public void ResetPacker()
         {
-            circlePacker.Reset(CircleRadius, new[]
+            Vector2[] borderPoints;
+            switch (shapeName)
             {
-                new Vector2(-5, -5),
-                new Vector2(-5, 5),
-                new Vector2(5, 5),
-                new Vector2(5, -5),
-            });
+                case "Square":
+                    borderPoints = new[]
+                    {
+                        new Vector2(-5, -5),
+                        new Vector2(-5, 5),
+                        new Vector2(5, 5),
+                        new Vector2(5, -5),
+                    };
+                    break;
+                case "Circle":
+                    borderPoints = Enumerable.Range(0, 256)
+                        .Select(x => x * MathHelper.TwoPi / 256)
+                        .Select(x => 5 * new Vector2(MathHelper.Cos(x), MathHelper.Sin(x)))
+                        .ToArray();
+                    break;
+                case "Ellipse":
+                    borderPoints = Enumerable.Range(0, 256)
+                        .Select(x => x * MathHelper.TwoPi / 256)
+                        .Select(x => new Vector2(8 * MathHelper.Cos(x), 5 * MathHelper.Sin(x)))
+                        .ToArray();
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+            circlePacker.Reset(CircleRadius, borderPoints);
         }
 
         public void OptimizeStep() => circlePacker.OptimizeStep();

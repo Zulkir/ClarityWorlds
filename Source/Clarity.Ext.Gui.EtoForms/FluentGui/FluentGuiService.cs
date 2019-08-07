@@ -169,6 +169,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             }
             {
                 var circlePackingGroupBox = builder.Row().GroupBox("Circle Packing", x => x.SearchComponent<ICirclePackingComponent>(), x => x != null).Table();
+                var shapeRow = circlePackingGroupBox.Row();
+                shapeRow.Label("Shape");
+                shapeRow.DropDown(x => x.ShapeName, new[] {"Square", "Circle", "Ellipse"}.ToDictionary(x => x));
                 var radiusRow = circlePackingGroupBox.Row();
                 radiusRow.Label("Radius");
                 radiusRow.TextBox(x => x.CircleRadius);
