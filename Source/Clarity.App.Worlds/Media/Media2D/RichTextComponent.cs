@@ -94,10 +94,9 @@ namespace Clarity.App.Worlds.Media.Media2D
             var lineModel = embeddedResources.LineModel();
             cursorVisualElement = new ModelVisualElement<RichTextComponent>(this)
                 .SetModel(lineModel)
-                .SetMaterial(StandardMaterial.New()
-                    .SetDiffuseColor(Color4.Black)
-                    .SetIgnoreLighting(true)
-                    .FromGlobalCache())
+                .SetMaterial(StandardMaterial.New(this)
+                    .SetDiffuseColor(x => x.HeadlessEditor.TryGetSpanStyleProp(s => s.TextColor, out var color) ? color : Color4.Black)
+                    .SetIgnoreLighting(true))
                 .SetRenderState(StandardRenderState.New()
                     .SetLineWidth(2)
                     .SetZOffset(GraphicsHelper.MinZOffset * 2)
