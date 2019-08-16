@@ -4,8 +4,9 @@
 
 ** Bugs **
 
-- Inputting text span size with a keyboard
 - Loading worlds with a skybox
+- Text selection highlight being rendered before the text with a transparent background
+- FluentGUI does not trigger Undo/Redo
 
 ** Small coding improvements **
 
@@ -76,6 +77,7 @@
 - Fix skybox
 - Better GUI framework
 - InputEventArgs containing hit coords
+- Inputting text span size with a keyboard
 
 ------ DEPRECATED ------
 - Move world serialization to a common place (away from SaveLoad and UndoRedo) // SaveLoad is now the common place
