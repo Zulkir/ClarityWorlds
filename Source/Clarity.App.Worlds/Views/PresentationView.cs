@@ -212,6 +212,8 @@ namespace Clarity.App.Worlds.Views
                 default:
                     throw new ArgumentOutOfRangeException(nameof(args.Type), args.Type, null);
             }
+
+            FocusNode = navigationService.Current;
         }
 
         private void OnQueryServiceUpdated()

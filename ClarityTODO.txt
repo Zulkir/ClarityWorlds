@@ -38,6 +38,7 @@
 - Layered input event system, where more info added to an event as it gets passed down to componenets
 - Restrict InputLock to a given viewport layer
 - In FluentGui, pass the parent object to Update so that getObject() is not called for the whole chain every time
+- Merge NavigationService.Current and View.FocusedNode concepts
 
 ** Large coding improvements **
 

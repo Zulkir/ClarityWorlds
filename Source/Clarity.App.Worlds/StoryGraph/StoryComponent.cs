@@ -60,7 +60,7 @@ namespace Clarity.App.Worlds.StoryGraph
         private readonly IInteractionElement navigateInteractionElement;
 
         private IEnumerable<IVisualElement> visualElems;
-        private IEnumerable<IVisualEffect> visualEffects;
+        private Func<ISceneNode, IEnumerable<IVisualEffect>> getVisualEffects;
         private IGuiCommand[] guiCommandBlock;
         private IRayHittable hittable;
 
@@ -96,7 +96,7 @@ namespace Clarity.App.Worlds.StoryGraph
         {
             DefaultViewpointMechanism = dynamicParts.DefaultViewpointMechanism;
             visualElems = dynamicParts.VisualElements;
-            visualEffects = dynamicParts.VisualEffects;
+            getVisualEffects = dynamicParts.GetVisualEffects;
             hittable = dynamicParts.Hittable;
             onUpdate = dynamicParts.OnUpdate;
             onUpdateClosure = dynamicParts.OnUpdateClosure;
@@ -188,7 +188,7 @@ namespace Clarity.App.Worlds.StoryGraph
 
         // Visual
         public IEnumerable<IVisualElement> GetVisualElements() => visualElems;
-        public IEnumerable<IVisualEffect> GetVisualEffects() => visualEffects ?? EmptyArrays<IVisualEffect>.Array;
+        public IEnumerable<IVisualEffect> GetVisualEffects() => getVisualEffects?.Invoke(Node) ?? EmptyArrays<IVisualEffect>.Array;
 
         // Hittable
         public RayHitResult HitWithClick(RayCastInfo clickInfo) => hittable?.HitWithClick(clickInfo) ?? RayHitResult.Failure();
