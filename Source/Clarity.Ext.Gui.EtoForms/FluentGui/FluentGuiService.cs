@@ -6,6 +6,7 @@ using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
@@ -192,6 +193,12 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 formulaRow.Button("Insert Formula", vm => vm.InsertFormula());
             }
             {
+                var highlightOnMouseGroupBox = builder.Row().GroupBox("Highlight on Mouse", x => x.SearchComponent<HighlightOnMouseComponent>(), x => x != null).Table();
+                var row = highlightOnMouseGroupBox.Row();
+                row.Label("Group Name");
+                row.TextBox(x => x.GroupName, x => x ?? "", x => string.IsNullOrEmpty(x) ? null : x);
+            }
+            {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
                 // todo: to ArrayTable
                 var componentsCache = (IEnumerable<ISceneNodeComponent>)null;
@@ -211,21 +218,21 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var newComponentRow = newComponentPanelBuilder.Row();
                 newComponentRow.DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
-                    ["RotateOnce"] = typeof(RotateOnceComponent),
+                    ["Rotate Once"] = typeof(RotateOnceComponent),
+                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent)
                 });
                 newComponentRow.Button("Add", x =>
                 {
                     componentsCache = null;
+                    ISceneNodeComponent component;
                     if (x.ComponentType == typeof(RotateOnceComponent))
-                    {
-                        var component = AmFactory.Create<RotateOnceComponent>();
-                        newComponentViewModel.GetNode().Components.Add(component);
-                        undoRedo.OnChange();
-                    }
+                        component = AmFactory.Create<RotateOnceComponent>();
+                    else if (x.ComponentType == typeof(HighlightOnMouseComponent))
+                        component = AmFactory.Create<HighlightOnMouseComponent>();
                     else
-                    {
                         throw new ArgumentOutOfRangeException();
-                    }
+                    newComponentViewModel.GetNode().Components.Add(component);
+                    undoRedo.OnChange();
                 });
             }
             builder.Row().Panel(x => x, x => true);
