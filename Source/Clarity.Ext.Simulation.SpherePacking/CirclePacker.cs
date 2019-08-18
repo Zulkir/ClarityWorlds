@@ -13,6 +13,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
     {
         private const float BorderMinDistanceInRadii = 0.2f;
         private const float MaxDensity = 0.907f;
+        private const float Precision = 1e-2f;
 
         private readonly ICoroutineService coroutineService;
         private readonly Random random;
@@ -55,12 +56,12 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 minY + (float)random.NextDouble() * (maxY - minY));
         }
 
-        public void Reset(float circleRadius, Vector2[] borderPoints)
+        public void Reset(float circleRadius, int maxInitialCircles, Vector2[] borderPoints)
         {
             this.circleRadius = circleRadius;
             circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
             this.border = new CirclePackingBorder(borderPoints, circleRadius);
-            maxNumCircles = (int)(border.Area / circleArea);
+            maxNumCircles = Math.Min(maxInitialCircles, (int)(border.Area / circleArea));
             
             frontCirclesGrid = new CirclePackingCircleGrid(circleRadius, border.BoundingRect);
             frontCircleCenters = Enumerable.Range(0, int.MaxValue)
@@ -94,16 +95,13 @@ namespace Clarity.Ext.Simulation.SpherePacking
                     {
                         var neighborCenter = frontCircleCenters[neighborIndex];
                         var fromNeighbor = circleToMove - neighborCenter;
-                        
-                        var minDist = circleRadius;
-                        var maxDist = 2.1f * circleRadius;
-                        
+
+                        var maxDist = 2 * circleRadius;
                         var dist = fromNeighbor.Length();
                         if (dist >= maxDist)
                             continue;
-                        var normalizedDist = MathHelper.Clamp((dist - minDist) / (maxDist - minDist), 0, 1);
-                        var offsetMagnitude = MathHelper.Pow((1 - normalizedDist), 1.5f) * circleRadius / 2;
-                        offset += fromNeighbor / dist * offsetMagnitude;
+
+                        offset += fromNeighbor * (maxDist - dist) * 0.5f;
                     }
 
                     var randomRange = RandomFactor * circleRadius;
@@ -131,7 +129,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 var closestDistanceSq = frontCirclesGrid.GetNeighborIndices(i)
                     .Select(x => (frontCircleCenters[x] - center).LengthSquared())
                     .MinOrNull() ?? float.MaxValue;
-                frontCircleStatuses[i] = new CircleStatus(MathHelper.Sqrt(closestDistanceSq) / circleRadius);
+                frontCircleStatuses[i] = new CircleStatus(MathHelper.Sqrt(closestDistanceSq));
             }
         }
 

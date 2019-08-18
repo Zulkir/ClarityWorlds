@@ -29,12 +29,14 @@ namespace Clarity.Ext.Simulation.SpherePacking
     public abstract class CirclePackingNodeComponent : SceneNodeComponentBase<CirclePackingNodeComponent>,
         ICirclePackingComponent, ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittableComponent
     {
+        private const float Precision = 1e-3f;
+
         private readonly IEmbeddedResources embeddedResources;
 
         public abstract float CircleRadius { get; set; }
+        public int MaxInitialCircles { get; set; } = 100;
 
         private readonly CirclePacker circlePacker;
-        
         private readonly ExplicitModel borderModel;
         private CirclePackingBorder lastBorder;
         private readonly IVisualElement backgroundVisualElement;
@@ -148,7 +150,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            circlePacker.Reset(CircleRadius, borderPoints);
+            circlePacker.Reset(CircleRadius, MaxInitialCircles, borderPoints);
         }
 
         public void OptimizeStep() => circlePacker.OptimizeStep();
@@ -190,17 +192,18 @@ namespace Clarity.Ext.Simulation.SpherePacking
                         .SetModel(x => x.embeddedResources.CircleModel(64))
                         .SetMaterial(StandardMaterial.New(this)
                             .SetIgnoreLighting(true)
-                            .SetDiffuseColor(x => ColorForStatus(x.circlePacker.FrontCircleStatuses[iLoc])))
+                            .SetDiffuseColor(x => x.ColorForStatus(x.circlePacker.FrontCircleStatuses[iLoc])))
                         .SetTransform(x => new Transform(x.circlePacker.CircleRadius, Quaternion.Identity, new Vector3(x.circlePacker.FrontCircleCenters[iLoc], 0))));
                 yield return circleVisualElements[i];
             }
         }
 
-        private static Color4 ColorForStatus(CircleStatus status)
+        private Color4 ColorForStatus(CircleStatus status)
         {
-            return status.MinRelativeDistance >= 2 
-                ? Color4.Green 
-                : Color4.Lerp(Color4.Red, Color4.Yellow, MathHelper.Clamp(status.MinRelativeDistance - 1, 0, 1));
+            if (status.MinDistance >= 2 * CircleRadius - Precision)
+                return Color4.Green;
+            var relativeDistance = status.MinDistance / CircleRadius;
+            return Color4.Lerp(Color4.Red, Color4.Yellow, MathHelper.Clamp(relativeDistance - 1, 0, 1));
         }
 
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;

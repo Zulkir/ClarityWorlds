@@ -175,6 +175,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var radiusRow = circlePackingGroupBox.Row();
                 radiusRow.Label("Radius");
                 radiusRow.TextBox(x => x.CircleRadius);
+                //var maxCircles = circlePackingGroupBox.Row();
+                //maxCircles.Label("Max Circles");
+                //maxCircles.TextBox(x => x.MaxInitialCircles);
                 var quakeRow = circlePackingGroupBox.Row();
                 quakeRow.Label("Quake");
                 quakeRow.Slider(x => x.RandomFactor, 0, 1, 32);
