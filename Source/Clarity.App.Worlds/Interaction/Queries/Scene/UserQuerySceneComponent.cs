@@ -52,7 +52,7 @@ namespace Clarity.App.Worlds.Interaction.Queries.Scene
             if (currentQuery == null || !currentQuery.Options.Any()) 
                 return;
             const float OptionMargin = 0.1f;
-            const float OptionHalfHeight = 0.07f;
+            const float OptionHalfHeight = 0.09f;
             const float OptionHalfWidth = 0.9f;
             var currentY = 1f;
             for (var i = 0; i < currentQuery.Options.Count; i++)
@@ -79,7 +79,7 @@ namespace Clarity.App.Worlds.Interaction.Queries.Scene
                     Color4.Black,
                     RtTransparencyMode.Opaque,
                     "Arial",
-                    36,
+                    32,
                     Color4.Orange,
                     FontDecoration.None);
                 var textImageRgba = textImageBuilder.BuildImageRgba(textBox);

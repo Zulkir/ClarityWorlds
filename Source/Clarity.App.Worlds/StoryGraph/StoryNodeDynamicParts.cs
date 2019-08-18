@@ -15,7 +15,7 @@ namespace Clarity.App.Worlds.StoryGraph
         public IDefaultViewpointMechanism DefaultViewpointMechanism { get; set; }
         public IRayHittable Hittable { get; set; }
         public IReadOnlyList<IVisualElement> VisualElements { get; set; }
-        public IReadOnlyList<IVisualEffect> VisualEffects { get; set; }
+        public Func<ISceneNode, IEnumerable<IVisualEffect>> GetVisualEffects { get; set; }
         public Action<ISceneNode, object, FrameTime> OnUpdate { get; set; }
         public object OnUpdateClosure { get; set; }
         public IPlacementSurface PlacementSurface2D { get; set; }

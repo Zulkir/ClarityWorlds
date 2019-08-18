@@ -4,6 +4,7 @@ using System.Linq;
 using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.Interaction.Placement;
 using Clarity.App.Worlds.StoryGraph;
+using Clarity.App.Worlds.Views;
 using Clarity.App.Worlds.Views.Cameras;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Common;
 using Clarity.Common.Numericals;
@@ -15,6 +16,7 @@ using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Resources;
 using Clarity.Engine.Visualization.Cameras.Embedded;
 using Clarity.Engine.Visualization.Elements;
+using Clarity.Engine.Visualization.Elements.Effects;
 using Clarity.Engine.Visualization.Elements.Materials;
 using Clarity.Engine.Visualization.Elements.RenderStates;
 
@@ -26,6 +28,8 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
         public Type Type => typeof(NestedSpheresStoryLayout);
 
         private readonly ICoroutineService coroutineService;
+        private readonly Lazy<IViewService> viewServiceLazy;
+        private readonly FocusVisualEffect focusVisualEffect;
 
         private readonly IModel3D mainModel;
         private readonly IModel3D lineModel;
@@ -35,9 +39,12 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
         private readonly IRenderState sphereRenderState;
         private readonly IRenderState lineRenderState;
 
-        public NestedSpheresStoryLayout(IEmbeddedResources embeddedResources, ICoroutineService coroutineService)
+        public NestedSpheresStoryLayout(IEmbeddedResources embeddedResources, ICoroutineService coroutineService, Lazy<IViewService> viewServiceLazy)
         {
             this.coroutineService = coroutineService;
+            this.viewServiceLazy = viewServiceLazy;
+            focusVisualEffect = new FocusVisualEffect();
+
             mainModel = embeddedResources.SphereModel(64, true);
             lineModel = embeddedResources.LineModel();
             sphereMaterials = new IMaterial[]
@@ -91,6 +98,11 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
                 visualElems.AddRange(edgeVisuals);
             }
 
+            var visualEffects = new[]
+            {
+                new FocusVisualEffect()
+            };
+
             if (sg.Children[index].Any())
             {
                 foreach (var childIndex in sg.Children[index])
@@ -119,6 +131,10 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
             }
             dynamicParts.Hittable = new SphereHittable<ISceneNode>(node, x => new Common.Numericals.Geometry.Sphere(x.GlobalTransform.Offset, scale), true);
             dynamicParts.VisualElements = visualElems;
+
+            dynamicParts.GetVisualEffects = n => viewServiceLazy.Value.MainView.FocusNode == n 
+                ? focusVisualEffect.EnumSelf() 
+                : Enumerable.Empty<IVisualEffect>();
             
             aspect.SetDynamicParts(dynamicParts);
         }

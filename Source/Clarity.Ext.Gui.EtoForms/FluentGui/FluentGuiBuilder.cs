@@ -92,12 +92,17 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
             addControl(button);
         }
 
-        public void TextBox(Expression<Func<T, string>> path)
+        public void TextBox(Expression<Func<T, string>> path) => TextBox(path, x => x, x => x);
+        public void TextBox(Expression<Func<T, int>> path) => TextBox(path, IntToStr, StrToInt);
+        public void TextBox(Expression<Func<T, float>> path) => TextBox(path, FloatToStr, StrToFloat);
+        public void TextBox(Expression<Func<T, double>> path) => TextBox(path, DoubleToStr, StrToDouble);
+        public void TextBox<TVal>(Expression<Func<T, TVal>> path, Func<TVal, string> valToStr, Func<string, TVal> strToVal)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            addControl(new FluentTextBox<T>(GetObject, 
-                x => (string)prop.GetValue(x),
-                (x, v) => prop.SetValue(x, v)));
+            addControl(new FluentTextBox<T, TVal>(GetObject, 
+                x => (TVal)prop.GetValue(x),
+                (x, v) => prop.SetValue(x, v),
+                valToStr, strToVal));
         }
 
         public void TextBox(Expression<Func<T, float>> path)
@@ -125,13 +130,24 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 minValue, maxValue, numSteps));
         }
 
-        public void NumericUpDown(Expression<Func<T, double>> path, double minValue, double maxValue)
+        public void NumericUpDown(Expression<Func<T, int>> path, int minValue, int maxValue) => NumericUpDown(path, minValue, maxValue, x => x, x => (int)x);
+        public void NumericUpDown(Expression<Func<T, float>> path, float minValue, float maxValue) => NumericUpDown(path, minValue, maxValue, x => x, x => (float)x);
+        public void NumericUpDown(Expression<Func<T, double>> path, double minValue, double maxValue) => NumericUpDown(path, minValue, maxValue, x => x, x => x);
+        public void NumericUpDown<TVal>(Expression<Func<T, TVal>> path, TVal minValue, TVal maxValue, Func<TVal, double> valToDouble, Func<double, TVal> doubleToVal)
         {
             var prop = CodingHelper.GetPropertyInfo(path);
-            addControl(new FluentNumericUpDown<T>(GetObject,
-                x => (double)prop.GetValue(x),
+            addControl(new FluentNumericUpDown<T, TVal>(GetObject,
+                x => (TVal)prop.GetValue(x),
                 (x, v) => prop.SetValue(x, v),
-                minValue, maxValue));
+                minValue, maxValue,
+                valToDouble, doubleToVal));
         }
+
+        private static string IntToStr(int x) => x.ToString(CultureInfo.InvariantCulture);
+        private static string FloatToStr(float x) => x.ToString(CultureInfo.InvariantCulture);
+        private static string DoubleToStr(double x) => x.ToString(CultureInfo.InvariantCulture);
+        private static int StrToInt(string s) => int.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var x) ? x : 0;
+        private static float StrToFloat(string s) => float.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var x) ? x : 0;
+        private static double StrToDouble(string s) => double.TryParse(s, NumberStyles.Any, CultureInfo.InvariantCulture, out var x) ? x : 0;
     }
 }

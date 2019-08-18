@@ -94,10 +94,9 @@ namespace Clarity.App.Worlds.Media.Media2D
             var lineModel = embeddedResources.LineModel();
             cursorVisualElement = new ModelVisualElement<RichTextComponent>(this)
                 .SetModel(lineModel)
-                .SetMaterial(StandardMaterial.New()
-                    .SetDiffuseColor(Color4.Black)
-                    .SetIgnoreLighting(true)
-                    .FromGlobalCache())
+                .SetMaterial(StandardMaterial.New(this)
+                    .SetDiffuseColor(x => x.HeadlessEditor.TryGetSpanStyleProp(s => s.TextColor, out var color) ? color : Color4.Black)
+                    .SetIgnoreLighting(true))
                 .SetRenderState(StandardRenderState.New()
                     .SetLineWidth(2)
                     .SetZOffset(GraphicsHelper.MinZOffset * 2)
@@ -213,7 +212,9 @@ namespace Clarity.App.Worlds.Media.Media2D
                             var textBox = x.TextBox;
                             var selectionRect = x.selectionRectangles[index];
                             return new Vector3(selectionRect.HalfWidth / textBox.PixelScaling, selectionRect.HalfHeight / textBox.PixelScaling, 1);
-                        });
+                        })
+                        // todo: remove when planar transparency order issue is solved
+                        .SetGetDistanceToCameraSq((x, t, c) => float.MinValue / 2);
                     selectionVisualElements.Add(elem);
                 }
                 for (var i = 0; i < selectionRectangles.Count; i++)
@@ -250,7 +251,9 @@ namespace Clarity.App.Worlds.Media.Media2D
                             var textBox = x.TextBox;
                             var selectionRect = x.highlightRectangles[index];
                             return new Vector3(selectionRect.HalfWidth / textBox.PixelScaling, selectionRect.HalfHeight / textBox.PixelScaling, 1);
-                        });
+                        })
+                        // todo: remove when planar transparency order issue is solved
+                        .SetGetDistanceToCameraSq((x, t, c) => float.MinValue);
                     highlightVisualElements.Add(elem);
                 }
             }

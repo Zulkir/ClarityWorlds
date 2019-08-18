@@ -8,9 +8,11 @@ using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.External.SpherePacking;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
+using Clarity.App.Worlds.Misc.HighlightOnMouse;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.UndoRedo;
 using Clarity.App.Worlds.Views;
+using Clarity.App.Worlds.WorldTree;
 using Clarity.App.Worlds.WorldTree.MiscComponents;
 using Clarity.Common.Infra.Files;
 using Clarity.Common.Numericals.Colors;
@@ -39,7 +41,11 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
 
         public Control RootEtoControl => rootControl.EtoControl;
 
-        public FluentGuiService(IViewService viewService, IRenderLoopDispatcher renderLoopDispatcher, IAssetService assetService, IUndoRedoService undoRedo, IEmbeddedResources embeddedResources)
+        public FluentGuiService(IViewService viewService, IRenderLoopDispatcher renderLoopDispatcher, 
+            IAssetService assetService, IUndoRedoService undoRedo, IEmbeddedResources embeddedResources,
+            IReadOnlyList<IStoryLayout> storyLayouts, 
+            // todo: refactor away from using these services
+            IStoryService storyService, IWorldTreeService worldTreeService)
         {
             this.viewService = viewService;
             this.assetService = assetService;
@@ -70,10 +76,31 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 });
             }
             {
-                var storyNode = builder.Row().GroupBox("Story Node", x => x.SearchComponent<IStoryComponent>(), x => x != null).Table();
-                var row = storyNode.Row();
-                row.CheckBox("Instant transition", x => x.InstantTransition);
-                row.CheckBox("Skip", x => x.SkipOrder);
+                var storyRootGroupBox = builder.Row().GroupBox("Story Root", x => x.SearchComponent<IStoryComponent>(), x => x != null && x.IsLayoutRoot).Table();
+                var layoutTypeRow = storyRootGroupBox.Row();
+                layoutTypeRow.Label("LayoutType");
+                layoutTypeRow.DropDown(x => x.StartLayoutType, storyLayouts.ToDictionary(x => x.UserFriendlyName, x => x.Type));
+                var auxRow12 = storyRootGroupBox.Row();
+                auxRow12.CheckBox("Aux 1", x => x.ShowAux1);
+                auxRow12.CheckBox("Aux 2", x => x.ShowAux2);
+                var auxRow34 = storyRootGroupBox.Row();
+                auxRow34.CheckBox("Aux 3", x => x.ShowAux3);
+                auxRow34.CheckBox("Aux 4", x => x.ShowAux4);
+            }
+            {
+                var storyNodeGroupBox = builder.Row().GroupBox("Story Node", x => x.SearchComponent<IStoryComponent>(), x => x != null).Table();
+                var firstRow = storyNodeGroupBox.Row();
+                firstRow.CheckBox("Instant transition", x => x.InstantTransition);
+                firstRow.CheckBox("Skip", x => x.SkipOrder);
+                for (var i = 0; i < 4; i++)
+                {
+                    var iLoc = i;
+                    var row = storyNodeGroupBox.Row();
+                    row.Label(x => storyService.GlobalGraph.Next.TryGetValue(x.Node.Id, out var nextList) && iLoc < nextList.Count
+                        ? worldTreeService.GetById(nextList[iLoc]).Name 
+                        : "-");
+                    row.Button("X", x => storyService.RemoveEdge(x.Node.Id, storyService.GlobalGraph.Next[x.Node.Id][iLoc]));
+                }
             }
             {
                 var modelComponentBuilder = builder.Row().GroupBox("Model", x => x.SearchComponent<IModelComponent>(), x => x != null).Table();
@@ -168,6 +195,12 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 formulaRow.Button("Insert Formula", vm => vm.InsertFormula());
             }
             {
+                var highlightOnMouseGroupBox = builder.Row().GroupBox("Highlight on Mouse", x => x.SearchComponent<HighlightOnMouseComponent>(), x => x != null).Table();
+                var row = highlightOnMouseGroupBox.Row();
+                row.Label("Group Name");
+                row.TextBox(x => x.GroupName, x => x ?? "", x => string.IsNullOrEmpty(x) ? null : x);
+            }
+            {
                 var circlePackingGroupBox = builder.Row().GroupBox("Circle Packing", x => x.SearchComponent<ICirclePackingComponent>(), x => x != null).Table();
                 var shapeRow = circlePackingGroupBox.Row();
                 shapeRow.Label("Shape");
@@ -229,21 +262,21 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var newComponentRow = newComponentPanelBuilder.Row();
                 newComponentRow.DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
-                    ["RotateOnce"] = typeof(RotateOnceComponent),
+                    ["Rotate Once"] = typeof(RotateOnceComponent),
+                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent)
                 });
                 newComponentRow.Button("Add", x =>
                 {
                     componentsCache = null;
+                    ISceneNodeComponent component;
                     if (x.ComponentType == typeof(RotateOnceComponent))
-                    {
-                        var component = AmFactory.Create<RotateOnceComponent>();
-                        newComponentViewModel.GetNode().Components.Add(component);
-                        undoRedo.OnChange();
-                    }
+                        component = AmFactory.Create<RotateOnceComponent>();
+                    else if (x.ComponentType == typeof(HighlightOnMouseComponent))
+                        component = AmFactory.Create<HighlightOnMouseComponent>();
                     else
-                    {
                         throw new ArgumentOutOfRangeException();
-                    }
+                    newComponentViewModel.GetNode().Components.Add(component);
+                    undoRedo.OnChange();
                 });
             }
             builder.Row().Panel(x => x, x => true);
