@@ -61,7 +61,8 @@ namespace Clarity.Ext.Simulation.SpherePacking
             this.circleRadius = circleRadius;
             circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
             this.border = new CirclePackingBorder(borderPoints, circleRadius);
-            maxNumCircles = Math.Min(maxInitialCircles, (int)(border.Area / circleArea));
+            maxNumCircles = (int)(border.Area / circleArea);
+            var numInitialCircles = Math.Min(maxInitialCircles, maxNumCircles);
             
             frontCirclesGrid = new CirclePackingCircleGrid(circleRadius, border.BoundingRect);
             frontCircleCenters = Enumerable.Range(0, int.MaxValue)
@@ -70,9 +71,9 @@ namespace Clarity.Ext.Simulation.SpherePacking
                     border.BoundingRect.MinY + circleRadius, border.BoundingRect.MaxY - circleRadius))
                 .Where(x => frontCirclesGrid.TryFit(x))
                 .Where(x => border.PointIsValid(x))
-                .Take(maxNumCircles)
+                .Take(numInitialCircles)
                 .ToArray();
-            numCircles = maxNumCircles;
+            numCircles = numInitialCircles;
             backCircleCenters = frontCircleCenters.ToArray();
             frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
             frontCircleStatuses = new CircleStatus[numCircles];

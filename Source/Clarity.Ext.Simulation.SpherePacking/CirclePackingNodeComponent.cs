@@ -203,7 +203,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
             if (status.MinDistance >= 2 * CircleRadius - Precision)
                 return Color4.Green;
             var relativeDistance = status.MinDistance / CircleRadius;
-            return Color4.Lerp(Color4.Red, Color4.Yellow, MathHelper.Clamp(relativeDistance - 1, 0, 1));
+            return Color4.Lerp(Color4.Red, Color4.Yellow, MathHelper.Clamp(MathHelper.Pow(relativeDistance - 1, 32), 0, 1));
         }
 
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
