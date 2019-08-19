@@ -29,7 +29,7 @@ namespace Clarity.Ext.TextImlets.Latex
         public IImage BuildImage(IRtEmbeddingSpan embedding)
         {
             if (!TryParseAndRender(embedding.SourceCode, embedding.Style, out var pngBytes, out var error) &&
-                !TryParseAndRender("ERROR", embedding.Style, out pngBytes, out var error2))
+                !TryParseAndRender("???", embedding.Style, out pngBytes, out var error2))
                 throw new Exception(error2);
             Bitmap bitmap;
             using (var stream = new MemoryStream(pngBytes, false))
