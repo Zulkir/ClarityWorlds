@@ -38,7 +38,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         private readonly CirclePacker circlePacker;
         private readonly ExplicitModel borderModel;
-        private CirclePackingBorder lastBorder;
+        private ICirclePackingBorder lastBorder;
         private readonly IVisualElement backgroundVisualElement;
         private readonly IVisualElement borderVisualElement;
         private readonly List<IVisualElement> circleVisualElements;
@@ -150,7 +150,8 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            circlePacker.Reset(CircleRadius, MaxInitialCircles, borderPoints);
+            var border = new PolylineCirclePackingBorder(borderPoints, CircleRadius);
+            circlePacker.Reset(CircleRadius, MaxInitialCircles, border);
         }
 
         public void OptimizeStep() => circlePacker.OptimizeStep();

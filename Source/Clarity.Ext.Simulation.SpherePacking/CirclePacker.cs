@@ -20,7 +20,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         private float circleRadius;
         private float circleArea;
-        private CirclePackingBorder border;
+        private ICirclePackingBorder border;
         private Vector2[] frontCircleCenters;
         private Vector2[] backCircleCenters;
         private CirclePackingCircleGrid frontCirclesGrid;
@@ -43,7 +43,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         }
 
         public float CircleRadius => circleRadius;
-        public CirclePackingBorder Border => border;
+        public ICirclePackingBorder Border => border;
         public Vector2[] FrontCircleCenters => frontCircleCenters;
         public CircleStatus[] FrontCircleStatuses => frontCircleStatuses;
         public int MaxNumCircles => maxNumCircles;
@@ -56,11 +56,11 @@ namespace Clarity.Ext.Simulation.SpherePacking
                 minY + (float)random.NextDouble() * (maxY - minY));
         }
 
-        public void Reset(float circleRadius, int maxInitialCircles, Vector2[] borderPoints)
+        public void Reset(float circleRadius, int maxInitialCircles, ICirclePackingBorder border)
         {
             this.circleRadius = circleRadius;
             circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
-            this.border = new CirclePackingBorder(borderPoints, circleRadius);
+            this.border = border;
             maxNumCircles = (int)(border.Area / circleArea);
             var numInitialCircles = Math.Min(maxInitialCircles, maxNumCircles);
             
@@ -70,7 +70,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
                     border.BoundingRect.MinX + circleRadius, border.BoundingRect.MaxX - circleRadius,
                     border.BoundingRect.MinY + circleRadius, border.BoundingRect.MaxY - circleRadius))
                 .Where(x => frontCirclesGrid.TryFit(x))
-                .Where(x => border.PointIsValid(x))
+                .Where(border.PointIsValid)
                 .Take(numInitialCircles)
                 .ToArray();
             numCircles = numInitialCircles;

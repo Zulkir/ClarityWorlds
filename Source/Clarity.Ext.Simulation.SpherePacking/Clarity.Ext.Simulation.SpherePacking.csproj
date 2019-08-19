@@ -42,9 +42,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CirclePacker.cs" />
-    <Compile Include="CirclePackingBorder.cs" />
+    <Compile Include="CirclePackingSolver.cs" />
+    <Compile Include="PolylineCirclePackingBorder.cs" />
     <Compile Include="CirclePackingCircleGrid.cs" />
     <Compile Include="CircleStatus.cs" />
+    <Compile Include="ICirclePackingBorder.cs" />
     <Compile Include="SpherePackingExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="CirclePackingNodeComponent.cs" />

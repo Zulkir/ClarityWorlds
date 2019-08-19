@@ -8,7 +8,7 @@ using Clarity.Common.Numericals.Geometry;
 
 namespace Clarity.Ext.Simulation.SpherePacking
 {
-    public class CirclePackingBorder
+    public class PolylineCirclePackingBorder : ICirclePackingBorder
     {
         private readonly Vector2[] points;
         private readonly float circleRadius;
@@ -20,7 +20,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
 
         private IEnumerable<LineSegment2> Segments => EnumerateSegments(points);
 
-        public CirclePackingBorder(IEnumerable<Vector2> rawPoints, float circleRadius)
+        public PolylineCirclePackingBorder(IEnumerable<Vector2> rawPoints, float circleRadius)
         {
             points = Normalize(rawPoints);
             this.circleRadius = circleRadius;
