@@ -32,6 +32,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         private const float Precision = 1e-3f;
 
         private readonly IEmbeddedResources embeddedResources;
+        private readonly ICoroutineService coroutineService;
 
         public abstract float CircleRadius { get; set; }
         public int MaxInitialCircles { get; set; } = 100;
@@ -85,9 +86,10 @@ namespace Clarity.Ext.Simulation.SpherePacking
         protected CirclePackingNodeComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {
             this.embeddedResources = embeddedResources;
+            this.coroutineService = coroutineService;
             CircleRadius = 1;
 
-            circlePacker = new CirclePacker(coroutineService);
+            circlePacker = new CirclePacker();
             ResetPacker();
             borderModel = new ExplicitModel(ResourceVolatility.Stable)
             {
@@ -117,7 +119,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
             selectOnClickInterationElement = new SelectOnClickInteractionElement(this, viewService);
             // todo: make precise
             hittable = new RectangleHittable<CirclePackingNodeComponent>(this, Transform.Identity, 
-                x => circlePacker.Border.BoundingRect,
+                x => x.circlePacker.Border.BoundingRect,
                 x => 0);
         }
 
@@ -151,11 +153,12 @@ namespace Clarity.Ext.Simulation.SpherePacking
                     throw new ArgumentOutOfRangeException();
             }
             var border = new PolylineCirclePackingBorder(borderPoints, CircleRadius);
-            circlePacker.Reset(CircleRadius, MaxInitialCircles, border);
+            circlePacker.ResetAll(CircleRadius, border);
+            circlePacker.RandomizeCircles(MaxInitialCircles);
         }
 
         public void OptimizeStep() => circlePacker.OptimizeStep();
-        public void RunOptimization() => circlePacker.RunOptimization();
+        public void RunOptimization() => circlePacker.RunOptimizationAsync(coroutineService);
         public void StopOptimization() => circlePacker.StopOptimization();
         public void DeleteCircle() => circlePacker.DeleteCircle();
 
