@@ -5,7 +5,7 @@ using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
 using Clarity.Common.Numericals.OtherTuples;
 
-namespace Clarity.Ext.Simulation.SpherePacking
+namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 {
     public class CirclePackingCircleGrid
     {

@@ -1,52 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
-using Clarity.Common.Numericals.Algebra;
 
-namespace Clarity.Ext.Simulation.SpherePacking
+namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 {
-    public struct CirclePackingSolverSuccessEntry
-    {
-        public IReadOnlyList<Vector2> Configuration;
-        public int AttemptsTaken;
-        public double SecondsTaken;
-        public int CumulativeAttemptsTaken;
-        public double CumulativeSecondsTaken;
-    }
-
-    public interface ICirclePackingSolvingStatus
-    {
-        int AttemptsSinceLastSuccess { get; }
-        float SecondsSinceLastSuccess { get; }
-        IReadOnlyList<CirclePackingSolverSuccessEntry> Successes { get; }
-    }
-
-    public class CirclePackingSolvingStatus : ICirclePackingSolvingStatus
-    {
-        public int AttemptsSinceLastSuccess { get; set; }
-        public float SecondsSinceLastSuccess { get; set; }
-
-        public List<CirclePackingSolverSuccessEntry> Successes { get; } = new List<CirclePackingSolverSuccessEntry>();
-        IReadOnlyList<CirclePackingSolverSuccessEntry> ICirclePackingSolvingStatus.Successes => Successes;
-    }
-
-    public delegate void CirclePackingCallback(ICirclePackingSolvingStatus status, out bool stop);
-
-    public class CirclePackingSolverSettings
-    {
-        public float CircleRadius { get; set; }
-        public float Precision { get; set; }
-        public ICirclePackingBorder Border { get; set; }
-        //public Action<Action> Parallelize { get; set; }
-        public CirclePackingCallback Callback { get; set; }
-        public int MaxIterationsPerAttempt { get; set; }
-        public int CostDecreaseGracePeriod { get; set; }
-        public float MinCostDecrease { get; set; }
-        public int AttemptsPerCallback { get; set; }
-    }
-
     public class CirclePackingSolvingProcess
     {
         private readonly CirclePackingSolverSettings settings;
@@ -103,11 +61,5 @@ namespace Clarity.Ext.Simulation.SpherePacking
             });
             return true;
         }
-    }
-
-    public class CirclePackingSolver
-    {
-        public void Solve(CirclePackingSolverSettings settings) => 
-            new CirclePackingSolvingProcess(settings).Run();
     }
 }

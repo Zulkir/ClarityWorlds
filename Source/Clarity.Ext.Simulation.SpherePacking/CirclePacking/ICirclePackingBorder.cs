@@ -2,7 +2,7 @@
 using Clarity.Common.Numericals.Algebra;
 using Clarity.Common.Numericals.Geometry;
 
-namespace Clarity.Ext.Simulation.SpherePacking
+namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 {
     public interface ICirclePackingBorder
     {

@@ -4,7 +4,7 @@ using Clarity.App.Worlds.WorldTree;
 using Clarity.Engine.Objects.WorldTree;
 using Clarity.Engine.Utilities;
 
-namespace Clarity.Ext.Simulation.SpherePacking 
+namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking 
 {
     public class CirclePackingToolMenuItem : IToolMenuItem
     {

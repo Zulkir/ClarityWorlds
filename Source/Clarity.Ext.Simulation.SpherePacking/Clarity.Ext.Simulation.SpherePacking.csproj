@@ -41,16 +41,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CirclePacker.cs" />
-    <Compile Include="CirclePackingSolver.cs" />
-    <Compile Include="PolylineCirclePackingBorder.cs" />
-    <Compile Include="CirclePackingCircleGrid.cs" />
-    <Compile Include="CircleStatus.cs" />
-    <Compile Include="ICirclePackingBorder.cs" />
+    <Compile Include="CirclePacking\CirclePacker.cs" />
+    <Compile Include="CirclePacking\CirclePackingCallback.cs" />
+    <Compile Include="CirclePacking\CirclePackingSolver.cs" />
+    <Compile Include="CirclePacking\CirclePackingSolverSettings.cs" />
+    <Compile Include="CirclePacking\CirclePackingSolverSuccessEntry.cs" />
+    <Compile Include="CirclePacking\CirclePackingSolvingProcess.cs" />
+    <Compile Include="CirclePacking\CirclePackingSolvingStatus.cs" />
+    <Compile Include="CirclePacking\ICirclePackingSolvingStatus.cs" />
+    <Compile Include="CirclePacking\PolylineCirclePackingBorder.cs" />
+    <Compile Include="CirclePacking\CirclePackingCircleGrid.cs" />
+    <Compile Include="CirclePacking\CircleStatus.cs" />
+    <Compile Include="CirclePacking\ICirclePackingBorder.cs" />
     <Compile Include="SpherePackingExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="CirclePackingNodeComponent.cs" />
-    <Compile Include="CirclePackingToolMenuItem.cs" />
+    <Compile Include="CirclePacking\CirclePackingNodeComponent.cs" />
+    <Compile Include="CirclePacking\CirclePackingToolMenuItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Clarity.App.Worlds\Clarity.App.Worlds.csproj">

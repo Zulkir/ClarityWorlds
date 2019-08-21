@@ -1,4 +1,4 @@
-﻿namespace Clarity.Ext.Simulation.SpherePacking
+﻿namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 {
     public struct CircleStatus
     {

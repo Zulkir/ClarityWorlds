@@ -1,6 +1,7 @@
 ﻿using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.Common.Infra.DependencyInjection;
 using Clarity.Engine.Platforms;
+using Clarity.Ext.Simulation.SpherePacking.CirclePacking;
 
 namespace Clarity.Ext.Simulation.SpherePacking
 {

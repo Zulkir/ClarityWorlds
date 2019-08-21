@@ -24,7 +24,7 @@ using Clarity.Engine.Visualization.Elements.Effects;
 using Clarity.Engine.Visualization.Elements.Materials;
 using Clarity.Engine.Visualization.Elements.RenderStates;
 
-namespace Clarity.Ext.Simulation.SpherePacking 
+namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking 
 {
     public abstract class CirclePackingNodeComponent : SceneNodeComponentBase<CirclePackingNodeComponent>,
         ICirclePackingComponent, ITransformable3DComponent, IVisualComponent, IInteractionComponent, IRayHittableComponent
