@@ -70,6 +70,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             foreach (var circleCenter in GenerateHoneycomb(border.BoundingRect, circleRadius).Where(border.PointIsValid))
                 frontCircleCenters[numCircles++] = circleCenter;
             frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
+            RefreshStatuses();
         }
 
         private static IEnumerable<Vector2> GenerateHoneycomb(AaRectangle2 boundingRect, float circleRadius)

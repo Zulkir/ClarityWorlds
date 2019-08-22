@@ -12,6 +12,7 @@ namespace Clarity.Ext.Simulation.SpherePacking
         public void Bind(IDiContainer di)
         {
             di.BindMulti<IToolMenuItem>().To<CirclePackingToolMenuItem>();
+            di.BindMulti<IToolMenuItem>().To<CirclePackingAutoToolMenuItem>();
         }
 
         public void OnStartup(IDiContainer di)

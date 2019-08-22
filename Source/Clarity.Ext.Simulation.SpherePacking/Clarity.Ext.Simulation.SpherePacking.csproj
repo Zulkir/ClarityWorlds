@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CirclePacking\CirclePacker.cs" />
-    <Compile Include="CirclePacking\CirclePackingCallback.cs" />
+    <Compile Include="CirclePacking\CirclePackingAutoComponent.cs" />
+    <Compile Include="CirclePacking\CirclePackingAutoToolMenuItem.cs" />
     <Compile Include="CirclePacking\CirclePackingSolver.cs" />
     <Compile Include="CirclePacking\CirclePackingSolverSettings.cs" />
     <Compile Include="CirclePacking\CirclePackingSolverSuccessEntry.cs" />

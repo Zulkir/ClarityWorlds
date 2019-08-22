@@ -12,6 +12,9 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         private readonly CirclePacker packer;
         private readonly Stopwatch stopwatch;
 
+        public CirclePacker Packer => packer;
+        public ICirclePackingSolvingStatus Status => status;
+
         public CirclePackingSolvingProcess(CirclePackingSolverSettings settings)
         {
             this.settings = settings;

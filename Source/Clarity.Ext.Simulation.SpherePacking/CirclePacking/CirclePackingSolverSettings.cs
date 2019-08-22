@@ -10,6 +10,5 @@
         public int ShakeIterations { get; set; }
         public float ShakeStrength { get; set; }
         public float MinCostDecrease { get; set; }
-        public int AttemptsPerCallback { get; set; }
     }
 }
