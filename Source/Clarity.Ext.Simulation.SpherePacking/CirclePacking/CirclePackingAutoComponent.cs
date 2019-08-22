@@ -36,11 +36,11 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         public float CircleRadius { get; set; } = 1;
         public float Precision { get; set; } = 1e-3f;
         public int MaxIterationsPerAttempt { get; set; } = 10000;
-        public int CostDecreaseGracePeriod { get; set; } = 100;
+        public int CostDecreaseGracePeriod { get; set; } = 1000;
         public int ShakeIterations { get; set; } = 100;
         public float ShakeStrength { get; set; } = 0.5f;
-        public float MinCostDecrease { get; set; } = 1e-3f;
-        public int AttemptsPerRefresh { get; set; }
+        public float MinCostDecrease { get; set; } = 0;
+        public int AttemptsPerRefresh { get; set; } = 1;
 
         private readonly CirclePackingSolver solver;
         private CirclePackingSolvingProcess solvingProcess;
@@ -54,6 +54,8 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         private readonly List<IVisualElement> circleVisualElements;
         private readonly IInteractionElement selectOnClickInterationElement;
         private readonly IRayHittable hittable;
+
+        public int NumCircles => solvingProcess.Packer.NumCircles;
 
         protected CirclePackingAutoComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {
@@ -151,6 +153,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 
         private async void RunAsync()
         {
+            runAsync = true;
             while (runAsync)
             {
                 solvingProcess.RunFor(AttemptsPerRefresh);

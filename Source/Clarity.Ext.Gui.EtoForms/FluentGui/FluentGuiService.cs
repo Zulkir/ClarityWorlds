@@ -246,6 +246,31 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 deleteCircleRow.Button("Delete Circle", x => x.DeleteCircle());
             }
             {
+                var circlePackingGroupBox = builder.Row().GroupBox("Circle Packing", x => x.SearchComponent<ICirclePackingAutoComponent>(), x => x != null).Table();
+                var shapeRow = circlePackingGroupBox.Row();
+                shapeRow.Label("Shape");
+                shapeRow.DropDown(x => x.ShapeName, new[] { "Square", "Circle", "Ellipse" }.ToDictionary(x => x));
+                var radiusRow = circlePackingGroupBox.Row();
+                radiusRow.Label("Radius");
+                radiusRow.TextBox(x => x.CircleRadius);
+                var numCirclesRow = circlePackingGroupBox.Row();
+                numCirclesRow.Label(x => "Num Circles: " + x.NumCircles);
+                //numCirclesRow.Label(x => "Uppber Bound: " + x.MaxCircles);
+                var attemptsPerDisplayRow = circlePackingGroupBox.Row();
+                attemptsPerDisplayRow.Label("Attempts per Display");
+                attemptsPerDisplayRow.TextBox(x => x.AttemptsPerRefresh);
+                var resetRow = circlePackingGroupBox.Row();
+                resetRow.Label("");
+                resetRow.Button("Reset", x => x.Reset());
+                var runOptimizeRow = circlePackingGroupBox.Row();
+                runOptimizeRow.Label("");
+                runOptimizeRow.Button("Run", x => x.Run());
+                var stopOptimizeRow = circlePackingGroupBox.Row();
+                stopOptimizeRow.Label("");
+                stopOptimizeRow.Button("Stop", x => x.Stop());
+                var deleteCircleRow = circlePackingGroupBox.Row();
+            }
+            {
                 var componentsBuilder = builder.Row().GroupBox("Components", x => x, x => x != null).Table();
                 // todo: to ArrayTable
                 var componentsCache = (IEnumerable<ISceneNodeComponent>)null;
