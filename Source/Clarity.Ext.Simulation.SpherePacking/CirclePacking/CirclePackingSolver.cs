@@ -2,7 +2,7 @@
 {
     public class CirclePackingSolver
     {
-        public void Solve(CirclePackingSolverSettings settings) => 
-            new CirclePackingSolvingProcess(settings).Run();
+        public CirclePackingSolvingProcess Solve(CirclePackingSolverSettings settings) => 
+            new CirclePackingSolvingProcess(settings);
     }
 }

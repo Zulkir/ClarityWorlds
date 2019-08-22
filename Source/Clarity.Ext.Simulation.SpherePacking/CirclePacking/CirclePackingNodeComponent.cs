@@ -65,6 +65,12 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             }
         }
 
+        public float MovementRate
+        {
+            get => circlePacker.MovementRate;
+            set => circlePacker.MovementRate = value;
+        }
+
         public float RandomFactor
         {
             get => circlePacker.RandomFactor;
@@ -153,11 +159,11 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     throw new ArgumentOutOfRangeException();
             }
             var border = new PolylineCirclePackingBorder(borderPoints, CircleRadius);
-            circlePacker.ResetAll(CircleRadius, border);
+            circlePacker.ResetAll(CircleRadius, border, Precision);
             circlePacker.RandomizeCircles(MaxInitialCircles);
         }
 
-        public void OptimizeStep() => circlePacker.OptimizeStep();
+        public void OptimizeStep() => circlePacker.OptimizeStep(out _);
         public void RunOptimization() => circlePacker.RunOptimizationAsync(coroutineService);
         public void StopOptimization() => circlePacker.StopOptimization();
         public void DeleteCircle() => circlePacker.DeleteCircle();

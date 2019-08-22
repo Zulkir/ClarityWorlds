@@ -14,7 +14,6 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
     {
         private const float BorderMinDistanceInRadii = 0.2f;
         private const float MaxDensity = 0.907f;
-        private const float Precision = 1e-2f;
         
         private readonly Random random;
 
@@ -27,10 +26,12 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         private CircleStatus[] frontCircleStatuses;
         private int maxNumCircles;
         private int numCircles;
+        private float precision;
         
         private bool runningAsync;
         
         public float RandomFactor { get; set; }
+        public float MovementRate { get; set; } = 0.5f;
         public int NumIterationPerBreak { get; set; } = 10;
         public int BatchSize { get; set; } = 100;
         public int MaxIterations { get; set; } = int.MaxValue;
@@ -49,11 +50,12 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         public int MaxNumCircles => maxNumCircles;
         public int NumCircles => numCircles;
 
-        public void ResetAll(float circleRadius, ICirclePackingBorder border)
+        public void ResetAll(float circleRadius, ICirclePackingBorder border, float precision)
         {
             this.circleRadius = circleRadius;
             circleArea = new Circle2(Vector2.Zero, circleRadius).Area;
             this.border = border;
+            this.precision = precision;
             maxNumCircles = (int)(border.Area / circleArea);
             backCircleCenters = new Vector2[maxNumCircles];
             frontCircleCenters = new Vector2[maxNumCircles];
@@ -120,8 +122,9 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
         }
 
-        public void OptimizeStep()
+        public void OptimizeStep(out float cost)
         {
+            cost = 0;
             for (var i = 0; i < numCircles; i++)
             {
                 var iLoc = i;
@@ -138,7 +141,9 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     if (dist >= maxDist)
                         continue;
 
-                    offset += fromNeighbor * (maxDist - dist) * 0.5f;
+                    var penetrationDepth = maxDist - dist;
+                    cost = Math.Max(cost, penetrationDepth);
+                    offset += fromNeighbor * penetrationDepth * MovementRate;
                 }
 
                 var randomRange = RandomFactor * circleRadius;
@@ -157,7 +162,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
         }
 
-        private void RefreshStatuses()
+        public void RefreshStatuses()
         {
             for (var i = 0; i < numCircles; i++)
             {
@@ -167,25 +172,24 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     .MinOrNull() ?? float.MaxValue;
                 frontCircleStatuses[i] = new CircleStatus(MathHelper.Sqrt(closestDistanceSq));
             }
-            var distanceThreshold = circleRadius * 2 - Precision;
+            var distanceThreshold = circleRadius * 2 - precision;
             IsSuccessfulConfiguration = frontCircleStatuses.Take(numCircles).All(x => x.MinDistance > distanceThreshold);
         }
 
         public void RunOptimization(int maxIterations, int costGracePeriod, float minCostDecrease)
         {
-            // todo: make actually follow params
-            var maxEvaluations = maxIterations / costGracePeriod;
-            var iterationsPerEvaluation = maxIterations / maxEvaluations;
-
             runningAsync = false;
-            var prevCost = EvaluateCost();
-            for (var e = 0; e < maxEvaluations; e++)
+            var bestCost = float.MaxValue;
+            var lastCostUpdate = 0;
+            for (var i = 0; i < maxIterations; i++)
             {
-                for (var i = 0; i < iterationsPerEvaluation; i++)
-                    OptimizeStep();
-                var cost = EvaluateCost();
-                if (prevCost - cost < minCostDecrease)
-                    // todo: next stage (shake, replace, etc.)
+                OptimizeStep(out var cost);
+                if (cost < bestCost - minCostDecrease)
+                {
+                    bestCost = cost;
+                    lastCostUpdate = i;
+                }
+                if (i - lastCostUpdate > costGracePeriod)
                     break;
             }
             RefreshStatuses();
@@ -204,7 +208,10 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     var fromNeighbor = circleCenter - neighborCenter;
                     var maxDist = 2 * circleRadius;
                     var dist = fromNeighbor.Length();
-                    cost += Math.Max(0, maxDist - dist);
+                    var localCost = Math.Max(0, maxDist - dist);
+
+                    //cost += localCost;
+                    cost = Math.Max(cost, localCost);
                 }
             }
             return (float)cost;
@@ -220,7 +227,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             {
                 if (!runningAsync)
                     break;
-                OptimizeStep();
+                OptimizeStep(out var cost);
                 if ((i+1) % NumIterationPerBreak == 0)
                 {
                     RefreshStatuses();

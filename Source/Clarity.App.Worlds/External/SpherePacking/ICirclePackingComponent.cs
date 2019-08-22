@@ -7,6 +7,7 @@ namespace Clarity.App.Worlds.External.SpherePacking
         string ShapeName { get; set; }
         float CircleRadius { get; set; }
         int MaxInitialCircles { get; set; }
+        float MovementRate { get; set; }
         float RandomFactor { get; set; }
         int NumIterationPerBreak { get; set; }
         int BatchSize { get; set; }
