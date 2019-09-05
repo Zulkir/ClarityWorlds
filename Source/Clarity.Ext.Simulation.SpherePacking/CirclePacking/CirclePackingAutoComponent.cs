@@ -56,6 +56,8 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         private readonly IRayHittable hittable;
 
         public int NumCircles => solvingProcess.Packer.NumCircles;
+        public int AttemptsSinceLastSuccess => solvingProcess.Status.AttemptsSinceLastSuccess;
+        public float SecondsSinceLastSuccess => solvingProcess.Status.SecondsSinceLastSuccess;
 
         protected CirclePackingAutoComponent(IEmbeddedResources embeddedResources, IViewService viewService, ICoroutineService coroutineService)
         {

@@ -43,6 +43,8 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                 RunAttempt(numCirclesToTry);
                 if (TryPushSuccess(i - 1))
                     break;
+                status.AttemptsSinceLastSuccess++;
+                status.SecondsSinceLastSuccess = stopwatch.ElapsedMilliseconds / 1000f;
             }
         }
 
@@ -110,6 +112,9 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                 SecondsTaken = elapsed,
                 CumulativeSecondsTaken = prevSuccess.CumulativeSecondsTaken + elapsed
             });
+            status.AttemptsSinceLastSuccess = 0;
+            status.SecondsSinceLastSuccess = 0;
+            stopwatch.Restart();
             return true;
         }
     }

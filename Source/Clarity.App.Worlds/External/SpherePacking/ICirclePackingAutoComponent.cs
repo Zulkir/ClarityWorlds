@@ -17,6 +17,8 @@ namespace Clarity.App.Worlds.External.SpherePacking
         int AttemptsPerRefresh { get; set; }
 
         int NumCircles { get; }
+        int AttemptsSinceLastSuccess { get; }
+        float SecondsSinceLastSuccess { get; }
 
         void Reset();
         void Run();

@@ -259,6 +259,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var attemptsPerDisplayRow = circlePackingGroupBox.Row();
                 attemptsPerDisplayRow.Label("Attempts per Display");
                 attemptsPerDisplayRow.TextBox(x => x.AttemptsPerRefresh);
+                var statsRow = circlePackingGroupBox.Row();
+                statsRow.Label(x => $"Seconds: {x.SecondsSinceLastSuccess:F} Attempts: {x.AttemptsSinceLastSuccess}");
                 var resetRow = circlePackingGroupBox.Row();
                 resetRow.Label("");
                 resetRow.Button("Reset", x => x.Reset());
