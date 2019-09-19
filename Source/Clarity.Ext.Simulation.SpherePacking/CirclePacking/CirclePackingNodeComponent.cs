@@ -167,6 +167,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         public void RunOptimization() => circlePacker.RunOptimizationAsync(coroutineService);
         public void StopOptimization() => circlePacker.StopOptimization();
         public void DeleteCircle() => circlePacker.DeleteCircle();
+        public void TryFillHole(bool useExisting) => circlePacker.TryFillHole(useExisting);
 
         public Sphere LocalBoundingSphere
         {

@@ -244,6 +244,9 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 var deleteCircleRow = circlePackingGroupBox.Row();
                 deleteCircleRow.Label("");
                 deleteCircleRow.Button("Delete Circle", x => x.DeleteCircle());
+                var fillHodeRow = circlePackingGroupBox.Row();
+                fillHodeRow.Button("Fill Hole (E)", x => x.TryFillHole(true));
+                fillHodeRow.Button("Fill Hole (N)", x => x.TryFillHole(false));
             }
             {
                 var circlePackingGroupBox = builder.Row().GroupBox("Circle Packing", x => x.SearchComponent<ICirclePackingAutoComponent>(), x => x != null).Table();

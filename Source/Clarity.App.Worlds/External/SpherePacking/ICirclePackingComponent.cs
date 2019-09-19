@@ -22,5 +22,6 @@ namespace Clarity.App.Worlds.External.SpherePacking
         void RunOptimization();
         void StopOptimization();
         void DeleteCircle();
+        void TryFillHole(bool useExisting);
     }
 }

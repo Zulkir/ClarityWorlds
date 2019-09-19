@@ -147,14 +147,75 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     offset += fromNeighbor * penetrationDepth * MovementRate;
                 }
 
-                var randomRange = RandomFactor * circleRadius;
-                offset += GetRandomVector(-randomRange, randomRange, -randomRange, randomRange);
-                if (offset.Length() > circleRadius / 2)
-                    offset = offset.Normalize() * circleRadius / 2;
+                if (RandomFactor > 0)
+                {
+                    var randomRange = RandomFactor * circleRadius;
+                    offset += GetRandomVector(-randomRange, randomRange, -randomRange, randomRange);
+                }
+                
                 var unrestrictedNewCenter = circleToMove + offset;
                 backCircleCenters[iLoc] = border.FindClosestValidPoint(unrestrictedNewCenter);
             }
             SwapBuffers();
+        }
+
+        public bool TryFillHole(bool useExisting)
+        {
+            for (var i = 0; i < numCircles; i++)
+            {
+                var totalDir = Vector2.Zero;
+                foreach (var neighborIndex in frontCirclesGrid.GetNeighborIndices(i))
+                {
+                    var toNeighbor = frontCircleCenters[neighborIndex] - frontCircleCenters[i];
+                    if (toNeighbor.Length() < 2.1f * circleRadius)
+                        totalDir += toNeighbor.Normalize();
+                }
+
+                if (IsHole(frontCircleCenters[i] + totalDir, out var holeCenter) ||
+                    IsHole(frontCircleCenters[i] - totalDir, out holeCenter))
+                {
+                    if (useExisting)
+                        frontCircleCenters[FindWorstCircleIndex()] = holeCenter;
+                    else
+                        frontCircleCenters[numCircles++] = holeCenter;
+                    frontCirclesGrid.Rebuild(frontCircleCenters, numCircles);
+                }
+            }
+            return false;
+        }
+
+        private bool IsHole(Vector2 point, out Vector2 exactCenter)
+        {
+            exactCenter = border.FindClosestValidPoint(point);
+            for (var i = 0; i < 4; i++)
+            {
+                var hasIntersections = false;
+                foreach (var neighborIndex in frontCirclesGrid.GetNeighborIndices(exactCenter))
+                {
+                    var fromNeighbor = exactCenter - frontCircleCenters[neighborIndex];
+                    if (fromNeighbor.Length() < 2 * circleRadius)
+                    {
+                        exactCenter = frontCircleCenters[neighborIndex] + fromNeighbor.Normalize() * 2 * circleRadius;
+                        exactCenter = border.FindClosestValidPoint(exactCenter);
+                        hasIntersections = true;
+                    }
+                }
+
+                if (!hasIntersections)
+                {
+                    if (!border.PointIsValid(exactCenter))
+                        throw new Exception();
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private int FindWorstCircleIndex()
+        {
+            return Enumerable.Range(0, numCircles).Minimal(x =>
+                frontCirclesGrid.GetNeighborIndices(x)
+                    .Min(y => (frontCircleCenters[x] - frontCircleCenters[y]).LengthSquared()));
         }
 
         private void SwapBuffers()

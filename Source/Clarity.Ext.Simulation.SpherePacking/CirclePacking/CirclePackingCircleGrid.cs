@@ -35,11 +35,11 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
         private IntVector2 CellVectorIndex(Vector2 point) => 
             new IntVector2((point - minCorner) / cellSize);
 
-        private int CellIndexFor(Vector2 point) => 
-            CellIndexFromVectorIndex(CellVectorIndex(point));
-
         private int CellIndexFromVectorIndex(IntVector2 vectorIndex) => 
             vectorIndex.Y * gridSize.Width + vectorIndex.X;
+
+        private int CellIndexFor(Vector2 point) => 
+            CellIndexFromVectorIndex(CellVectorIndex(point));
 
         private static int CircleIndicesOffsetForCell(int cellIndex) => 
             cellIndex * MaxCirclesPerCell;
@@ -79,14 +79,24 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
 
         public IEnumerable<int> GetNeighborIndices(int index)
         {
-            var cellVectorIndex = CellVectorIndex(circleCenters[index]);
+            return GetNeighborIndices(circleCenters[index], index);
+        }
+
+        public IEnumerable<int> GetNeighborIndices(Vector2 point)
+        {
+            return GetNeighborIndices(point, -1);
+        }
+
+        private IEnumerable<int> GetNeighborIndices(Vector2 point, int indexToIgnore)
+        {
+            var cellVectorIndex = CellVectorIndex(point);
             for (var ix = Math.Max(0, cellVectorIndex.X - 1); ix <= Math.Min(cellVectorIndex.X + 1, gridSize.Width - 1); ix++)
             for (var iy = Math.Max(0, cellVectorIndex.Y - 1); iy <= Math.Min(cellVectorIndex.Y + 1, gridSize.Height - 1); iy++)
             {
                 var cellIndex = CellIndexFromVectorIndex(new IntVector2(ix, iy));
                 var offset = CircleIndicesOffsetForCell(cellIndex);
                 for (var i = 0; i < cellCircleCounts[cellIndex]; i++)
-                    if (circleIndices[offset + i] != index)
+                    if (circleIndices[offset + i] != indexToIgnore)
                         yield return circleIndices[offset + i];
             }
         }
