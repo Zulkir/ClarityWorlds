@@ -41,7 +41,7 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
             for (var i = 0; i < numAttempts; i++)
             {
                 RunAttempt(numCirclesToTry);
-                if (TryPushSuccess(i - 1))
+                if (TryPushSuccess(i + 1))
                     break;
                 status.AttemptsSinceLastSuccess++;
                 status.SecondsSinceLastSuccess = stopwatch.ElapsedMilliseconds / 1000f;
@@ -78,14 +78,21 @@ namespace Clarity.Ext.Simulation.SpherePacking.CirclePacking
                     {
                         state++;
                         if (state == AttemptStage.Shaking)
+                        {
+                            state++;
                             shakeStart = i;
+                        }
                     }
                 }
                 else if (state == AttemptStage.Shaking)
                 {
                     packer.RandomFactor = settings.ShakeStrength;
+                    packer.OptimizeStep(out var cost);
                     if (i - shakeStart >= settings.ShakeIterations)
+                    {
                         state++;
+                        lastCostUpdate = i;
+                    }
                 }
                 else if (state == AttemptStage.FillingHoles)
                 {
