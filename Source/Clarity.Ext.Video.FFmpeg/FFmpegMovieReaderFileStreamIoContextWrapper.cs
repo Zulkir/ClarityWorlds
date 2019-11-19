@@ -18,8 +18,6 @@ namespace Clarity.Ext.Video.FFmpeg
         private readonly avio_alloc_context_seek SeekPacketDelegate;
         private readonly AVIOContext* pIoContext;
 
-        private volatile bool disposing;
-
         public FFmpegMovieReaderFileStreamIoContextWrapper(Stream fileStream)
         {
             fileDataStream = fileStream;
@@ -53,8 +51,6 @@ namespace Clarity.Ext.Video.FFmpeg
 
         private int ReadPacket(void* ptr, byte* buffer, int bufferSize)
         {
-            if (disposing)
-                return 0;
             var bytesToCopy = (int)Math.Min(Math.Min(bufferSize, managedReadBuffer.Length), fileDataStream.Length - fileDataStream.Position);
             var bytesCopied = fileDataStream.Read(managedReadBuffer, 0, bytesToCopy);
             Marshal.Copy(managedReadBuffer, 0, (IntPtr)buffer, bytesCopied);
@@ -63,9 +59,6 @@ namespace Clarity.Ext.Video.FFmpeg
 
         private long Seek(void* opaque, long pos, int whence)
         {
-            if (disposing)
-                return -1;
-
             // todo: make this work
             whence &= ~ffmpeg.AVSEEK_FORCE;
             const int SEEK_SET = 0;

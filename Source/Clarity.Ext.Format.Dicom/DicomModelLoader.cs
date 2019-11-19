@@ -106,10 +106,11 @@ namespace Clarity.Ext.Format.Dicom
                         
                     var yStride = width;
                         
-                    var mcCube = new MCCubeCornerScalarStruct();
-                    mcCube.CubeDim = new IrtPtType(100.0 / width, 100.0 / height, 100.0 / depth);
-                    //mcCube.CubeDim = new IrtPtType(scale, scale, scale);
-                    mcCube.Vrtx0Lctn = new IrtPtType(vx, vy, vz);
+                    var mcCube = new MCCubeCornerScalarStruct
+                    {
+                        CubeDim = new IrtPtType(100.0 / width, 100.0 / height, 100.0 / depth),
+                        Vrtx0Lctn = new IrtPtType(vx, vy, vz)
+                    };
                     mcCube.Corners[0] = UNormToDouble(lowerBuffer[yStride * y + x]);
                     mcCube.Corners[1] = UNormToDouble(lowerBuffer[yStride * y + (x + 1)]);
                     mcCube.Corners[2] = UNormToDouble(lowerBuffer[yStride * (y + 1) + (x + 1)]);
@@ -184,7 +185,7 @@ namespace Clarity.Ext.Format.Dicom
 
         private static long GetLong(void* dm, int slice, TagInfoStruct tagInfo, int index)
         {
-            var val = 0l;
+            var val = 0L;
             var res = DicomProject.AnalyzerGetTagValueLong(dm, 1, tagInfo.GroupId, tagInfo.Id, &val, 0);
             CheckSuccess(res);
             return val;

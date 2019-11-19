@@ -13,8 +13,6 @@ namespace Clarity.Ext.Video.FFmpeg
         private const AVPixelFormat DestinationPixFmt = AVPixelFormat.AV_PIX_FMT_BGRA;
         private const int ConvertedBufferAlign = 4;
 
-        private volatile bool disposing;
-
         private readonly IFFmpegMovieReaderIoContextWrapper contextWrapper;
         private readonly AVFormatContext* pFormatContext;
         private readonly AVCodecContext* pVideoCodecContext;
@@ -121,8 +119,6 @@ namespace Clarity.Ext.Video.FFmpeg
 
         public void Dispose()
         {
-            disposing = true;
-
             var packetLoc = packet;
             var pPacket = &packetLoc;
             while (pPacket->side_data_elems > 0)

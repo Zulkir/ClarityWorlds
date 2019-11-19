@@ -144,53 +144,11 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedSpheres
             var positions = PackSpheres2(0, childRadius, numChildren);
             var boundingSphere = Common.Numericals.Geometry.Sphere.BoundingSphere(positions.Select(x => new Common.Numericals.Geometry.Sphere(x, childRadius)).ToArray());
             return boundingSphere.Radius + boundingSphere.Center.Length();
-
-            switch (numChildren)
-            {
-                case 1: return childRadius;
-                case 2: return 2 * childRadius;
-                case 3: return childRadius * (1f / MathHelper.Sin(MathHelper.PiOver3) + 1);
-                //case 4: return childRadius * (1 + MathHelper.Sqrt2);
-                //case 5:
-                //case 6:
-                //case 7: return 3 * childRadius;
-                //case 8:
-                //case 9:
-                //case 10: return 4 * childRadius;
-                //case 11:
-                //case 12:
-                //case 13:
-                //case 14:
-                //case 15:
-                //case 16:
-                //case 17:
-                //case 18:
-                //case 19: return 5 * childRadius;
-                default:
-                    {
-                        var rowLength = 4;
-                        while (PackSpheres(rowLength * childRadius, childRadius, numChildren).Count() < numChildren)
-                            rowLength++;
-                        return rowLength * childRadius;
-                    };
-            }
         }
 
         private void RunAdjustmentLoop()
         {
             AdjustmentStep();
-            //await AdjustmentStep();
-
-            //float prevEnergy = float.MaxValue;
-            //float deltaEnergy = float.MaxValue;
-            //
-            //while (deltaEnergy > MathHelper.Eps5)
-            //{
-            //    await AdjustmentStep();
-            //    var currEnergy = TotalEnergy();
-            //    deltaEnergy = prevEnergy - currEnergy;
-            //    prevEnergy = currEnergy;
-            //}
         }
 
         private void AdjustmentStep()

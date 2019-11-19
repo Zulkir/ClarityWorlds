@@ -6,6 +6,5 @@ namespace Clarity.Engine.Media.Text.Rich
     {
         [NotNull]
         string Text { get; set; }
-        bool IsEmpty { get; }
     }
 }

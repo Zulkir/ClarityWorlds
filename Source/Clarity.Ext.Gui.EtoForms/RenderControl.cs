@@ -42,12 +42,9 @@ namespace Clarity.Ext.Gui.EtoForms
 
         public event Action Resized;
         
-        private bool isInFullscreen;
-
         public RenderControl(IInputService inputService, ICommonGuiObjects commonGuiObjects)
         {
             this.inputService = inputService;
-            Handler.FullscreenEnded += () => { isInFullscreen = false; };
             Viewports = new IViewport[0];
             ContextMenu = commonGuiObjects.SelectionContextMenu;
             tableLayout = new ViewportsLayout
@@ -80,13 +77,11 @@ namespace Clarity.Ext.Gui.EtoForms
         public void GoFullscreen()
         {
             Handler.GoFullscreen();
-            isInFullscreen = true;
         }
 
         public void EndFullscreen()
         {
             Handler.EndFullscreen();
-            isInFullscreen = false;
         }
 
         protected override void OnSizeChanged(EventArgs e)
@@ -122,8 +117,7 @@ namespace Clarity.Ext.Gui.EtoForms
             {
                 // todo: move to RenderingSystem
                 var bitmap = new Bitmap(new Size(Width, Height), Eto.Drawing.PixelFormat.Format32bppRgb);
-                int fbuf;
-                GL.GetInteger(GetPName.ReadFramebufferBinding, out fbuf);
+                GL.GetInteger(GetPName.ReadFramebufferBinding, out var fbuf);
                 GL.BindFramebuffer(FramebufferTarget.ReadFramebuffer, 0);
                 using (var bData = bitmap.Lock())
                 {

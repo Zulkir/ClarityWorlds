@@ -90,10 +90,10 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             return parent != -1 ? positions[node] + GetGlobalPos(parent) : positions[node];
         }
 
-        public async void Apply()
+        public void Apply()
         {
             BuildApproxRadii(sg.Root);
-            await RunAdjustmentLoop();
+            RunAdjustmentLoop();
             visualize(this);
         }
 
@@ -155,32 +155,22 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             }
         }
 
-        private async Task RunAdjustmentLoop()
+        private void RunAdjustmentLoop()
         {
-            await AdjustmentStep();
-            await AdjustmentStep();
-
-            //float prevEnergy = float.MaxValue;
-            //float deltaEnergy = float.MaxValue;
-            //
-            //while (deltaEnergy > MathHelper.Eps5)
-            //{
-            //    await AdjustmentStep();
-            //    var currEnergy = TotalEnergy();
-            //    deltaEnergy = prevEnergy - currEnergy;
-            //    prevEnergy = currEnergy;
-            //}
+            // todo: make loop
+            AdjustmentStep();
+            AdjustmentStep();
         }
 
-        private async Task AdjustmentStep()
+        private void AdjustmentStep()
         {
             placed[sg.Root] = true;
             foreach (var node in sg.HierarchyBreadthFirst())
-                await PlaceNodeChildren(node);
+                PlaceNodeChildren(node);
             foreach (var node in sg.HierarchyBreadthFirst().Reverse())
-                await CollapseCircles(node);
+                CollapseCircles(node);
             foreach (var node in sg.HierarchyBreadthFirst())
-                await RotateChildren(node);
+                RotateChildren(node);
         }
 
         private float TotalEnergy()
@@ -203,7 +193,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             return (GetGlobalPos(edge.First) - GetGlobalPos(edge.Second)).LengthSquared();
         }
 
-        private async Task PlaceNodeChildren(int node)
+        private void PlaceNodeChildren(int node)
         {
             var children = sg.Children[node];
 
@@ -226,7 +216,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
 
                 // Generate honeycomb places
                 var childPlaces = PackCircles(nodeRadius, childRadius, children.Count)
-                    .Select(x => new ChildPlace {Position = x}).ToArray();
+                    .Select(x => new ChildPlace { Position = x }).ToArray();
                 Debug.Assert(childPlaces.Length >= children.Count, "packedCircleCenters.Length >= children.Count");
                 //foreach (var child in children)
                 //    positions[child] = Vector2.Zero;
@@ -269,15 +259,15 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
                     placed[child] = true;
                 }
 
-                await DoPlaceSwapping(node, childPlaces);
+                DoPlaceSwapping(node, childPlaces);
             }
             else
             {
-                await DoChildSwapping(node);
+                DoChildSwapping(node);
             }
         }
 
-        private async Task DoPlaceSwapping(int node, ChildPlace[] childPlaces)
+        private void DoPlaceSwapping(int node, ChildPlace[] childPlaces)
         {
             var hasImpreved = true;
             while (hasImpreved)
@@ -298,7 +288,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
                     {
                         energy = newEnergy;
                         hasImpreved = true;
-                        //await VisualizeAsync();
                     }
                     else
                     {
@@ -317,7 +306,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             CodingHelper.Swap(ref place1.Child, ref place2.Child);
         }
 
-        private async Task DoChildSwapping(int node)
+        private void DoChildSwapping(int node)
         {
             var children = sg.Children[node];
             var hasImpreved = true;
@@ -341,7 +330,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
                     {
                         energy = newEnergy;
                         hasImpreved = true;
-                        //await VisualizeAsync();
                     }
                     else
                     {
@@ -351,16 +339,11 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             }
         }
 
-        private async Task RotateChildren(int node)
+        private void RotateChildren(int node)
         {
             var children = sg.Children[node];
             if (children.Count == 0)
                 return;
-            //if (children.All(x => sg.Children[x].Count == 0))
-            //{
-            //    await PlaceNodeChildren(node);
-            //    continue;
-            //}
 
             var angleDiffs = new List<float>();
             foreach (var child in children)
@@ -373,8 +356,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
                 foreach (var externalConnection in externalConnections)
                 {
                     var externalConnectionLoc = externalConnection;
-                    //while (sg.Depths[externalConnectionLoc] > sg.Depths[node])
-                    //    externalConnectionLoc = sg.Parents[externalConnectionLoc];
                     var targetGlobal = GetGlobalPos(externalConnectionLoc);
                     var dir = targetGlobal - childGlobal;
                     var targetAngle = MathHelper.Atan2(dir.Y, dir.X);
@@ -391,10 +372,8 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             {
                 var angleCorrection = -angleDiffs.Average();
                 // todo: make Matrix2x2
-                //await VisualizeAsync();
                 foreach (var child in children)
                     positions[child] = (new Vector3(positions[child], 0) * Matrix3x3.RotationZ(angleCorrection)).Xy;
-                //await VisualizeAsync();
             }
         }
 
@@ -548,7 +527,7 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             }
         }
 
-        private async Task CollapseCircles(int node)
+        private void CollapseCircles(int node)
         {
             var children = sg.Children[node];
             if (children.Count == 0)
@@ -574,11 +553,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
 
         private void MoveWhilePossible(int node, Vector2 deltaPos)
         {
-            //if (node == 1)
-            //{
-            //    int x = 0;
-            //}
-
             var parent = sg.Parents[node];
             var children = sg.Children[parent];
             var child = node;
@@ -587,7 +561,6 @@ namespace Clarity.App.Worlds.StoryLayouts.NestedCircles
             var ownRadius = radii[child];
             var remainingDeltaPos = deltaPos;
             var circles = children
-                //.Where(x => placed[x])
                 .ExceptSingle(child)
                 .Select(x => new Circle2(positions[x], ownRadius + radii[x]))
                 .ToArray();

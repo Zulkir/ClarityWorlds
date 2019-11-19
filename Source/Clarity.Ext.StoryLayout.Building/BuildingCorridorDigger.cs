@@ -353,11 +353,8 @@ namespace Clarity.Ext.StoryLayout.Building
                         GetExternalPart(new LineSegment3(m, segment.Point2), primitive, results);
                         return;
                     }
-                    else
-                    {
-                        results.Add(segment);
-                        return;
-                    }
+
+                    results.Add(segment);
                     return;
                 }
 

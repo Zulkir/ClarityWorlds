@@ -36,7 +36,6 @@ namespace Clarity.Ext.Gui.EtoForms
         private readonly UndoRedoGui undoRedoGui;
         private readonly Random random = new Random();
         private readonly IStoryGraphGui storyGraphGui;
-        private bool isFullscreen;
 
         public Form Form => this;
         public RenderControl RenderControl => renderControl;
@@ -188,8 +187,6 @@ namespace Clarity.Ext.Gui.EtoForms
                     new TableCell(new TableLayout(new TableRow(new TableCell(rightLayout))))));
 
             Content = layout;
-            
-            renderControl.FullscreenEnded += OnFullscreenEnded;
         }
 
         private void CreateMenuBar(ISaveLoadGuiCommands saveLoadGuiCommands, IAppModesCommands appModesCommands)
@@ -251,12 +248,6 @@ namespace Clarity.Ext.Gui.EtoForms
             collectButton.Click += (s, a) => GC.Collect();
             toolBar.Items.Add(collectButton);
             ToolBar = toolBar;
-        }
-
-        private void OnFullscreenEnded()
-        {
-            isFullscreen = false;
-            //appModeService.SetMode(AppMode.Editing);
         }
 
         private Color4 GetRandomSaturatedColor()

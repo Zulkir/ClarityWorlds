@@ -350,7 +350,6 @@ namespace Clarity.App.Worlds.Media.Media2D
                 default:
                     throw new ArgumentOutOfRangeException(nameof(command), command, null);
             }
-            return editInteractionElement.HeadlessEditor.SelectionRange.HasValue;
         }
 
         public bool CanExecute(CopyPasteCommand command)

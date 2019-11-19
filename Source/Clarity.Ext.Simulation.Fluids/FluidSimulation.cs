@@ -15,24 +15,16 @@ namespace Clarity.Ext.Simulation.Fluids
     {
         private const float ParticleCreationCurvature = 1f;
         private const float ParticleRemovalPhi = -0.1f;
-
-        private ConcurrentQueue<FluidSimulationFrame> frameQueue;
-
-        private INavierStokesGrid currentNavierStokesGrid;
         private INavierStokesGrid nextNavierStokesGrid;
         private INavierStokesGrid backNavierStokesGrid;
-        private FluidParticle[] particles;
         private IntSize3 size;
         private float cellSize;
-        private int numCells;
         private int spanJ;
         private int spanK;
         private Vector3 gravityForce;
-        private float atmosphericPressure;
-        private float density;
-        private LevelSet levelSet;
-        private float viscosity;
-        private Random random;
+        private readonly float atmosphericPressure;
+        private readonly float density;
+        private readonly float viscosity;
         private bool stop;
         private int levelSetScale;
         private FluidSurfaceType surfaceType;
@@ -46,24 +38,23 @@ namespace Clarity.Ext.Simulation.Fluids
         //private float[] xk;
         //private float[] xk1;
 
-        public int NumCells => numCells;
-        public INavierStokesGrid CurrentNavierStokesGrid => currentNavierStokesGrid;
-        public FluidParticle[] Particles => particles;
-        public ConcurrentQueue<FluidSimulationFrame> FrameQueue => frameQueue;
-        public LevelSet LevelSet => levelSet;
+        public int NumCells { get; private set; }
+        public INavierStokesGrid CurrentNavierStokesGrid { get; private set; }
+        public FluidParticle[] Particles { get; private set; }
+        public ConcurrentQueue<FluidSimulationFrame> FrameQueue { get; private set; }
+        public LevelSet LevelSet { get; private set; }
 
         public FluidSimulation(float atmosphericPressure, float density, float viscosity)
         {
             this.atmosphericPressure = atmosphericPressure;
             this.density = density;
             this.viscosity = viscosity;
-            random = new Random();
-            particles = new FluidParticle[1 << 16];
+            Particles = new FluidParticle[1 << 16];
             size = new IntSize3(20, 20, 1);
             levelSetScale = 8;
             cellSize = 0.8f;
-            currentNavierStokesGrid = new NavierStokesGrid(size, cellSize);
-            levelSet = new LevelSet(new IntSize3(size.Width * levelSetScale, size.Height * levelSetScale, 1), cellSize / levelSetScale, currentNavierStokesGrid);
+            CurrentNavierStokesGrid = new NavierStokesGrid(size, cellSize);
+            LevelSet = new LevelSet(new IntSize3(size.Width * levelSetScale, size.Height * levelSetScale, 1), cellSize / levelSetScale, CurrentNavierStokesGrid);
         }
 
         public void Reset(FluidSimulationConfig config)
@@ -77,12 +68,12 @@ namespace Clarity.Ext.Simulation.Fluids
             surfaceType = config.SurfaceType;
             //this.particleRadius = particleRadius;
             
-            frameQueue = new ConcurrentQueue<FluidSimulationFrame>();
+            FrameQueue = new ConcurrentQueue<FluidSimulationFrame>();
             
-            currentNavierStokesGrid = new NavierStokesGrid(size, cellSize);
+            CurrentNavierStokesGrid = new NavierStokesGrid(size, cellSize);
             nextNavierStokesGrid = new NavierStokesGrid(size, cellSize);
             backNavierStokesGrid = new NavierStokesGrid(size, cellSize);
-            numCells = size.Volume();
+            NumCells = size.Volume();
             spanJ = size.Width;
             spanK = size.Width * size.Height;
             //rk = new float[numCells];
@@ -95,20 +86,20 @@ namespace Clarity.Ext.Simulation.Fluids
             gravityForce = new Vector3(0, -0.98f * 3, 0) / cellSize * 0.4f;
             InitBorderCellStates();
             levelSetScale = config.LevelSetScale;
-            levelSet = new LevelSet(new IntSize3(size.Width * levelSetScale, size.Height * levelSetScale, 1), cellSize / levelSetScale, currentNavierStokesGrid);
+            LevelSet = new LevelSet(new IntSize3(size.Width * levelSetScale, size.Height * levelSetScale, 1), cellSize / levelSetScale, CurrentNavierStokesGrid);
             SetInitialMass();
-            particles = new FluidParticle[1 << 16];
+            Particles = new FluidParticle[1 << 16];
             GenerateInitialParticles();
             if (surfaceType != FluidSurfaceType.Particles)
-                levelSet.InitPhi();
+                LevelSet.InitPhi();
         }
 
         private void SetInitialMass()
         {
-            for (int j = (int)(0.2f * levelSet.Size.Height); j < 0.85f * levelSet.Size.Height; j++)
-            for (int i = (int)(0.6f * levelSet.Size.Width); i < 0.8f * levelSet.Size.Width; i++)
+            for (int j = (int)(0.2f * LevelSet.Size.Height); j < 0.85f * LevelSet.Size.Height; j++)
+            for (int i = (int)(0.6f * LevelSet.Size.Width); i < 0.8f * LevelSet.Size.Width; i++)
             {
-                levelSet.Mass(i, j) = 1f;
+                LevelSet.Mass(i, j) = 1f;
             }
             //levelSet.RecalculatePhi();
         }
@@ -135,15 +126,15 @@ namespace Clarity.Ext.Simulation.Fluids
 
             int k = 0;
             //for (int k = 0; k < size.Depth; k++)
-            for (int j = 0; j < levelSet.Size.Height; j++)
-            for (int i = 0; i < levelSet.Size.Width; i++)
+            for (int j = 0; j < LevelSet.Size.Height; j++)
+            for (int i = 0; i < LevelSet.Size.Width; i++)
             {
-                if (levelSet.Mass(i, j) == 0)
+                if (LevelSet.Mass(i, j) == 0)
                     continue;
                 if (surfaceType != FluidSurfaceType.Particles || i % 4 != 0 || j % 4 != 0)
                     continue;
 
-                var point = levelSet.CellSize * new Vector3(i, j, k);
+                var point = LevelSet.CellSize * new Vector3(i, j, k);
                 //for (int k = 0; k < size.Depth; k++)
                 //for (int j2 = 1; j2 < 3; j2++)
                 //for (int i2 = 1; i2 < 3; i2++)
@@ -151,7 +142,7 @@ namespace Clarity.Ext.Simulation.Fluids
                 //    resultList.Add(point + levelSet.CellSize * new Vector3(i2, j2, 2) / 3);
                 //}
 
-                particles[c].Position = point + levelSet.CellSize * new Vector3(1, 1, 1) / 2;
+                Particles[c].Position = point + LevelSet.CellSize * new Vector3(1, 1, 1) / 2;
 
                 c++;
             }
@@ -176,10 +167,10 @@ namespace Clarity.Ext.Simulation.Fluids
             for (int k = 0; k < size.Depth; k++)
             for (int j = 0; j < size.Height; j++)
             {
-                currentNavierStokesGrid.Cell(0, j, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(1, j, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(currentNavierStokesGrid.Size.Width - 1, j, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(currentNavierStokesGrid.Size.Width - 2, j, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(0, j, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(1, j, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(CurrentNavierStokesGrid.Size.Width - 1, j, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(CurrentNavierStokesGrid.Size.Width - 2, j, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(0, j, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(1, j, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(nextNavierStokesGrid.Size.Width - 1, j, k).State = NavierStokesCellState.Object;
@@ -193,10 +184,10 @@ namespace Clarity.Ext.Simulation.Fluids
             for (int k = 0; k < size.Depth; k++)
             for (int i = 0; i < size.Width; i++)
             {
-                currentNavierStokesGrid.Cell(i, 0, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(i, 1, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(i, currentNavierStokesGrid.Size.Height - 1, k).State = NavierStokesCellState.Object;
-                currentNavierStokesGrid.Cell(i, currentNavierStokesGrid.Size.Height - 2, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(i, 0, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(i, 1, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(i, CurrentNavierStokesGrid.Size.Height - 1, k).State = NavierStokesCellState.Object;
+                CurrentNavierStokesGrid.Cell(i, CurrentNavierStokesGrid.Size.Height - 2, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(i, 0, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(i, 1, k).State = NavierStokesCellState.Object;
                 nextNavierStokesGrid.Cell(i, nextNavierStokesGrid.Size.Height - 1, k).State = NavierStokesCellState.Object;
@@ -221,7 +212,7 @@ namespace Clarity.Ext.Simulation.Fluids
         public void Run(float initialTimestamp)
         {
             stop = false;
-            if (frameQueue == null)
+            if (FrameQueue == null)
                 throw new Exception();
             processingTask = Task.Run(() => SimulationLoop(initialTimestamp));
         }
@@ -237,37 +228,37 @@ namespace Clarity.Ext.Simulation.Fluids
             var currentTimestamp = initialTimestamp;
             while (!stop)
             {
-                var frameSize = sizeof(float) * 3 * particles.Length + 9 * levelSet.AllPhi.Length;
+                var frameSize = sizeof(float) * 3 * Particles.Length + 9 * LevelSet.AllPhi.Length;
                 var maxFrames = (1 << 29) / frameSize;
-                while (!stop && frameQueue.Count > maxFrames)
+                while (!stop && FrameQueue.Count > maxFrames)
                     Thread.Sleep(1);
 
                 if (stop)
                     break;
 
-                var maxVel = Enumerable.Range(0, numCells).Select(x => nextNavierStokesGrid.Cells[x].Velocity.Length()).Max();
+                var maxVel = Enumerable.Range(0, NumCells).Select(x => nextNavierStokesGrid.Cells[x].Velocity.Length()).Max();
                 var deltaT = Math.Min(0.5f * cellSize / maxVel, 1 / 10f);
                 AdvanceSimulation(deltaT);
                 currentTimestamp += deltaT;
                 if (currentTimestamp - lastFrameTimestamp > 1f/20)
                 {
                     lastFrameTimestamp = currentTimestamp;
-                    var newFrame = new FluidSimulationFrame(levelSet.Size, particles.Length, nextNavierStokesGrid.Size, nextNavierStokesGrid.CellSize)
+                    var newFrame = new FluidSimulationFrame(LevelSet.Size, Particles.Length, nextNavierStokesGrid.Size, nextNavierStokesGrid.CellSize)
                     {
                         Timestamp = currentTimestamp
                     };
-                    for (int i = 0; i < particles.Length; i++)
+                    for (int i = 0; i < Particles.Length; i++)
                     {
-                        newFrame.Particles[i] = particles[i].Position;
+                        newFrame.Particles[i] = Particles[i].Position;
                     }
-                    for (int i = 0; i < levelSet.Size.Volume(); i++)
+                    for (int i = 0; i < LevelSet.Size.Volume(); i++)
                     {
-                        newFrame.Phi[i] = levelSet.AllPhi[i];
-                        newFrame.ParticleMask[i] = levelSet.AllParticleMasks[i];
+                        newFrame.Phi[i] = LevelSet.AllPhi[i];
+                        newFrame.ParticleMask[i] = LevelSet.AllParticleMasks[i];
                     }
-                    for (int i = 0; i < numCells; i++)
+                    for (int i = 0; i < NumCells; i++)
                         newFrame.NavierStokesGrid.Cells[i] = nextNavierStokesGrid.Cells[i];
-                    frameQueue.Enqueue(newFrame);
+                    FrameQueue.Enqueue(newFrame);
                 }
             }
         }
@@ -282,14 +273,14 @@ namespace Clarity.Ext.Simulation.Fluids
 
             while (remainingT > 0)
             {
-                var maxVel = Enumerable.Range(0, numCells).Select(x => currentNavierStokesGrid.Cells[x].Velocity.Length()).Max();
+                var maxVel = Enumerable.Range(0, NumCells).Select(x => CurrentNavierStokesGrid.Cells[x].Velocity.Length()).Max();
                 if (maxVel > maxmaxvel)
-                    for (int i = 0; i < numCells; i++)
-                        currentNavierStokesGrid.Cells[i].Velocity *= (maxmaxvel / maxVel);
+                    for (int i = 0; i < NumCells; i++)
+                        CurrentNavierStokesGrid.Cells[i].Velocity *= (maxmaxvel / maxVel);
                 if (maxVel > maxvel)
-                    for (int i = 0; i < numCells; i++)
-                        currentNavierStokesGrid.Cells[i].Velocity *= veldumping;
-                maxVel = Enumerable.Range(0, numCells).Select(x => currentNavierStokesGrid.Cells[x].Velocity.Length()).Max();
+                    for (int i = 0; i < NumCells; i++)
+                        CurrentNavierStokesGrid.Cells[i].Velocity *= veldumping;
+                maxVel = Enumerable.Range(0, NumCells).Select(x => CurrentNavierStokesGrid.Cells[x].Velocity.Length()).Max();
 
                 var maxDist = 0.5f * cellSize;
                 var minDeltaT = 0.001f;
@@ -297,12 +288,12 @@ namespace Clarity.Ext.Simulation.Fluids
                 
                 UpdateVelocities2(smallDeltaT);
 
-                maxVel = Enumerable.Range(0, numCells).Select(x => nextNavierStokesGrid.Cells[x].Velocity.Length()).Max();
+                maxVel = Enumerable.Range(0, NumCells).Select(x => nextNavierStokesGrid.Cells[x].Velocity.Length()).Max();
                 if (maxVel > maxmaxvel)
-                    for (int i = 0; i < numCells; i++)
+                    for (int i = 0; i < NumCells; i++)
                         nextNavierStokesGrid.Cells[i].Velocity *= (maxmaxvel / maxVel);
                 if (maxVel > maxvel)
-                    for (int i = 0; i < numCells; i++)
+                    for (int i = 0; i < NumCells; i++)
                         nextNavierStokesGrid.Cells[i].Velocity *= veldumping;
                 
                 EnforceMassConservation4(smallDeltaT);
@@ -312,8 +303,8 @@ namespace Clarity.Ext.Simulation.Fluids
                 if (surfaceType == FluidSurfaceType.Hybrid)
                     CreateAndRemoveParticles(smallDeltaT);
                 PostUpdateCellStates();
-                for (int i = 0; i < numCells; i++)
-                    currentNavierStokesGrid.Cells[i] = nextNavierStokesGrid.Cells[i];
+                for (int i = 0; i < NumCells; i++)
+                    CurrentNavierStokesGrid.Cells[i] = nextNavierStokesGrid.Cells[i];
                 remainingT -= smallDeltaT;
             }
             
@@ -336,19 +327,19 @@ namespace Clarity.Ext.Simulation.Fluids
             {
                 ref var curr = ref nextNavierStokesGrid.Cell(i, j, k);
                 {
-                    var v_mh_mh_mh = currentNavierStokesGrid.Cell(i, j, k).Velocity;
-                    var v_z_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, 0, k, 0);
-                    var v_m_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i - 1, 0, j, 0, k, 0);
-                    var v_mh_mh_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, -1, k, 0);
-                    var v_mh_ph_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, +1, k, 0);
+                    var v_mh_mh_mh = CurrentNavierStokesGrid.Cell(i, j, k).Velocity;
+                    var v_z_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, 0, k, 0);
+                    var v_m_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i - 1, 0, j, 0, k, 0);
+                    var v_mh_mh_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, -1, k, 0);
+                    var v_mh_ph_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, +1, k, 0);
                     //var v_mh_z_mh = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, 0, k, -1);
                     //var v_mh_z_ph = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, 0, k, +1);
-                    var v_ph_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i, +1, j, 0, k, 0);
-                    var v_mh_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, 0, k, 0);
-                    var v_mt_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -3, j, 0, k, 0);
-                    var v_mh_m_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j - 1, 0, k, 0);
-                    var p_m_z_z = currentNavierStokesGrid.Cell(i - 1, j, k).Pressure;
-                    var p_z_z_z = currentNavierStokesGrid.Cell(i, j, k).Pressure;
+                    var v_ph_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, +1, j, 0, k, 0);
+                    var v_mh_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, 0, k, 0);
+                    var v_mt_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -3, j, 0, k, 0);
+                    var v_mh_m_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -1, j - 1, 0, k, 0);
+                    var p_m_z_z = CurrentNavierStokesGrid.Cell(i - 1, j, k).Pressure;
+                    var p_z_z_z = CurrentNavierStokesGrid.Cell(i, j, k).Pressure;
 
                     var prev = v_mh_mh_mh.X;
                     var a = invDeltaX * (v_m_z_z.X * v_m_z_z.X - v_z_z_z.X * v_z_z_z.X);
@@ -372,16 +363,16 @@ namespace Clarity.Ext.Simulation.Fluids
                     curr.Velocity.X = prev + delta;
                 }
                 {
-                    var v_mh_mh_mh = currentNavierStokesGrid.Cell(i, j, k).Velocity;
-                    var v_mh_mh_z = currentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, -1, k, 0);
-                    var v_ph_mh_z = currentNavierStokesGrid.GetCenterVelocityAt(i, +1, j, -1, k, 0);
-                    var v_z_m_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j - 1, 0, k, 0);
-                    var v_z_z_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, 0, k, 0);
-                    var v_z_mh_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, -1, k, 0);
-                    var v_z_mt_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, -3, k, 0);
-                    var v_z_ph_z = currentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, +1, k, 0);
-                    var p_z_m_z = currentNavierStokesGrid.Cell(i, j - 1, k).Pressure;
-                    var p_z_z_z = currentNavierStokesGrid.Cell(i, j, k).Pressure;
+                    var v_mh_mh_mh = CurrentNavierStokesGrid.Cell(i, j, k).Velocity;
+                    var v_mh_mh_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, -1, j, -1, k, 0);
+                    var v_ph_mh_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, +1, j, -1, k, 0);
+                    var v_z_m_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j - 1, 0, k, 0);
+                    var v_z_z_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, 0, k, 0);
+                    var v_z_mh_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, -1, k, 0);
+                    var v_z_mt_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, -3, k, 0);
+                    var v_z_ph_z = CurrentNavierStokesGrid.GetCenterVelocityAt(i, 0, j, +1, k, 0);
+                    var p_z_m_z = CurrentNavierStokesGrid.Cell(i, j - 1, k).Pressure;
+                    var p_z_z_z = CurrentNavierStokesGrid.Cell(i, j, k).Pressure;
 
                     var prev = v_mh_mh_mh.Y;
                     var a = invDeltaX * (v_mh_mh_z.Y * v_mh_mh_z.X - v_ph_mh_z.Y * v_ph_mh_z.X);
@@ -405,7 +396,7 @@ namespace Clarity.Ext.Simulation.Fluids
         
         private void AddForce(Vector3 force, float deltaT)
         {
-            for (int i = 0; i < numCells; i++)
+            for (int i = 0; i < NumCells; i++)
                 if (nextNavierStokesGrid.Cells[i].State == NavierStokesCellState.Liquid)
                     nextNavierStokesGrid.Cells[i].Velocity = nextNavierStokesGrid.Cells[i].Velocity + force * deltaT;
         }
@@ -661,17 +652,6 @@ namespace Clarity.Ext.Simulation.Fluids
 
         private void EnforceMassConservation4(float deltaT)
         {
-            var invDeltaX = 1f / cellSize;
-            var invDeltaY = 1f / cellSize;
-            var invDeltaZ = 1f / cellSize;
-            var invSqDeltaX = 1f / (cellSize * cellSize);
-            var invSqDeltaY = 1f / (cellSize * cellSize);
-            var invSqDeltaZ = 1f / (cellSize * cellSize);
-
-            var beta0 = 1.1f;
-            var laplacian = invSqDeltaX + invSqDeltaY + invSqDeltaZ;
-
-            //int badCells = int.MaxValue;
             hasBadCells = true;
 
             while (hasBadCells)
@@ -720,12 +700,6 @@ namespace Clarity.Ext.Simulation.Fluids
                     if (float.IsInfinity(deltaV) || float.IsNaN(deltaV))
                         throw new Exception();
 
-                    //var maxVel = Math.Max(Math.Max(Math.Max(
-                    //    Math.Abs(curr.Velocity.X), Math.Abs(curr.Velocity.Y)), Math.Abs(nextI.Velocity.X)), Math.Abs(nextJ.Velocity.Y));
-                    //if (Math.Abs(deltaV) / maxVel < 0.000001f)
-                    //    return;
-
-
                     hasBadCells = true;
 
                     ref var backCurr = ref backNavierStokesGrid.Cells[index];
@@ -770,18 +744,8 @@ namespace Clarity.Ext.Simulation.Fluids
                         backNavierStokesGrid.Cells[index + spanJ].Velocity.Y += 3 * deltaV;
                     else
                         backNavierStokesGrid.Cells[index + spanJ].Velocity.Y += deltaV;
-
-                    //backNavierStokesGrid.Cell(i, j, k).Velocity.X += -deltaV;
-                    //backNavierStokesGrid.Cell(i + 1, j, k).Velocity.X += deltaV;
-                    //backNavierStokesGrid.Cell(i, j, k).Velocity.Y += -deltaV;
-                    //backNavierStokesGrid.Cell(i, j + 1, k).Velocity.Y += deltaV;
+                    
                     backCurr.Pressure += deltaP;
-
-                    //curr.Velocity.X -= deltaV;
-                    //nextI.Velocity.X += deltaV;
-                    //curr.Velocity.Y -= deltaV;
-                    //nextJ.Velocity.Y += deltaV;
-                    //curr.Pressure += deltaP;
                 });
                 CodingHelper.Swap(ref nextNavierStokesGrid, ref backNavierStokesGrid);
             }
@@ -897,7 +861,7 @@ namespace Clarity.Ext.Simulation.Fluids
                     if (nextNavierStokesGrid.Cells[i - 1].State == NavierStokesCellState.Liquid && !nextNavierStokesGrid.Cells[i - 1].IsSurface)
                         numLiquidNeighbors++;
                 }
-                if (i < numCells - 1)
+                if (i < NumCells - 1)
                 {
                     sum += v[i + 1];
                     if (nextNavierStokesGrid.Cells[i + 1].State == NavierStokesCellState.Liquid && !nextNavierStokesGrid.Cells[i + 1].IsSurface)
@@ -909,7 +873,7 @@ namespace Clarity.Ext.Simulation.Fluids
                     if (nextNavierStokesGrid.Cells[i - spanJ].State == NavierStokesCellState.Liquid && !nextNavierStokesGrid.Cells[i - spanJ].IsSurface)
                         numLiquidNeighbors++;
                 }
-                if (i < numCells - spanJ)
+                if (i < NumCells - spanJ)
                 {
                     sum += v[i + spanJ];
                     if (nextNavierStokesGrid.Cells[i + spanJ].State == NavierStokesCellState.Liquid && !nextNavierStokesGrid.Cells[i + spanJ].IsSurface)
@@ -942,14 +906,14 @@ namespace Clarity.Ext.Simulation.Fluids
 
         private void TransferMass(float deltaT)
         {
-            Array.Clear(levelSet.AllMasses, 0, levelSet.AllMasses.Length);
+            Array.Clear(LevelSet.AllMasses, 0, LevelSet.AllMasses.Length);
             
-            foreach (var particle in particles)
+            foreach (var particle in Particles)
             {
-                var i = (int)(particle.Position.X / levelSet.CellSize);
-                var j = (int)(particle.Position.Y / levelSet.CellSize);
-                var k = (int)(particle.Position.Z / levelSet.CellSize);
-                levelSet.Mass(i, j) += 1f;
+                var i = (int)(particle.Position.X / LevelSet.CellSize);
+                var j = (int)(particle.Position.Y / LevelSet.CellSize);
+                var k = (int)(particle.Position.Z / LevelSet.CellSize);
+                LevelSet.Mass(i, j) += 1f;
             }
             //levelSet.TransferMass(deltaT, nextNavierStokesGrid);
             //levelSet.RecalculatePhi();
@@ -957,47 +921,47 @@ namespace Clarity.Ext.Simulation.Fluids
 
         private void MovePhi(float deltaT)
         {
-            levelSet.TransferPhi(deltaT, nextNavierStokesGrid);
+            LevelSet.TransferPhi(deltaT, nextNavierStokesGrid);
         }
 
         private void MoveParticles(float deltaT)
         {
-            for (int i = 0; i < particles.Length; i++)
+            for (int i = 0; i < Particles.Length; i++)
             {
-                if (particles[i].Position == Vector3.Zero)
+                if (Particles[i].Position == Vector3.Zero)
                     continue;
-                var vel = nextNavierStokesGrid.GetVelocityAt(particles[i].Position);
-                particles[i].Position += vel * deltaT;
+                var vel = nextNavierStokesGrid.GetVelocityAt(Particles[i].Position);
+                Particles[i].Position += vel * deltaT;
                 //particles[i].Position += new Vector3((float)random.NextDouble() - 0.5f, (float)random.NextDouble() - 0.5f, 0) * vel.Length() / 25;
-                particles[i].Position.X = MathHelper.Clamp(particles[i].Position.X, cellSize * 2 + 0.1f, (size.Width - 2) * cellSize - 0.1f);
-                particles[i].Position.Y = MathHelper.Clamp(particles[i].Position.Y, cellSize * 2 + 0.1f, (size.Height - 2) * cellSize - 0.1f);
+                Particles[i].Position.X = MathHelper.Clamp(Particles[i].Position.X, cellSize * 2 + 0.1f, (size.Width - 2) * cellSize - 0.1f);
+                Particles[i].Position.Y = MathHelper.Clamp(Particles[i].Position.Y, cellSize * 2 + 0.1f, (size.Height - 2) * cellSize - 0.1f);
                 //particles[i].Z = MathHelper.Clamp(particles[i].Z, cellSize * 2 + 0.01f, (size.Depth - 2) * cellSize - 0.01f);
             }
         }
 
         private void CreateAndRemoveParticles(float deltaT)
         {
-            levelSet.ClearParticleMask();
+            LevelSet.ClearParticleMask();
 
-            for (int p = 0; p < particles.Length; p++)
+            for (int p = 0; p < Particles.Length; p++)
             {
-                ref var particle = ref particles[p];
+                ref var particle = ref Particles[p];
                 if (particle.Position == Vector3.Zero)
                     continue;
-                if (levelSet.PhiAt(particle.Position) < ParticleRemovalPhi)
+                if (LevelSet.PhiAt(particle.Position) < ParticleRemovalPhi)
                     RemoveParticle(p);
                 else
-                    levelSet.AddParticleIfHavePlace(particle.Position);
+                    LevelSet.AddParticleIfHavePlace(particle.Position);
             }
 
-            for (int j = 5; j < levelSet.Size.Height - 5; j++)
-            for (int i = 5; i < levelSet.Size.Width - 5; i++)
+            for (int j = 5; j < LevelSet.Size.Height - 5; j++)
+            for (int i = 5; i < LevelSet.Size.Width - 5; i++)
             {
-                var point = levelSet.CellSize * (new Vector3(i, j, 0) + new Vector3(0.5f, 0.5f, 0.5f));
-                var phi = levelSet.Phi(i, j);
+                var point = LevelSet.CellSize * (new Vector3(i, j, 0) + new Vector3(0.5f, 0.5f, 0.5f));
+                var phi = LevelSet.Phi(i, j);
                 if (phi < 0 && phi > ParticleRemovalPhi &&
-                    levelSet.Curvature(point) > ParticleCreationCurvature &&
-                    levelSet.AddParticleIfHavePlace(i, j))
+                    LevelSet.Curvature(point) > ParticleCreationCurvature &&
+                    LevelSet.AddParticleIfHavePlace(i, j))
                 {
                     AddParticle(point, 1);
                 }
@@ -1028,7 +992,7 @@ namespace Clarity.Ext.Simulation.Fluids
                 //cell.Velocity *= 0.99f;
             }
             
-            foreach (var particle in particles)
+            foreach (var particle in Particles)
             {
                 var i = (int)(particle.Position.X / cellSize);
                 var j = (int)(particle.Position.Y / cellSize);
@@ -1037,14 +1001,14 @@ namespace Clarity.Ext.Simulation.Fluids
                     nextNavierStokesGrid.Cell(i, j, k).State = NavierStokesCellState.Liquid;
             }
 
-            for (int j = 0; j < levelSet.Size.Height; j++)
-            for (int i = 0; i < levelSet.Size.Width; i++)
+            for (int j = 0; j < LevelSet.Size.Height; j++)
+            for (int i = 0; i < LevelSet.Size.Width; i++)
             {
                 var nsi = i / levelSetScale;
                 var nsj = j / levelSetScale;
 
                 if (nextNavierStokesGrid.Cell(nsi, nsj, k).State == NavierStokesCellState.Empty && 
-                    (levelSet.Phi(i, j) < 0 
+                    (LevelSet.Phi(i, j) < 0 
                     /*|| levelSet.ParticleMask(i, j)*/))
                     nextNavierStokesGrid.Cell(nsi, nsj, k).State = NavierStokesCellState.Liquid;
             }
@@ -1088,15 +1052,15 @@ namespace Clarity.Ext.Simulation.Fluids
             for (int j = 0; j < size.Height; j++)
             for (int i = 0; i < size.Width; i++)
                 nextNavierStokesGrid.Cell(i, j, k).Mass += AvgLevelSetMassFor(i, j);
-            for (int i = 0; i < particles.Length; i++)
+            for (int i = 0; i < Particles.Length; i++)
             {
-                if (particles[i].Position == Vector3.Zero)
+                if (Particles[i].Position == Vector3.Zero)
                     continue;
-                var normPos = particles[i].Position / cellSize;
+                var normPos = Particles[i].Position / cellSize;
                 var pi = (int)normPos.X;
                 var pj = (int)normPos.Y;
                 var pk = (int)normPos.Z;
-                nextNavierStokesGrid.Cell(pi, pj, pk).Mass += particles[i].Mass;
+                nextNavierStokesGrid.Cell(pi, pj, pk).Mass += Particles[i].Mass;
             }
         }
 
@@ -1105,7 +1069,7 @@ namespace Clarity.Ext.Simulation.Fluids
             var sum = 0f;
             for (int j = aj * levelSetScale; j < (aj + 1) * levelSetScale; j++)
             for (int i = ai * levelSetScale; i < (ai + 1) * levelSetScale; i++)
-                sum += levelSet.Mass(i, j);
+                sum += LevelSet.Mass(i, j);
             return sum / (levelSetScale * levelSetScale);
         }
 
@@ -1116,21 +1080,21 @@ namespace Clarity.Ext.Simulation.Fluids
 
         private void AddParticle(Vector3 pos,float mass)
         {
-            for (int i = 0; i < particles.Length; i++)
+            for (int i = 0; i < Particles.Length; i++)
             {
-                if (particles[i].Position != Vector3.Zero)
+                if (Particles[i].Position != Vector3.Zero)
                     continue;
-                particles[i].Position = pos;
-                particles[i].Mass = mass;
-                particles[i].TimeToLive = float.MaxValue;
+                Particles[i].Position = pos;
+                Particles[i].Mass = mass;
+                Particles[i].TimeToLive = float.MaxValue;
                 return;
             }
         }
 
         private void RemoveParticle(int i)
         {
-            particles[i].Position = Vector3.Zero;
-            particles[i].Mass = 0;
+            Particles[i].Position = Vector3.Zero;
+            Particles[i].Mass = 0;
         }
     }
 }
