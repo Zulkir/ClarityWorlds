@@ -63,6 +63,7 @@ namespace Clarity.Engine.Platforms
             di.Bind<IResourceLoadingService>().To<ResourceLoadingService>();
             di.BindMulti<IResourceFactory>().To<LineModelFactory>();
             di.BindMulti<IResourceFactory>().To<CircleModelFactory>();
+            di.BindMulti<IResourceFactory>().To<RectangleModelFactory>();
             di.BindMulti<IResourceFactory>().To<CubeModelFactory>();
             di.BindMulti<IResourceFactory>().To<PlaneModelFactory>();
             di.BindMulti<IResourceFactory>().To<SimpleFrustumModelFactory>();

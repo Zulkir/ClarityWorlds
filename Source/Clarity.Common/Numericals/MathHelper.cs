@@ -1,4 +1,6 @@
-﻿namespace Clarity.Common.Numericals
+﻿using System;
+
+namespace Clarity.Common.Numericals
 {
     public static class MathHelper
     {
@@ -23,6 +25,8 @@
         public static float Pow(float b, float e) => (float)System.Math.Pow(b, e);
         public static float Sqrt(float x) => (float)System.Math.Sqrt(x);
         public static float Exp(float d) => (float)System.Math.Exp(d);
+        public static float Ceiling(float f) => (float)Math.Ceiling(f);
+        public static float Floor(float f) => (float)Math.Floor(f);
         public static float Lerp(float left, float right, float amount) => left - amount * (left - right);
         public static double Lerp(double left, double right, double amount) => left - amount * (left - right);
         public static int Clamp(int x, int min, int max) => x < min ? min : x > max ? max : x;

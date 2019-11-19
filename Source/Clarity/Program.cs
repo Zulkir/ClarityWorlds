@@ -8,6 +8,7 @@ using Clarity.Ext.Rendering.Ogl3;
 using Clarity.Ext.Simulation.Fluids;
 using Clarity.Ext.Format.Itd;
 using Clarity.Ext.Import.Pptx;
+using Clarity.Ext.Simulation.SpherePacking;
 using Clarity.Ext.StoryLayout.Building;
 using Clarity.Ext.TextImlets.Latex;
 using Clarity.Ext.Video.FFmpeg;
@@ -38,6 +39,7 @@ namespace Clarity
                 new OalExtension(),
                 new PptxImportExtension(),
                 new LatexImletExtension(),
+                new SpherePackingExtension(),
             };
             var environment = new DesktopEnvironment(extensions);
             var appLifecycle = new AppLifecycle();

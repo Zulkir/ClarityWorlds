@@ -46,7 +46,7 @@ namespace Clarity.Engine.Media.Models.Explicit.Embedded
             {
             }
 
-            protected override bool FieldsAreEual(Source other) =>
+            protected override bool FieldsAreEqual(Source other) =>
                 Plane == other.Plane &&
                 NormalDirection == other.NormalDirection &&
                 HalfWidth == other.HalfWidth &&

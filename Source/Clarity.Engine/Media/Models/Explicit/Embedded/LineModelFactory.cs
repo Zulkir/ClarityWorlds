@@ -12,7 +12,7 @@ namespace Clarity.Engine.Media.Models.Explicit.Embedded
         private class Source : FactoryResourceSourceBase<Source, LineModelFactory>
         {
             protected override int GetFieldsHashCode() => 0;
-            protected override bool FieldsAreEual(Source other) => true;
+            protected override bool FieldsAreEqual(Source other) => true;
 
             [TrwSerialize]
             public Source(IFactoryResourceCache factoryResourceCache, LineModelFactory factory) : base(factoryResourceCache, factory)

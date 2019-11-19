@@ -24,7 +24,7 @@ namespace Clarity.Engine.Media.Models.Explicit.Embedded
             }
 
             protected override int GetFieldsHashCode() => NumSegments;
-            protected override bool FieldsAreEual(Source other) => NumSegments == other.NumSegments;
+            protected override bool FieldsAreEqual(Source other) => NumSegments == other.NumSegments;
         }
 
         public CircleModelFactory(IFactoryResourceCache factoryResourceCache) 

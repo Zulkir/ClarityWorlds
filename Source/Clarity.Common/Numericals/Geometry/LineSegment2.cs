@@ -15,10 +15,8 @@ namespace Clarity.Common.Numericals.Geometry
             Point2 = point2;
         }
 
-        public Line2 ToLine()
-        {
-            return new Line2(Point1, Point2 - Point1);
-        }
+        public Vector2 ToArrowVector() => Point2 - Point1;
+        public Line2 ToLine() => new Line2(Point1, Point2 - Point1);
 
         public Vector2? Intersect(Ray2 ray)
         {
