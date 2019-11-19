@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using Clarity.Common.Infra.TreeReadWrite.Paths;
 using Newtonsoft.Json;
 
 namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
@@ -8,7 +7,6 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
     public class TrwReaderJson : ITrwReader
     {
         private readonly JsonTextReader reader;
-        private readonly TrwPathBuilder pathBuilder;
 
         public TrwTokenType TokenType { get; private set; }
 
@@ -18,7 +16,6 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
             {
                 CloseInput = true
             };
-            pathBuilder = new TrwPathBuilder();
         }
 
         public void Dispose()
@@ -30,7 +27,6 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
         {
             var result = reader.Read();
             TokenType = ConvertTokenType(reader.TokenType);
-            pathBuilder.OnRead(this);
             return result;
         }
 
@@ -58,7 +54,6 @@ namespace Clarity.Common.Infra.TreeReadWrite.Formats.Json
             reader.Skip();
             reader.Read();
             TokenType = ConvertTokenType(reader.TokenType);
-            pathBuilder.OnSkip(this);
         }
         
         public bool ValueAsBool => (bool)reader.Value;

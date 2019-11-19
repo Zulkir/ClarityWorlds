@@ -114,7 +114,8 @@ namespace Clarity.Common.Infra.TreeReadWrite.Paths
 
         public void OnSkip(ITrwReader reader)
         {
-            pathStack.Pop();
+            prev = pathStack.Pop();
+            popNext = false;
             OnRead(reader);
         }
 
