@@ -11,7 +11,6 @@ namespace Clarity.Common.Infra.DependencyInjection
         private static readonly MethodInfo GetFuncMethod = typeof(DiContainer).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(x => x.Name == "GetFunc");
         private static readonly MethodInfo GetLazyMethod = typeof(DiContainer).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(x => x.Name == "GetLazy");
         private static readonly MethodInfo GetRolMethod = typeof(DiContainer).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).First(x => x.Name == "GetRol");
-        private static readonly object[] EmptyObjects = { };
 
         private readonly ConcurrentDictionary<Type, IDiCachedRootBinding> cachedBindings;
 
@@ -58,8 +57,8 @@ namespace Clarity.Common.Infra.DependencyInjection
             GetOrAddCachedBinding(type, rootBindingType).Instantiate(this);
 
         // ReSharper disable UnusedMember.Local
-        private Func<T> GetFunc<T>() { return Get<T>; }
-        private Lazy<T> GetLazy<T>() { return new Lazy<T>(GetFunc<T>()); }
+        private Func<T> GetFunc<T>() { return Instantiate<T>; }
+        private Lazy<T> GetLazy<T>() { return new Lazy<T>(Get<T>); }
         private IReadOnlyList<T> GetRol<T>() { return GetMulti<T>(); }
         // ReSharper restore UnusedMember.Local
     }

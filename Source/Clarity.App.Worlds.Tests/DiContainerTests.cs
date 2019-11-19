@@ -349,6 +349,15 @@ namespace Clarity.App.Worlds.Tests
         }
 
         [Test]
+        public void LazySingleton()
+        {
+            container.Bind<IAbstract>().To<Concrete>();
+            var result1 = container.Get<Lazy<IAbstract>>().Value;
+            var result2 = container.Get<Lazy<IAbstract>>().Value;
+            Assert.That(result2, Is.SameAs(result1));
+        }
+
+        [Test]
         public void ReadOnlyList()
         {
             var impl1 = new Concrete();
