@@ -117,7 +117,7 @@ namespace Clarity.App.Worlds.Assets
             cutOff = (int)Math.Min(cutOff, (uint)loaderMessage.IndexOf('\n'));
             cutOff = (int)Math.Min(cutOff, (uint)loaderMessage.IndexOf('\r'));
             cutOff = (int)Math.Min(cutOff, 16);
-            var substring = loaderMessage.Substring(cutOff);
+            var substring = loaderMessage.Substring(0, cutOff);
             return cutOff == loaderMessage.Length ? substring : substring + "...";
         }
 
