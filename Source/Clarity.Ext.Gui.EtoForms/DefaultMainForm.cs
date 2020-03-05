@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.Hacks.SpherePackingLoad;
 using Clarity.App.Worlds.Interaction.Tools;
 using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.UndoRedo;
@@ -132,6 +133,7 @@ namespace Clarity.Ext.Gui.EtoForms
                         case IMovie movie:
                             return toolFactory.AddMovie(movie);
                         case IFlexibleModel fModel:
+                        {
                             var entity = AmFactory.Create<SceneNode>();
                             entity.Name = "NewModel";
                             entity.Components.Add(PresentationComponent.Create());
@@ -140,6 +142,18 @@ namespace Clarity.Ext.Gui.EtoForms
                             modelComponent.Color = GetRandomSaturatedColor();
                             entity.Components.Add(modelComponent);
                             return toolFactory.MoveEntity(entity, true);
+                        }
+                        case SpherePackingResult spherePackingResult:
+                        {
+                            var entity = AmFactory.Create<SceneNode>();
+                            entity.Name = "NewModel";
+                            entity.Components.Add(PresentationComponent.Create());
+                            var modelComponent = AmFactory.Create<SpherePackingComponent>();
+                            modelComponent.SpherePackingResult = spherePackingResult;
+                            modelComponent.Color = GetRandomSaturatedColor();
+                            entity.Components.Add(modelComponent);
+                            return toolFactory.MoveEntity(entity, true);
+                        }
                         default:
                             MessageBox.Show($"Unable to instantiate an asset of type '{resource.GetType().Name}'.");
                             return null;

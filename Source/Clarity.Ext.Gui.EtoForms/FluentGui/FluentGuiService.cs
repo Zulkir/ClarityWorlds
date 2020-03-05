@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.External.SpherePacking;
+using Clarity.App.Worlds.Hacks.SpherePackingLoad;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.Misc.HighlightOnMouse;
@@ -117,6 +118,15 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 checkBoxRow2.CheckBox("Don't cull", x => x.DontCull);
                 checkBoxRow2.CheckBox("Ortho", x => x.Ortho);
                 modelComponentBuilder.Row().Button("Export", OnExportClick);
+            }
+            {
+                var spherePackingComponentBuilder = builder.Row().GroupBox("Sphere Packing", x => x.SearchComponent<SpherePackingComponent>(), x => x != null).Table();
+                var row = spherePackingComponentBuilder.Row();
+                row.Label("Radius");
+                row.TextBox(x => x.Radius);
+                row = spherePackingComponentBuilder.Row();
+                row.Label("Color");
+                row.ColorPicker(x => x.Color);
             }
             {
                 var rectGroupBox = builder.Row().GroupBox("Rectangle", x => x, x => x.HasComponent<IRectangleComponent>()).Table();

@@ -6,6 +6,7 @@ using Clarity.App.Worlds.Coroutines;
 using Clarity.App.Worlds.DirtyHacks;
 using Clarity.App.Worlds.External.ObjLoading;
 using Clarity.App.Worlds.Gui;
+using Clarity.App.Worlds.Hacks.SpherePackingLoad;
 using Clarity.App.Worlds.Helpers;
 using Clarity.App.Worlds.Interaction;
 using Clarity.App.Worlds.Interaction.Queries;
@@ -70,6 +71,7 @@ namespace Clarity.App.Worlds.Infra
             di.BindMulti<IAssetLoader>().To<SkyboxAssetLoader>();
             di.BindMulti<IAssetLoader>().To<ObjGeoModelLoader>();
             di.BindMulti<IAssetLoader>().To<CgModelLoader>();
+            di.BindMulti<IAssetLoader>().To<SpherePackingLoader>();
             di.Bind<ILogService>().To<LogService>();
             di.BindMulti<ISerializationNecessitiesProvider>().To<CommonSerializationNecessitiesProvider>();
             di.BindMulti<ISerializationNecessitiesProvider>().To<AmSerializationNecessitiesProvider>();
