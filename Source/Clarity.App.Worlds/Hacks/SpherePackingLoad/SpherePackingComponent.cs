@@ -25,6 +25,7 @@ namespace Clarity.App.Worlds.Hacks.SpherePackingLoad
         IVisualComponent, ITransformable3DComponent, IInteractionComponent, IRayHittableComponent
     {
         private readonly IEmbeddedResources embeddedResources;
+        private readonly IViewService viewService;
         private readonly Lazy<IAppModeService> appModeServiceLazy;
 
         public abstract SpherePackingResult SpherePackingResult { get; set; }
@@ -40,6 +41,7 @@ namespace Clarity.App.Worlds.Hacks.SpherePackingLoad
         protected SpherePackingComponent(IEmbeddedResources embeddedResources, IViewService viewService, Lazy<IAppModeService> appModeServiceLazy)
         {
             this.embeddedResources = embeddedResources;
+            this.viewService = viewService;
             this.appModeServiceLazy = appModeServiceLazy;
             Radius = 0.05f;
             Color = Color4.Red;
@@ -70,7 +72,10 @@ namespace Clarity.App.Worlds.Hacks.SpherePackingLoad
         }
 
         // Visual
-        public IEnumerable<IVisualElement> GetVisualElements() => visualElems;
+        public IEnumerable<IVisualElement> GetVisualElements() => 
+            (viewService.MainView.Layers[0].Camera.GetEye() - Node.GlobalTransform.Offset).Length() < 10 
+                ? visualElems 
+                : EmptyArrays<IVisualElement>.Array;
         public IEnumerable<IVisualEffect> GetVisualEffects() => EmptyArrays<IVisualEffect>.Array;
 
         // Interaction

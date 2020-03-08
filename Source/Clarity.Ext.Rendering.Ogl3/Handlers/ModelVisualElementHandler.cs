@@ -1,5 +1,6 @@
 ﻿using System;
 using Clarity.Common;
+using Clarity.Common.CodingUtilities.Sugar.Extensions.Collections;
 using Clarity.Common.CodingUtilities.Tuples;
 using Clarity.Common.Numericals;
 using Clarity.Common.Numericals.Algebra;
@@ -185,8 +186,10 @@ namespace Clarity.Ext.Rendering.Ogl3.Handlers
                 world = Matrix4x4.Scaling(visual.NonUniformScale) * transform.ToMatrix4x4();
             }
             
-            
-            var zOffset = renderStateData.ZOffset + (node.ParentNode?.ChildNodes.IndexOf(node) ?? 0) * GraphicsHelper.MinZOffset;
+            var zOffset = renderStateData.ZOffset + 
+                          GraphicsHelper.MinZOffset * (node.ChildNodes.IsEmptyL() 
+                            ? (node.ParentNode?.ChildNodes.IndexOf(node) ?? 0)
+                            : 0);
             commonObjects.TransformUb.SetData(new TransformUniform { World = world, WorldInverseTranspose = world.Invert().Transpose(), ZOffset = zOffset});
             
             switch (visual.Model)

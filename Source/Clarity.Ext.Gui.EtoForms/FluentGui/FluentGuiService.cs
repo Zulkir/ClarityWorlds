@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.External.SpherePacking;
+using Clarity.App.Worlds.External.WarpScrolling;
 using Clarity.App.Worlds.Hacks.SpherePackingLoad;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
@@ -306,7 +307,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 newComponentRow.DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
                     ["Rotate Once"] = typeof(RotateOnceComponent),
-                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent)
+                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent),
+                    ["Warp Scrolling"] = typeof(WarpScrollComponent),
                 });
                 newComponentRow.Button("Add", x =>
                 {
@@ -316,6 +318,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                         component = AmFactory.Create<RotateOnceComponent>();
                     else if (x.ComponentType == typeof(HighlightOnMouseComponent))
                         component = AmFactory.Create<HighlightOnMouseComponent>();
+                    else if (x.ComponentType == typeof(WarpScrollComponent))
+                        component = AmFactory.Create<WarpScrollComponent>();
                     else
                         throw new ArgumentOutOfRangeException();
                     newComponentViewModel.GetNode().Components.Add(component);
