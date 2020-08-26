@@ -99,8 +99,6 @@ namespace Clarity.App.Worlds.Media.Media3D
 
         public override void AmOnChildEvent(IAmEventMessage message)
         {
-            //if (AmParent == null)
-            //    return;
             if (message.Obj(this).ValueChanged(x => x.Model, out _))
                 BuildVisualElements();
         }

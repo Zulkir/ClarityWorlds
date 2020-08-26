@@ -6,6 +6,7 @@ using Clarity.App.Worlds.WorldTree;
 using Clarity.Common.Numericals.Colors;
 using Clarity.Engine.Interaction;
 using Clarity.Engine.Interaction.Input.Keyboard;
+using Clarity.Engine.Resources;
 
 namespace Clarity.App.Worlds.DirtyHacks 
 {
@@ -14,43 +15,61 @@ namespace Clarity.App.Worlds.DirtyHacks
         private readonly IWorldTreeService worldTreeService;
         private IAppModeService appModeService;
         private readonly IReadOnlyList<IStoryLayout> storyLayouts;
+        private readonly IEmbeddedResources embeddedResources;
         private int layerToShow = 0;
 
-        public DirtyHackService(IWorldTreeService worldTreeService, IAppModeService appModeService, IReadOnlyList<IStoryLayout> storyLayouts)
+        public DirtyHackService(IWorldTreeService worldTreeService, IAppModeService appModeService, 
+            IReadOnlyList<IStoryLayout> storyLayouts, IEmbeddedResources embeddedResources)
         {
             this.worldTreeService = worldTreeService;
             this.appModeService = appModeService;
             this.storyLayouts = storyLayouts;
+            this.embeddedResources = embeddedResources;
         }
 
         public bool TryHandleInput(IInteractionEvent args)
         {
-            //if (args is IKeyEvent kargs)
-            //    return TryHandleKeyboard(kargs);
+            if (args is IKeyEvent kargs)
+                return TryHandleKeyboard(kargs);
             return false;
         }
 
         private bool TryHandleKeyboard(IKeyEvent args)
         {
+            if (appModeService.Mode != AppMode.Presentation)
+                return false;
+
             if (args.ComplexEventType == KeyEventType.Up)
             {
                 var scene = worldTreeService.World.Scenes.First();
                 var cStory = worldTreeService.MainRoot.GetComponent<IStoryComponent>();
-                if (args.EventKey == Key.K)
+                if (args.EventKey == Key.J)
                 {
                     cStory.StartLayoutType = storyLayouts.Select(x => x.Type).Single(x => x.ToString().Contains("NestedSpheres"));
                     cStory.ShowAux1 = true;
                     cStory.ShowAux2 = false;
-                    scene.BackgroundColor = Color4.White;
+                    scene.BackgroundColor = Color4.Black;
+                    scene.Skybox = null;
                     return true;
                 }
 
-                if (args.EventKey == Key.L)
+                if (args.EventKey == Key.K)
                 {
                     cStory.StartLayoutType = storyLayouts.Select(x => x.Type).Single(x => x.ToString().Contains("Building"));
                     cStory.ShowAux1 = false;
                     cStory.ShowAux2 = false;
                     scene.BackgroundColor = Color4.Black;
+                    scene.Skybox = null;
+                    return true;
+                }
+
+                if (args.EventKey == Key.L)
+                {
+                    cStory.StartLayoutType = storyLayouts.Select(x => x.Type).Last(x => x.ToString().Contains("Sphere"));
+                    cStory.ShowAux1 = false;
+                    cStory.ShowAux2 = false;
+                    scene.BackgroundColor = Color4.Black;
+                    scene.Skybox = embeddedResources.Skybox("Skyboxes/stars.skybox");
                     return true;
                 }
 

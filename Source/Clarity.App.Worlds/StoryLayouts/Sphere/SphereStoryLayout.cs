@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Clarity.App.Worlds.Interaction.Placement;
 using Clarity.App.Worlds.StoryGraph;
 using Clarity.App.Worlds.Views.Cameras;
@@ -104,14 +105,37 @@ namespace Clarity.App.Worlds.StoryLayouts.Sphere
                 var distr = CalculateDistribution(numChildren);
                 var radius = distr.RelativeRadius;
 
+                var oneMore = children.SelectMany(x => sg.Children[x]).Any();
+
                 for (int i = 0; i < numChildren; i++)
                 {
                     var pitch = distr.Angles[i].Pitch;
                     var yaw = distr.Angles[i].Yaw;
-                    //var internalRadius = radius / 2;
-                    ArrangeAndDecorateInternal(sg, children[i],
-                        AaRectangle2.FromCenter(new Vector2(yaw, pitch), HalfWidth / radius, HalfHeight / radius),
-                        radius);
+
+                    if (oneMore)
+                    {
+                        //var internalRadius = radius / 2;
+                        ArrangeAndDecorateRoot(sg, children[i]);
+
+                        //var yaw = yawPitchBounds.Center.X;
+                        //var pitch = yawPitchBounds.Center.Y;
+                        var pos = ToCartesian(yaw, pitch, radius * 20);
+                        var zAxis = (-pos).Normalize();
+                        var xAxis = Vector3.Cross(Vector3.UnitY, zAxis).Normalize();
+                        var yAxis = Vector3.Cross(zAxis, xAxis);
+                        var rotation = Quaternion.RotationToFrame(xAxis, yAxis);
+                        sg.NodeObjects[children[i]].Transform = new Transform(1, rotation, pos);
+                    
+                        //ArrangeAndDecorateInternal(sg, children[i],
+                        //    AaRectangle2.FromCenter(new Vector2(yaw, pitch), HalfWidth / radius, HalfHeight / radius),
+                        //    radius);
+                    }
+                    else
+                    {
+                        ArrangeAndDecorateInternal(sg, children[i],
+                            AaRectangle2.FromCenter(new Vector2(yaw, pitch), HalfWidth / radius, HalfHeight / radius),
+                            radius);
+                    }
                 }
 
                 var viewpointProps = new LookAroundCamera.Props

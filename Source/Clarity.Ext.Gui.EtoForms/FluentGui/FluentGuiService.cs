@@ -6,6 +6,8 @@ using System.IO;
 using System.Linq;
 using Clarity.App.Worlds.Assets;
 using Clarity.App.Worlds.External.SpherePacking;
+using Clarity.App.Worlds.External.WarpScrolling;
+using Clarity.App.Worlds.Hacks.SpherePackingLoad;
 using Clarity.App.Worlds.Media.Media2D;
 using Clarity.App.Worlds.Media.Media3D;
 using Clarity.App.Worlds.Misc.HighlightOnMouse;
@@ -117,6 +119,15 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 checkBoxRow2.CheckBox("Don't cull", x => x.DontCull);
                 checkBoxRow2.CheckBox("Ortho", x => x.Ortho);
                 modelComponentBuilder.Row().Button("Export", OnExportClick);
+            }
+            {
+                var spherePackingComponentBuilder = builder.Row().GroupBox("Sphere Packing", x => x.SearchComponent<SpherePackingComponent>(), x => x != null).Table();
+                var row = spherePackingComponentBuilder.Row();
+                row.Label("Radius");
+                row.TextBox(x => x.Radius);
+                row = spherePackingComponentBuilder.Row();
+                row.Label("Color");
+                row.ColorPicker(x => x.Color);
             }
             {
                 var rectGroupBox = builder.Row().GroupBox("Rectangle", x => x, x => x.HasComponent<IRectangleComponent>()).Table();
@@ -296,7 +307,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                 newComponentRow.DropDown(x => x.ComponentType, new Dictionary<string, Type>
                 {
                     ["Rotate Once"] = typeof(RotateOnceComponent),
-                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent)
+                    ["Highlight on Mouse"] = typeof(HighlightOnMouseComponent),
+                    ["Warp Scrolling"] = typeof(WarpScrollComponent),
                 });
                 newComponentRow.Button("Add", x =>
                 {
@@ -306,6 +318,8 @@ namespace Clarity.Ext.Gui.EtoForms.FluentGui
                         component = AmFactory.Create<RotateOnceComponent>();
                     else if (x.ComponentType == typeof(HighlightOnMouseComponent))
                         component = AmFactory.Create<HighlightOnMouseComponent>();
+                    else if (x.ComponentType == typeof(WarpScrollComponent))
+                        component = AmFactory.Create<WarpScrollComponent>();
                     else
                         throw new ArgumentOutOfRangeException();
                     newComponentViewModel.GetNode().Components.Add(component);

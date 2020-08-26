@@ -65,6 +65,8 @@
     <Compile Include="AppModes\IAppModeService.cs" />
     <Compile Include="AppModes\IPresentationWorldBuilder.cs" />
     <Compile Include="AppModes\PresentationWorldBuilder.cs" />
+    <Compile Include="Hacks\SpherePackingLoad\SpherePackingComponent.cs" />
+    <Compile Include="Hacks\SpherePackingLoad\SpherePackingLoader.cs" />
     <Compile Include="Configuration\Config.cs" />
     <Compile Include="Configuration\ConfigSerializationNecessitiesProvider.cs" />
     <Compile Include="Configuration\IConfigFileStorage.cs" />
@@ -86,6 +88,7 @@
     <Compile Include="Gui\IGuiObserver.cs" />
     <Compile Include="Gui\ISceneNodeContextMenuBuilder.cs" />
     <Compile Include="Gui\SceneNodeContextMenuBuilder.cs" />
+    <Compile Include="Hacks\SpherePackingLoad\SpherePackingResult.cs" />
     <Compile Include="Infra\AppVersion.cs" />
     <Compile Include="Interaction\InputHandler.cs" />
     <Compile Include="Interaction\ActionOnEventInteractionElement.cs" />

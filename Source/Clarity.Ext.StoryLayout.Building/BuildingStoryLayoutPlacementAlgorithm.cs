@@ -353,8 +353,8 @@ namespace Clarity.Ext.StoryLayout.Building
                         laneBuilder.AddRawPoint(startPoint);
                         laneBuilder.AddRawPoint(new Vector3(halfSizes[commonParent].Width, startPoint.Y, startPoint.Z));
                         laneBuilder.AddRawPoint(new Vector3(halfSizes[commonParent].Width, startPoint.Y, -halfSizes[commonParent].Depth - BuildingConstants.StairsDistance * (floorDistance + 1)));
-                        laneBuilder.AddRawPoint(new Vector3(-halfSizes[commonParent].Width, endPoint.Y, -halfSizes[commonParent].Depth - BuildingConstants.StairsDistance * (floorDistance + 1)));
-                        laneBuilder.AddRawPoint(new Vector3(-halfSizes[commonParent].Width, endPoint.Y, endPoint.Z));
+                        laneBuilder.AddRawPoint(new Vector3(halfSizes[commonParent].Width, endPoint.Y, -halfSizes[commonParent].Depth - BuildingConstants.StairsDistance * (floorDistance + 1)));
+                        laneBuilder.AddRawPoint(new Vector3(halfSizes[commonParent].Width, endPoint.Y, endPoint.Z));
                         laneBuilder.AddRawPoint(endPoint);
                         laneBuilder.EndLaneSegment(commonParent, true);
                     }
@@ -451,7 +451,7 @@ namespace Clarity.Ext.StoryLayout.Building
                             else
                             {
                                 laneBuilder.AddRawPoint(revStartPoint);
-                                laneBuilder.AddRawPoint(startPoint - Vector3.UnitX * BuildingConstants.ElevatorOffset);
+                                laneBuilder.AddRawPoint(revStartPoint - Vector3.UnitX * BuildingConstants.ElevatorOffset);
                             }
 
                             if (!isReversed[topLevelChildSecond])

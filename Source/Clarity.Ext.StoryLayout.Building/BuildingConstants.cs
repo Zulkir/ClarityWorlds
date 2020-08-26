@@ -7,7 +7,7 @@ namespace Clarity.Ext.StoryLayout.Building
     {
         public const float WidthMargin = 16f;
         public const float CorridorBranchingOffset = 4f;
-        public const float HeightMargin = 25f;
+        public const float HeightMargin = 10f;
         public const float DepthMargin = 3f;
         public const float StairsDistance = 5f;
         public const float CorridorHalfWidth = 2f;
